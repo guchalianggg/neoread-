@@ -1,0 +1,335 @@
+diff --git a/build/pdf.mjs b/build/pdf.mjs
+index c55a629aa4482ce73d02e19d4e5eddeba8976e97..06fe7cbb30749e66b6409ac7cccbdc0a2a128dfb 100644
+--- a/build/pdf.mjs
++++ b/build/pdf.mjs
+@@ -10905,6 +10905,30 @@ const LINE_JOIN_STYLES = ["miter", "round", "bevel"];
+ const NORMAL_CLIP = {};
+ const EO_CLIP = {};
+ class CanvasGraphics {
++  #objectFillColor = null;
++  #objectStrokeColor = null;
++  // Cache only the last source/target pair per ink. PDF state remains original,
++  // and mask data bypasses mapping. Reapply at paint sites so native restore,
++  // group switches and temporary contexts need no parallel invalidation system.
++  #objectColor(color, stroke = false) {
++    const mapColor = this.pageColors?.mapColor;
++    if (!mapColor || this.smaskStack.length) return color;
++    const previous = stroke ? this.#objectStrokeColor : this.#objectFillColor;
++    if (previous?.source === color) return previous.target;
++    const entry = { source: color, target: mapColor(color) };
++    if (stroke) this.#objectStrokeColor = entry;
++    else this.#objectFillColor = entry;
++    return entry.target;
++  }
++  #applyObjectColors(fill, stroke) {
++    if (!this.pageColors?.mapColor) return;
++    if (fill && !this.current.patternFill) {
++      this.ctx.fillStyle = this.#objectColor(this.current.fillColor);
++    }
++    if (stroke && !this.current.patternStroke) {
++      this.ctx.strokeStyle = this.#objectColor(this.current.strokeColor, true);
++    }
++  }
+   static #SCALE_MATRIX = null;
+   #knockoutGroupLevel = 0;
+   #knockoutElementDepth = 0;
+@@ -10973,7 +10997,7 @@ class CanvasGraphics {
+     const width = this.ctx.canvas.width;
+     const height = this.ctx.canvas.height;
+     const savedFillStyle = this.ctx.fillStyle;
+-    this.ctx.fillStyle = background || "#ffffff";
++    this.ctx.fillStyle = this.pageColors?.mapColor ? this.pageColors.background : background || "#ffffff";
+     this.ctx.fillRect(0, 0, width, height);
+     this.ctx.fillStyle = savedFillStyle;
+     if (transparency) {
+@@ -11108,7 +11132,7 @@ class CanvasGraphics {
+     this.#drawFilter();
+   }
+   #drawFilter() {
+-    if (this.pageColors) {
++    if (this.pageColors && !this.pageColors.mapColor) {
+       const hcmFilterId = this.filterFactory.addHCMFilter(this.pageColors.foreground, this.pageColors.background);
+       if (hcmFilterId !== "none") {
+         const savedFilter = this.ctx.filter;
+@@ -11198,7 +11222,10 @@ class CanvasGraphics {
+       width,
+       height
+     } = img;
+-    const fillColor = this.current.fillColor;
++    // Stencils use ink, unlike ordinary bitmap images. Include mapped ink in
++    // the stencil cache key while keeping luminosity-mask data untouched.
++    const fillColor = this.pageColors?.mapColor && !this.current.patternFill && !this.smaskStack.length
++      ? this.#objectColor(this.current.fillColor) : this.current.fillColor;
+     const isPatternFill = this.current.patternFill;
+     const currentTransform = getCurrentTransform(ctx);
+     let cache, cacheKey, scaled, maskCanvas;
+@@ -11870,6 +11897,7 @@ class CanvasGraphics {
+     this.ctx.closePath();
+   }
+   stroke(opIdx, path, consumePath = true) {
++    this.#applyObjectColors(false, true);
+     const started = consumePath && this.#beginKnockoutElement(this.current.strokeAlpha);
+     const ctx = this.ctx;
+     const strokeColor = this.current.strokeColor;
+@@ -11901,6 +11929,7 @@ class CanvasGraphics {
+     this.stroke(opIdx, path);
+   }
+   fill(opIdx, path, consumePath = true) {
++    this.#applyObjectColors(true, false);
+     const started = consumePath && this.#beginKnockoutElement(this.current.fillAlpha);
+     const ctx = this.ctx;
+     const fillColor = this.current.fillColor;
+@@ -11975,6 +12004,7 @@ class CanvasGraphics {
+     this.consumePath(opIdx, path);
+   }
+   rawFillPath(opIdx, path) {
++    this.#applyObjectColors(true, false);
+     const started = this.#beginKnockoutElement(this.current.fillAlpha);
+     this.ctx.fill(path);
+     this.dependencyTracker?.recordDependencies(opIdx, Dependencies.rawFillPath).recordOperation(opIdx);
+@@ -12205,6 +12235,9 @@ class CanvasGraphics {
+     return shadow(this, "isFontSubpixelAAEnabled", enabled);
+   }
+   showText(opIdx, glyphs) {
++    const mode = this.current.textRenderingMode & TextRenderingMode.FILL_STROKE_MASK;
++    this.#applyObjectColors(mode === TextRenderingMode.FILL || mode === TextRenderingMode.FILL_STROKE,
++      mode === TextRenderingMode.STROKE || mode === TextRenderingMode.FILL_STROKE);
+     if (this.dependencyTracker) {
+       this.dependencyTracker.recordDependencies(opIdx, Dependencies.showText).resetBBox(opIdx);
+       if (this.current.textRenderingMode & TextRenderingMode.ADD_TO_PATH_FLAG) {
+@@ -12942,7 +12975,10 @@ class CanvasGraphics {
+     }
+     const started = this.#beginKnockoutElement(this.current.fillAlpha);
+     const ctx = this.ctx;
+-    const fillColor = this.current.fillColor;
++    // Stencils use ink, unlike ordinary bitmap images. Include mapped ink in
++    // the stencil cache key while keeping luminosity-mask data untouched.
++    const fillColor = this.pageColors?.mapColor && !this.current.patternFill && !this.smaskStack.length
++      ? this.#objectColor(this.current.fillColor) : this.current.fillColor;
+     const isPatternFill = this.current.patternFill;
+     this.dependencyTracker?.resetBBox(opIdx).recordDependencies(opIdx, Dependencies.transformAndFill);
+     for (const image of images) {
+@@ -13117,6 +13153,7 @@ class CanvasGraphics {
+     this.#endKnockoutElement(started);
+   }
+   paintSolidColorImageMask(opIdx) {
++    this.#applyObjectColors(true, false);
+     if (!this.contentVisible) {
+       return;
+     }
+diff --git a/legacy/build/pdf.mjs b/legacy/build/pdf.mjs
+index 993f35056cbb76d09d83c25dccd96fe1916ee372..d900eb33608cb069467da5a3b549cef8693f5351 100644
+--- a/legacy/build/pdf.mjs
++++ b/legacy/build/pdf.mjs
+@@ -17364,6 +17364,30 @@ const LINE_JOIN_STYLES = ["miter", "round", "bevel"];
+ const NORMAL_CLIP = {};
+ const EO_CLIP = {};
+ class CanvasGraphics {
++  #objectFillColor = null;
++  #objectStrokeColor = null;
++  // Cache only the last source/target pair per ink. PDF state remains original,
++  // and mask data bypasses mapping. Reapply at paint sites so native restore,
++  // group switches and temporary contexts need no parallel invalidation system.
++  #objectColor(color, stroke = false) {
++    const mapColor = this.pageColors?.mapColor;
++    if (!mapColor || this.smaskStack.length) return color;
++    const previous = stroke ? this.#objectStrokeColor : this.#objectFillColor;
++    if (previous?.source === color) return previous.target;
++    const entry = { source: color, target: mapColor(color) };
++    if (stroke) this.#objectStrokeColor = entry;
++    else this.#objectFillColor = entry;
++    return entry.target;
++  }
++  #applyObjectColors(fill, stroke) {
++    if (!this.pageColors?.mapColor) return;
++    if (fill && !this.current.patternFill) {
++      this.ctx.fillStyle = this.#objectColor(this.current.fillColor);
++    }
++    if (stroke && !this.current.patternStroke) {
++      this.ctx.strokeStyle = this.#objectColor(this.current.strokeColor, true);
++    }
++  }
+   static #SCALE_MATRIX = null;
+   #knockoutGroupLevel = 0;
+   #knockoutElementDepth = 0;
+@@ -17432,7 +17456,7 @@ class CanvasGraphics {
+     const width = this.ctx.canvas.width;
+     const height = this.ctx.canvas.height;
+     const savedFillStyle = this.ctx.fillStyle;
+-    this.ctx.fillStyle = background || "#ffffff";
++    this.ctx.fillStyle = this.pageColors?.mapColor ? this.pageColors.background : background || "#ffffff";
+     this.ctx.fillRect(0, 0, width, height);
+     this.ctx.fillStyle = savedFillStyle;
+     if (transparency) {
+@@ -17567,7 +17591,7 @@ class CanvasGraphics {
+     this.#drawFilter();
+   }
+   #drawFilter() {
+-    if (this.pageColors) {
++    if (this.pageColors && !this.pageColors.mapColor) {
+       const hcmFilterId = this.filterFactory.addHCMFilter(this.pageColors.foreground, this.pageColors.background);
+       if (hcmFilterId !== "none") {
+         const savedFilter = this.ctx.filter;
+@@ -17657,7 +17681,10 @@ class CanvasGraphics {
+       width,
+       height
+     } = img;
+-    const fillColor = this.current.fillColor;
++    // Stencils use ink, unlike ordinary bitmap images. Include mapped ink in
++    // the stencil cache key while keeping luminosity-mask data untouched.
++    const fillColor = this.pageColors?.mapColor && !this.current.patternFill && !this.smaskStack.length
++      ? this.#objectColor(this.current.fillColor) : this.current.fillColor;
+     const isPatternFill = this.current.patternFill;
+     const currentTransform = getCurrentTransform(ctx);
+     let cache, cacheKey, scaled, maskCanvas;
+@@ -18329,6 +18356,7 @@ class CanvasGraphics {
+     this.ctx.closePath();
+   }
+   stroke(opIdx, path, consumePath = true) {
++    this.#applyObjectColors(false, true);
+     const started = consumePath && this.#beginKnockoutElement(this.current.strokeAlpha);
+     const ctx = this.ctx;
+     const strokeColor = this.current.strokeColor;
+@@ -18360,6 +18388,7 @@ class CanvasGraphics {
+     this.stroke(opIdx, path);
+   }
+   fill(opIdx, path, consumePath = true) {
++    this.#applyObjectColors(true, false);
+     const started = consumePath && this.#beginKnockoutElement(this.current.fillAlpha);
+     const ctx = this.ctx;
+     const fillColor = this.current.fillColor;
+@@ -18434,6 +18463,7 @@ class CanvasGraphics {
+     this.consumePath(opIdx, path);
+   }
+   rawFillPath(opIdx, path) {
++    this.#applyObjectColors(true, false);
+     const started = this.#beginKnockoutElement(this.current.fillAlpha);
+     this.ctx.fill(path);
+     this.dependencyTracker?.recordDependencies(opIdx, Dependencies.rawFillPath).recordOperation(opIdx);
+@@ -18664,6 +18694,9 @@ class CanvasGraphics {
+     return shadow(this, "isFontSubpixelAAEnabled", enabled);
+   }
+   showText(opIdx, glyphs) {
++    const mode = this.current.textRenderingMode & TextRenderingMode.FILL_STROKE_MASK;
++    this.#applyObjectColors(mode === TextRenderingMode.FILL || mode === TextRenderingMode.FILL_STROKE,
++      mode === TextRenderingMode.STROKE || mode === TextRenderingMode.FILL_STROKE);
+     if (this.dependencyTracker) {
+       this.dependencyTracker.recordDependencies(opIdx, Dependencies.showText).resetBBox(opIdx);
+       if (this.current.textRenderingMode & TextRenderingMode.ADD_TO_PATH_FLAG) {
+@@ -19401,7 +19434,10 @@ class CanvasGraphics {
+     }
+     const started = this.#beginKnockoutElement(this.current.fillAlpha);
+     const ctx = this.ctx;
+-    const fillColor = this.current.fillColor;
++    // Stencils use ink, unlike ordinary bitmap images. Include mapped ink in
++    // the stencil cache key while keeping luminosity-mask data untouched.
++    const fillColor = this.pageColors?.mapColor && !this.current.patternFill && !this.smaskStack.length
++      ? this.#objectColor(this.current.fillColor) : this.current.fillColor;
+     const isPatternFill = this.current.patternFill;
+     this.dependencyTracker?.resetBBox(opIdx).recordDependencies(opIdx, Dependencies.transformAndFill);
+     for (const image of images) {
+@@ -19576,6 +19612,7 @@ class CanvasGraphics {
+     this.#endKnockoutElement(started);
+   }
+   paintSolidColorImageMask(opIdx) {
++    this.#applyObjectColors(true, false);
+     if (!this.contentVisible) {
+       return;
+     }
+diff --git a/web/pdf_viewer.mjs b/web/pdf_viewer.mjs
+index 29b3492cd9cb0869a906785739c34fc364ec1c17..4915556821bf4fc13507e7488bb18ea1c2c1857d 100644
+--- a/web/pdf_viewer.mjs
++++ b/web/pdf_viewer.mjs
+@@ -5044,8 +5044,11 @@ class BasePDFPageView extends RenderableView {
+   }
+   async _drawCanvas(options, onCancel, onFinish) {
+     const renderTask = this.renderTask = this.pdfPage.render(options);
+-    renderTask.onContinue = this.#renderContinueCallback;
++    renderTask.onContinue = cont => {
++      if (renderTask === this.renderTask) this.#renderContinueCallback(cont);
++    };
+     renderTask.onError = error => {
++      if (renderTask !== this.renderTask) return;
+       if (error instanceof RenderingCancelledException) {
+         onCancel();
+         this.#renderError = null;
+@@ -5054,16 +5057,23 @@ class BasePDFPageView extends RenderableView {
+     let error = null;
+     try {
+       await renderTask.promise;
++      // A superseded task must not publish the replacement's pending canvas.
++      if (renderTask !== this.renderTask) return;
+       this.#showCanvas?.(true);
+     } catch (e) {
++      if (renderTask !== this.renderTask) return;
+       if (e instanceof RenderingCancelledException) {
+         return;
+       }
+       error = e;
+-      this.#showCanvas?.(true);
++      if (this.pageColors?.mapColor) {
++        onCancel(); // Never replace a completed frame with a failed partial render.
++      } else {
++        this.#showCanvas?.(true);
++      }
+     } finally {
+-      this.#renderError = error;
+       if (renderTask === this.renderTask) {
++        this.#renderError = error;
+         this.renderTask = null;
+         if (this.enableOptimizedPartialRendering) {
+           this.recordedBBoxes ??= renderTask.recordedBBoxes;
+@@ -6933,8 +6943,14 @@ class PDFPageView extends BasePDFPageView {
+     scale = 0,
+     rotation = null,
+     optionalContentConfigPromise = null,
+-    drawingDelay = -1
++    drawingDelay = -1,
++    pageColors = undefined
+   }) {
++    const colorsChanged = pageColors !== undefined && pageColors !== this.pageColors;
++    if (colorsChanged) {
++      this.pageColors = pageColors;
++      if (this.detailView) this.detailView.pageColors = pageColors;
++    }
+     this.scale = scale || this.scale;
+     if (typeof rotation === "number") {
+       this.rotation = rotation;
+@@ -6960,7 +6976,7 @@ class PDFPageView extends BasePDFPageView {
+     }
+     this.#computeScale();
+     if (this.canvas) {
+-      const onlyCssZoom = this.#hasRestrictedScaling && this.#needsRestrictedScaling;
++      const onlyCssZoom = !colorsChanged && this.#hasRestrictedScaling && this.#needsRestrictedScaling;
+       const postponeDrawing = drawingDelay >= 0 && drawingDelay < 1000;
+       if (postponeDrawing || onlyCssZoom) {
+         if (postponeDrawing && !onlyCssZoom && this.renderingState !== RenderingStates.FINISHED) {
+@@ -7251,8 +7267,15 @@ class PDFPageView extends BasePDFPageView {
+     const recordImages = this.imagesRightClickMinSize !== -1 && !this.imageCoordinates;
+     const transform = outputScale.scaled ? [outputScale.sx, 0, 0, outputScale.sy, 0, 0] : null;
+     const resultPromise = this._drawCanvas(this._getRenderingContext(canvas, transform, recordBBoxes, recordImages), () => {
+-      prevCanvas?.remove();
+-      this._resetCanvas();
++      if (this.pageColors?.mapColor && prevCanvas) {
++        // A cancelled replacement must not discard the last completed frame.
++        canvas.remove();
++        canvas.width = canvas.height = 0;
++        this.canvas = prevCanvas;
++      } else {
++        prevCanvas?.remove();
++        this._resetCanvas();
++      }
+     }, renderTask => {
+       this.#useThumbnailCanvas.regularAnnotations = !renderTask.separateAnnots;
+       this.dispatchPageRendered(false, false);
+@@ -9173,7 +9196,9 @@ class PDFViewer {
+       view,
+       visibleArea
+     } of visiblePages) {
+-      view.updateVisibleArea(visibleArea);
++      // Do not invalidate/recreate detail tiles on every animated zoom frame.
++      // forceRendering already postpones detail rendering until this timer clears.
++      if (this.#scaleTimeoutId === null) view.updateVisibleArea(visibleArea);
+     }
+     for (const view of this.#buffer) {
+       if (!visible.ids.has(view.id)) {

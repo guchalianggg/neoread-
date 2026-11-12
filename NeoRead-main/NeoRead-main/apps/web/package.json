@@ -1,0 +1,48 @@
+{
+  "name": "@neoread/web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@citation-js/core": "^0.9.0",
+    "@citation-js/plugin-csl": "^0.9.0",
+    "@lobehub/icons": "5.23.0",
+    "@lobehub/streamdown": "1.4.0",
+    "@milkdown/kit": "7.22.3",
+    "@neoread/api": "workspace:*",
+    "@neoread/core": "workspace:*",
+    "@neoread/ui": "workspace:*",
+    "@readium/navigator": "2.11.1",
+    "@readium/shared": "2.6.0",
+    "citeproc": "2.4.63",
+    "katex": "0.18.1",
+    "lucide-react": "^0.577.0",
+    "marked": "18.0.6",
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "6.3.289",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1",
+    "remark-math": "6.0.0",
+    "remend": "1.3.0",
+    "shiki": "3.13.0",
+    "sonner": "^2.0.7",
+    "unist-util-visit": "5.1.0",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.0",
+    "@types/katex": "0.16.7",
+    "@types/mdast": "4.0.4",
+    "@vitejs/plugin-react": "^5.1.0",
+    "mdast-util-from-markdown": "2.1.0",
+    "micromark-util-types": "2.0.3",
+    "tailwindcss": "^4.2.0",
+    "unified": "11.0.5",
+    "vite": "^7.3.0"
+  }
+}

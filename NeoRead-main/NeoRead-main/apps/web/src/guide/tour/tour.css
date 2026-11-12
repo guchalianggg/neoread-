@@ -1,0 +1,299 @@
+.tour {
+  --tour-shade: rgb(18 18 22 / 0.42);
+  --tour-accent: #c87351;
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  pointer-events: none;
+  -webkit-app-region: no-drag;
+}
+.dark .tour {
+  --tour-shade: rgb(0 0 0 / 0.58);
+}
+
+.tour-shade,
+.tour-block {
+  position: fixed;
+  inset: 0;
+}
+.tour-shade > rect {
+  fill: var(--tour-shade);
+}
+.tour-shade {
+  animation: tour-fade 240ms ease-out;
+}
+.tour-block path {
+  fill: transparent;
+  pointer-events: fill;
+}
+
+/* A breathing glow around what the step is about. */
+.tour-frame {
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 10px;
+  transition:
+    transform 320ms cubic-bezier(0.32, 0.72, 0, 1),
+    width 320ms cubic-bezier(0.32, 0.72, 0, 1),
+    height 320ms cubic-bezier(0.32, 0.72, 0, 1);
+  animation:
+    tour-fade 240ms ease-out,
+    tour-breathe 2s ease-in-out infinite;
+}
+
+.tour-pointer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition:
+    transform 760ms cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 200ms ease-out;
+}
+.tour-pointer[data-visible] {
+  opacity: 1;
+}
+.tour-press {
+  position: absolute;
+  display: block;
+  transform-origin: 2px 2px;
+}
+.tour-cursor {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 30px;
+  height: 34px;
+  overflow: visible;
+  filter: drop-shadow(0 3px 6px rgb(0 0 0 / 0.28));
+}
+.tour-cursor path {
+  fill: #fff;
+  stroke: #111;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+.tour-ripple {
+  position: absolute;
+  top: -18px;
+  left: -18px;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--tour-accent);
+  border-radius: 999px;
+  opacity: 0;
+}
+
+/* Click: arrive, press, release, wait, repeat. */
+.tour-press[data-gesture="click"] {
+  animation: tour-click 1.8s 0.8s infinite;
+}
+.tour-press[data-gesture="click"] .tour-ripple:first-child {
+  animation: tour-ripple 1.8s 0.8s infinite;
+}
+.tour-press[data-gesture="double"] {
+  animation: tour-double 2s 0.8s infinite;
+}
+.tour-press[data-gesture="double"] .tour-ripple:first-child {
+  animation: tour-ripple 2s 0.8s infinite;
+}
+.tour-press[data-gesture="double"] .tour-ripple:nth-child(2) {
+  animation: tour-ripple 2s 1.04s infinite;
+}
+.tour-press[data-gesture="hover"],
+.tour-press[data-gesture="wander"] {
+  animation: tour-float 2.4s ease-in-out infinite;
+}
+
+.tour-card {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: min(300px, calc(100vw - 32px));
+  overflow: auto;
+  scrollbar-width: none;
+  padding: 14px 14px 10px;
+  border-radius: 14px;
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--foreground) 10%, transparent),
+    0 12px 32px rgb(0 0 0 / 0.18);
+  pointer-events: auto;
+  transition: transform 360ms cubic-bezier(0.32, 0.72, 0, 1);
+  animation: tour-fade 240ms ease-out;
+}
+.tour-progress {
+  flex: 1;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--muted);
+}
+.tour-progress span {
+  display: block;
+  height: 100%;
+  background: var(--tour-accent);
+  transform-origin: left;
+  transition: transform 360ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.tour-title {
+  font-size: 14px;
+  font-weight: 500;
+}
+.tour-body {
+  white-space: pre-line;
+  margin-top: 4px;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--muted-foreground);
+}
+.tour-body code {
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--muted);
+  color: var(--foreground);
+  font-size: 11.5px;
+}
+.tour-strong {
+  font-weight: 600;
+  color: var(--foreground);
+}
+.tour-warn {
+  font-weight: inherit;
+  color: var(--destructive);
+}
+.tour-warn code {
+  color: inherit;
+}
+.tour-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.tour-options {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+}
+.tour-option {
+  justify-content: flex-start;
+}
+.tour-option[data-chosen] {
+  border-color: var(--tour-accent);
+  color: var(--tour-accent);
+}
+
+/* Fixed bottom-left throughout the tour; red when hovered. */
+.tour-skip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: auto;
+  transition:
+    background-color 160ms ease-out,
+    color 160ms ease-out;
+  background: var(--popover);
+  color: var(--muted-foreground);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--foreground) 10%, transparent),
+    0 4px 12px rgb(0 0 0 / 0.12);
+}
+.tour-skip:hover {
+  background: var(--destructive);
+  color: #fff;
+}
+.tour-confirm {
+  z-index: 2147483100;
+}
+
+@keyframes tour-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes tour-breathe {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px color-mix(in oklab, var(--tour-accent) 40%, transparent),
+      0 0 10px 1px color-mix(in oklab, var(--tour-accent) 35%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 7px color-mix(in oklab, var(--tour-accent) 18%, transparent),
+      0 0 26px 6px color-mix(in oklab, var(--tour-accent) 55%, transparent);
+  }
+}
+@keyframes tour-click {
+  0%,
+  100% {
+    transform: none;
+  }
+  8% {
+    transform: scale(0.84);
+  }
+  16% {
+    transform: none;
+  }
+}
+@keyframes tour-double {
+  0%,
+  100% {
+    transform: none;
+  }
+  6%,
+  18% {
+    transform: scale(0.84);
+  }
+  12%,
+  24% {
+    transform: none;
+  }
+}
+@keyframes tour-ripple {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  8% {
+    opacity: 0.9;
+    transform: scale(0.4);
+  }
+  40%,
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+@keyframes tour-float {
+  50% {
+    transform: translate(3px, 4px);
+  }
+}
+
+:root[data-reduced-motion="true"] {
+  .tour-frame,
+  .tour-pointer,
+  .tour-card,
+  .tour-skip,
+  .tour-progress span {
+    transition: none;
+  }
+  .tour-press,
+  .tour-ripple,
+  .tour-frame {
+    animation: none !important;
+  }
+  .tour-frame {
+    box-shadow: 0 0 0 3px
+      color-mix(in oklab, var(--tour-accent) 30%, transparent);
+  }
+  .tour-press[data-gesture="click"] .tour-ripple:first-child,
+  .tour-press[data-gesture="double"] .tour-ripple:first-child {
+    opacity: 0.8;
+    transform: scale(0.8);
+  }
+}

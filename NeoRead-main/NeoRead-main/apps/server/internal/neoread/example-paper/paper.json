@@ -1,0 +1,1944 @@
+{
+  "id": "bdfaa68d8984f0dc02beaca527b76f20",
+  "title": "Attention Is All You Need",
+  "author": "Vaswani, Ashish, Shazeer, Noam, Parmar, Niki, Uszkoreit, Jakob, Jones, Llion, Gomez, Aidan N., Kaiser, Lukasz, Polosukhin, Illia",
+  "metadata": {
+    "itemType": "preprint",
+    "creators": [
+      {
+        "name": "Vaswani, Ashish"
+      },
+      {
+        "name": "Shazeer, Noam"
+      },
+      {
+        "name": "Parmar, Niki"
+      },
+      {
+        "name": "Uszkoreit, Jakob"
+      },
+      {
+        "name": "Jones, Llion"
+      },
+      {
+        "name": "Gomez, Aidan N."
+      },
+      {
+        "name": "Kaiser, Lukasz"
+      },
+      {
+        "name": "Polosukhin, Illia"
+      }
+    ],
+    "date": "2017-06-12",
+    "arxiv": "1706.03762",
+    "url": "https://arxiv.org/abs/1706.03762",
+    "abstract": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data.",
+    "lookup": "done"
+  },
+  "translations": [
+    {
+      "blockId": "p1-b10",
+      "sourceHash": "e062ac7d81ad6dba606f71b484e35d5292a1323d00feccb5fbfb03b78f301c19",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Illia Polosukhin ∗ ‡ illia.polosukhin@gmail.com",
+          "target": "Illia Polosukhin ∗ ‡ illia.polosukhin@gmail.com"
+        }
+      ]
+    },
+    {
+      "blockId": "p1-b11",
+      "sourceHash": "f4be457845459ceb3a230047d16fc2785e41d31f9d257d5d5956332bcc36c7fe",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Abstract",
+          "target": "摘要"
+        }
+      ]
+    },
+    {
+      "blockId": "p1-b12",
+      "sourceHash": "f3c7455207cd963df4b487246a8771047ff0e47960329e624567891aae755172",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder.",
+          "target": "主流序列转换模型基于复杂的循环神经网络或卷积神经网络，并包含编码器和解码器。"
+        },
+        {
+          "source": "The best performing models also connect the encoder and decoder through an attention mechanism.",
+          "target": "表现最佳的模型还通过注意力机制连接编码器和解码器。"
+        },
+        {
+          "source": "We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely.",
+          "target": "我们提出一种新的简洁网络架构 Transformer，它完全基于注意力机制，彻底摒弃循环和卷积。"
+        },
+        {
+          "source": "Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train.",
+          "target": "在两项机器翻译任务上的实验表明，这些模型的质量更高、更易于并行化，而且所需训练时间显著更短。"
+        },
+        {
+          "source": "Our model achieves 28.4 BLEU on the WMT 2014 English- to-German translation task, improving over the existing best results, including ensembles, by over 2 BLEU.",
+          "target": "在 WMT 2014 英译德任务中，我们的模型取得了 28.4 BLEU，比包括集成模型在内的现有最佳结果高出 2 BLEU 以上。"
+        },
+        {
+          "source": "On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the arXiv:1706.03762v7 [cs.CL] 2 Aug 2023 best models from the literature.",
+          "target": "在 WMT 2014 英译法任务中，我们的模型在八块 GPU 上训练 3.5 天后，取得了 41.8 的 BLEU 分数，创下单模型的新最佳成绩；其训练成本仅为文献中最佳模型的一小部分。 arXiv:1706.03762v7 [cs.CL] 2023 年 8 月 2 日"
+        },
+        {
+          "source": "We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data.",
+          "target": "我们将 Transformer 成功应用于训练数据量充足和有限的英语成分句法分析任务，表明它能够良好地泛化到其他任务。"
+        }
+      ]
+    },
+    {
+      "blockId": "p1-b13",
+      "sourceHash": "6b2e71d97450d2ef041b838eab47cad19c7eb6373a5ffbab8dfb9fbb17e0dfd2",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "∗ Equal contribution.",
+          "target": "∗ 贡献相同。"
+        },
+        {
+          "source": "Listing order is random.",
+          "target": "作者列出的顺序是随机的。"
+        },
+        {
+          "source": "Jakob proposed replacing RNNs with self-attention and started the effort to evaluate this idea.",
+          "target": "Jakob 提议用自注意力取代 RNN，并启动了对这一想法的评估工作。"
+        },
+        {
+          "source": "Ashish, with Illia, designed and implemented the first Transformer models and has been crucially involved in every aspect of this work.",
+          "target": "Ashish 与 Illia 设计并实现了首批 Transformer 模型，并在这项工作的各个方面都发挥了关键作用。"
+        },
+        {
+          "source": "Noam proposed scaled dot-product attention, multi-head attention and the parameter-free position representation and became the other person involved in nearly every detail.",
+          "target": "Noam 提出了缩放点积注意力、多头注意力和无参数的位置表示，并成为几乎参与每个细节的另一位成员。"
+        },
+        {
+          "source": "Niki designed, implemented, tuned and evaluated countless model variants in our original codebase and tensor2tensor.",
+          "target": "Niki 在我们的原始代码库和 tensor2tensor 中设计、实现、调整并评估了无数模型变体。"
+        },
+        {
+          "source": "Llion also experimented with novel model variants, was responsible for our initial codebase, and efficient inference and visualizations.",
+          "target": "Llion 也尝试了新颖的模型变体，负责我们的初始代码库、高效推理和可视化。"
+        },
+        {
+          "source": "Lukasz and Aidan spent countless long days designing various parts of and implementing tensor2tensor, replacing our earlier codebase, greatly improving results and massively accelerating our research.",
+          "target": "Lukasz 和 Aidan 花费了无数个漫长的日子，设计并实现 tensor2tensor 的各个部分，以取代我们早期的代码库；这大幅改善了结果，也极大加快了我们的研究。"
+        }
+      ]
+    },
+    {
+      "blockId": "p1-b14",
+      "sourceHash": "5e32097b3694c68e98ff69c7d707510aed5eee7affd365de565b1de3e485d0c7",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "† Work performed while at Google Brain.",
+          "target": "† 这项工作是在 Google Brain 任职期间完成的。"
+        }
+      ]
+    },
+    {
+      "blockId": "p1-b15",
+      "sourceHash": "341cd295b0d1ba3900e5fb1cea1b150fbc77f46289dfad85241a3fabb3aeab62",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "‡ Work performed while at Google Research.",
+          "target": "‡ 这项工作是在 Google Research 任职期间完成的。"
+        }
+      ]
+    },
+    {
+      "blockId": "p1-b3",
+      "sourceHash": "6f39de2e281446b6292ec4e9ddb20cd5359f0ee3bf79dd266b73ff21b319356c",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Attention Is All You Need",
+          "target": "注意力就是一切"
+        }
+      ]
+    },
+    {
+      "blockId": "p1-b4",
+      "sourceHash": "dc2a2e6bb8b2ea0c0d8317486c9c6850fc17cb3f23ca1367069d6a5ce1d5f879",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Ashish Vaswani ∗ Google Brain avaswani@google.com",
+          "target": "Ashish Vaswani ∗ Google Brain avaswani@google.com"
+        }
+      ]
+    },
+    {
+      "blockId": "p1-b5",
+      "sourceHash": "a196d8ceae89c92179cb67a798fd950cee4307467d32c768f6f8462b5c92de2f",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Noam Shazeer ∗ Google Brain noam@google.com",
+          "target": "Noam Shazeer ∗ Google Brain noam@google.com"
+        }
+      ]
+    },
+    {
+      "blockId": "p1-b6",
+      "sourceHash": "ac9aab89a451d3b0473302c35d9070b38cb25ddec5a9fdf718574631ec03bf6b",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Llion Jones ∗ Google Research llion@google.com",
+          "target": "Llion Jones ∗ Google Research llion@google.com"
+        }
+      ]
+    },
+    {
+      "blockId": "p1-b7",
+      "sourceHash": "a8b0e5547ccf872d51b6a793eedcbe51e171eca04abf8a0c1b704ababebecdd2",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Niki Parmar ∗ Jakob Uszkoreit ∗ Google Research Google Research nikip@google.com usz@google.com",
+          "target": "Niki Parmar ∗ Jakob Uszkoreit ∗ Google Research Google Research nikip@google.com usz@google.com"
+        }
+      ]
+    },
+    {
+      "blockId": "p1-b8",
+      "sourceHash": "65c8dd630d9f17a55aea04f97280e6039aa7a6f97b7f04a1de41ea1cc1f45e54",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Aidan N. Gomez ∗ † University of Toronto aidan@cs.toronto.edu",
+          "target": "Aidan N. Gomez ∗ † University of Toronto aidan@cs.toronto.edu"
+        }
+      ]
+    },
+    {
+      "blockId": "p1-b9",
+      "sourceHash": "776fc17f0eb5c0a4c2c251ad6afa4fa5bd4a8445a6333ddda76806ec6fdfcd32",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Łukasz Kaiser ∗ Google Brain lukaszkaiser@google.com",
+          "target": "Łukasz Kaiser ∗ Google Brain lukaszkaiser@google.com"
+        }
+      ]
+    },
+    {
+      "blockId": "p10-b1",
+      "sourceHash": "1931abd8bb8e2504d396c9dbc99174c9924c1bb8d68e1065876180a21e9e32f5",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Table 4: The Transformer generalizes well to English constituency parsing (Results are on Section 23 of WSJ)",
+          "target": "表 4：Transformer 能够很好地泛化到英语成分句法分析（结果基于 WSJ 的第 23 节）。"
+        }
+      ]
+    },
+    {
+      "blockId": "p10-b10",
+      "sourceHash": "7b0b61b825c91b6a3b6d11e2c56f7036a7ead8567396a62396b26b04f9cef88b",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Acknowledgements We are grateful to Nal Kalchbrenner and Stephan Gouws for their fruitful comments, corrections and inspiration.",
+          "target": "致谢：我们感谢 Nal Kalchbrenner 和 Stephan Gouws 提出的宝贵意见、修正建议和启发。"
+        }
+      ]
+    },
+    {
+      "blockId": "p10-b11",
+      "sourceHash": "e70525ce4d2f06128da462481427746b344ddfcac2a4a0c8002558e5f1d2c33d",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "References",
+          "target": "参考文献"
+        }
+      ]
+    },
+    {
+      "blockId": "p10-b2",
+      "sourceHash": "310476069a043380e049a16ea87126e0ec6dfe228fb2cb6253b42a1cf1f2e42c",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "increased the maximum output length to input length + 300 .",
+          "target": "将最大输出长度增加到输入长度加 300。"
+        },
+        {
+          "source": "We used a beam size of 21 and α = 0 . 3 for both WSJ only and the semi-supervised setting.",
+          "target": "在仅使用 WSJ 和半监督两种设置中，我们都使用了 21 的束宽和 $\\alpha = 0.3$。"
+        }
+      ]
+    },
+    {
+      "blockId": "p10-b3",
+      "sourceHash": "d1e5cd067389773733563e496c43c76f308fe4413452e68d30a238249e07bd2d",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Our results in Table 4 show that despite the lack of task-specific tuning our model performs sur- prisingly well, yielding better results than all previously reported models with the exception of the Recurrent Neural Network Grammar [8].",
+          "target": "表 4 中的结果显示，尽管没有针对任务进行专门调优，我们的模型仍表现出人意料的良好效果，结果优于此前报告的所有模型，循环神经网络语法模型 [8] 除外。"
+        }
+      ]
+    },
+    {
+      "blockId": "p10-b4",
+      "sourceHash": "5ccf672ce672a2a12631defdf0ba0120fca4df97cc8d2b8f431d80dcf365fa37",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "In contrast to RNN sequence-to-sequence models [37], the Transformer outperforms the Berkeley- Parser [29] even when training only on the WSJ training set of 40K sentences.",
+          "target": "与 RNN 序列到序列模型 [37] 不同，即使只在包含 40K 个句子的 WSJ 训练集上训练，Transformer 的表现也优于 BerkeleyParser [29]。"
+        }
+      ]
+    },
+    {
+      "blockId": "p10-b5",
+      "sourceHash": "8d1a9cb4c8f936fac49e43e7feba3c43df3a0b5afa989939adcb5f887419f20f",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "7 Conclusion",
+          "target": "7 结论"
+        }
+      ]
+    },
+    {
+      "blockId": "p10-b6",
+      "sourceHash": "9a95a8fbdaddf741f4bb33638461e2117cf3437209a85309b5d74d1a4bdbbacc",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "In this work, we presented the Transformer, the first sequence transduction model based entirely on attention, replacing the recurrent layers most commonly used in encoder-decoder architectures with multi-headed self-attention.",
+          "target": "在这项工作中，我们提出了 Transformer，这是首个完全基于注意力机制的序列转换模型。它以多头自注意力取代了编码器—解码器架构中最常用的循环层。"
+        }
+      ]
+    },
+    {
+      "blockId": "p10-b7",
+      "sourceHash": "3382ef504d6e93ab68440da985e6bc8cc33707eec3c8310bd279a107378cd972",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "For translation tasks, the Transformer can be trained significantly faster than architectures based on recurrent or convolutional layers.",
+          "target": "对于翻译任务，Transformer 的训练速度显著快于基于循环层或卷积层的架构。"
+        },
+        {
+          "source": "On both WMT 2014 English-to-German and WMT 2014 English-to-French translation tasks, we achieve a new state of the art.",
+          "target": "在 WMT 2014 英译德和 WMT 2014 英译法两项翻译任务中，我们都达到了新的最先进水平。"
+        },
+        {
+          "source": "In the former task our best model outperforms even all previously reported ensembles.",
+          "target": "在前一项任务中，我们的最佳模型甚至超过了此前报告的所有集成模型。"
+        }
+      ]
+    },
+    {
+      "blockId": "p10-b8",
+      "sourceHash": "cc9c0e6534ee75a7c78c8edaaf3b4500b2c7772d1687878944daf046760beca7",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "We are excited about the future of attention-based models and plan to apply them to other tasks.",
+          "target": "我们对基于注意力的模型的未来充满期待，并计划将其应用于其他任务。"
+        },
+        {
+          "source": "We plan to extend the Transformer to problems involving input and output modalities other than text and to investigate local, restricted attention mechanisms to efficiently handle large inputs and outputs such as images, audio and video.",
+          "target": "我们计划将 Transformer 扩展到涉及文本以外输入和输出模态的问题，并研究局部、受限的注意力机制，以高效处理图像、音频和视频等大型输入与输出。"
+        },
+        {
+          "source": "Making generation less sequential is another research goals of ours.",
+          "target": "让生成过程更少依赖序列顺序，也是我们的研究目标之一。"
+        }
+      ]
+    },
+    {
+      "blockId": "p10-b9",
+      "sourceHash": "1aae7db9fbbe8b139d86d41b905f8d26828f13a044e6fafccfc2fe58e16efd1f",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "The code we used to train and evaluate our models is available at https://github.com/ tensorflow/tensor2tensor .",
+          "target": "我们用于训练和评估模型的代码可在 https://github.com/tensorflow/tensor2tensor 获取。"
+        }
+      ]
+    },
+    {
+      "blockId": "p13-b1",
+      "sourceHash": "9267f1b6e4edad486033ed2d6552bc1190d720e4270be4eb6a9633b6dfa03a32",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Figure 3: An example of the attention mechanism following long-distance dependencies in the encoder self-attention in layer 5 of 6.",
+          "target": "图 3：一个注意力机制追踪长距离依赖关系的示例，展示了 6 层编码器中第 5 层的自注意力。"
+        },
+        {
+          "source": "Many of the attention heads attend to a distant dependency of the verb ‘making’, completing the phrase ‘making...more difficult’.",
+          "target": "许多注意力头都关注动词 ‘making’ 的远距离依赖，从而补全短语 ‘making...more difficult’。"
+        },
+        {
+          "source": "Attentions here shown only for the word ‘making’.",
+          "target": "此处仅展示针对单词 ‘making’ 的注意力。"
+        },
+        {
+          "source": "Different colors represent different heads.",
+          "target": "不同颜色代表不同的注意力头。"
+        },
+        {
+          "source": "Best viewed in color.",
+          "target": "彩色观看效果最佳。"
+        }
+      ]
+    },
+    {
+      "blockId": "p14-b1",
+      "sourceHash": "0385af8566dbecee336c5fd4277f6f4e53557959f3b55b06f33875dcd1bf4d23",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Figure 4: Two attention heads, also in layer 5 of 6, apparently involved in anaphora resolution.",
+          "target": "图 4：两个注意力头也位于 6 层中的第 5 层，显然参与了照应消解。"
+        },
+        {
+          "source": "Top: Full attentions for head 5.",
+          "target": "上：注意力头 5 的完整注意力。"
+        },
+        {
+          "source": "Bottom: Isolated attentions from just the word ‘its’ for attention heads 5 and 6.",
+          "target": "下：注意力头 5 和 6 中仅针对单词 ‘its’ 的独立注意力。"
+        },
+        {
+          "source": "Note that the attentions are very sharp for this word.",
+          "target": "请注意，针对这个词的注意力分布非常集中。"
+        }
+      ]
+    },
+    {
+      "blockId": "p15-b1",
+      "sourceHash": "e7e9ac15d9a945d6272ddebee4b8e2a3cb667dd2083384f8280b862d4e1249e9",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Figure 5: Many of the attention heads exhibit behaviour that seems related to the structure of the sentence.",
+          "target": "图 5：许多注意力头表现出的行为似乎与句子结构有关。"
+        },
+        {
+          "source": "We give two such examples above, from two different heads from the encoder self-attention at layer 5 of 6.",
+          "target": "上方给出了两个此类示例，分别来自 6 层编码器中第 5 层的两个不同自注意力头。"
+        },
+        {
+          "source": "The heads clearly learned to perform different tasks.",
+          "target": "这些注意力头显然学会了执行不同的任务。"
+        }
+      ]
+    },
+    {
+      "blockId": "p2-b1",
+      "sourceHash": "84fec3249b9b269762bfae96bd9680c753e663eeec196ff8524771848e6ae901",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "1 Introduction",
+          "target": "1 引言"
+        }
+      ]
+    },
+    {
+      "blockId": "p2-b10",
+      "sourceHash": "d99ed0bd1fffc6906784c805e31cd2566e31d96e3bb6f8260ecba8c521daeb40",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "To the best of our knowledge, however, the Transformer is the first transduction model relying entirely on self-attention to compute representations of its input and output without using sequence- aligned RNNs or convolution.",
+          "target": "然而，据我们所知，Transformer 是首个完全依靠自注意力计算输入和输出表示、而不使用与序列对齐的 RNN 或卷积的转换模型。"
+        },
+        {
+          "source": "In the following sections, we will describe the Transformer, motivate self-attention and discuss its advantages over models such as [17, 18] and [9].",
+          "target": "在接下来的章节中，我们将介绍 Transformer，阐述自注意力的动机，并讨论它相较于 [17, 18] 和 [9] 等模型的优势。"
+        }
+      ]
+    },
+    {
+      "blockId": "p2-b11",
+      "sourceHash": "018dd938179d4475a60767bc07fe90c1e648ff85816c45b4af27759aea62c7ec",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "3 Model Architecture",
+          "target": "3 模型架构"
+        }
+      ]
+    },
+    {
+      "blockId": "p2-b12",
+      "sourceHash": "5fcf6aeb12f58750c377188bef21017ea9cacbfb75449a8901b4f8d272be9156",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Most competitive neural sequence transduction models have an encoder-decoder structure [5, 2, 35].",
+          "target": "大多数有竞争力的神经序列转换模型都采用编码器—解码器结构 [5, 2, 35]。",
+          "anchor": "Most competitive neural sequence transduction models have an encoder-decoder structure [5, 2, 35]."
+        },
+        {
+          "source": "Here, the encoder maps an input sequence of symbol representations ( x , ..., x ) to a sequence 1 n of continuous representations z = ( z , ..., z ) .",
+          "target": "在这种结构中，编码器将由符号表示组成的输入序列 $(x_1, ..., x_n)$ 映射为连续表示序列 $z = (z_1, ..., z_n)$。",
+          "anchor": "Here, the encoder maps an input sequence of symbol representations ( x , ..., x ) to a sequence 1 n of continuous representations z = ( z , ..., z ) ."
+        },
+        {
+          "source": "Given z , the decoder then generates an output 1 n sequence ( y , ..., y ) of symbols one element at a time.",
+          "target": "给定 $z$ 后，解码器逐个生成由符号构成的输出序列 $(y_1, ..., y_m)$。",
+          "anchor": "Given z , the decoder then generates an output 1 n sequence ( y , ..., y ) of symbols one element at a time."
+        },
+        {
+          "source": "At each step the model is auto-regressive [10], consuming the previously generated symbols as additional input when generating the next.",
+          "target": "在每一步中，模型都采用自回归方式 [10]：生成下一个符号时，将之前生成的符号作为额外输入。",
+          "anchor": "At each step the model is auto-regressive 1 m [10], consuming the previously generated symbols as additional input when generating the next."
+        }
+      ]
+    },
+    {
+      "blockId": "p2-b2",
+      "sourceHash": "250f35e6595923898d94019da8e82dddf505a811451c08973f6f62174eb6abc6",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Recurrent neural networks, long short-term memory [13] and gated recurrent [7] neural networks in particular, have been firmly established as state of the art approaches in sequence modeling and transduction problems such as language modeling and machine translation [35, 2, 5].",
+          "target": "循环神经网络，尤其是长短期记忆网络 [13] 和门控循环神经网络 [7]，已成为序列建模和转换问题（如语言建模和机器翻译 [35, 2, 5]）中公认的先进方法。"
+        },
+        {
+          "source": "Numerous efforts have since continued to push the boundaries of recurrent language models and encoder-decoder architectures [38, 24, 15].",
+          "target": "此后，许多研究持续拓展循环语言模型和编码器—解码器架构的能力边界 [38, 24, 15]。"
+        }
+      ]
+    },
+    {
+      "blockId": "p2-b3",
+      "sourceHash": "69078943348e06d86b3be3d77c081ca09ee965bf1ac539084f84b73d168d91f8",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Recurrent models typically factor computation along the symbol positions of the input and output sequences.",
+          "target": "循环模型通常按照输入和输出序列中的符号位置分解计算。"
+        },
+        {
+          "source": "Aligning the positions to steps in computation time, they generate a sequence of hidden states h , as a function of the previous hidden state h t t t − and the input for position .",
+          "target": "这些模型将各位置与计算时间步对齐，并生成一系列隐藏状态 $h_t$；每个状态由前一隐藏状态 $h_{t-1}$ 和该位置的输入决定。"
+        },
+        {
+          "source": "This inherently 1 sequential nature precludes parallelization within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples.",
+          "target": "这种固有的顺序性使训练样本内部无法并行化；序列较长时，这一点尤其关键，因为内存限制了跨样本批处理。"
+        },
+        {
+          "source": "Recent work has achieved significant improvements in computational efficiency through factorization tricks [21] and conditional computation [32], while also improving model performance in case of the latter.",
+          "target": "近期研究通过分解技巧 [21] 和条件计算 [32] 显著提高了计算效率；后者还提升了模型性能。"
+        },
+        {
+          "source": "The fundamental constraint of sequential computation, however, remains.",
+          "target": "然而，顺序计算这一根本限制依然存在。"
+        }
+      ]
+    },
+    {
+      "blockId": "p2-b4",
+      "sourceHash": "670bfeefba51030c653a865b17058b0a1d9b5a24f462d68bf233a4115376668b",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Attention mechanisms have become an integral part of compelling sequence modeling and transduc- tion models in various tasks, allowing modeling of dependencies without regard to their distance in the input or output sequences [2, 19].",
+          "target": "在各种任务中，注意力机制已成为高性能序列建模和转换模型不可或缺的组成部分，使模型能够不受输入或输出序列中距离远近的影响来建模依赖关系 [2, 19]。"
+        },
+        {
+          "source": "In all but a few cases [27], however, such attention mechanisms are used in conjunction with a recurrent network.",
+          "target": "然而，除了少数情况 [27] 外，这类注意力机制通常与循环网络结合使用。"
+        }
+      ]
+    },
+    {
+      "blockId": "p2-b5",
+      "sourceHash": "53ca68fce677f2634dce34e10e1b6e24b3e2d1b5aada3ee41aaecbe5ddb686ae",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "In this work we propose the Transformer, a model architecture eschewing recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output.",
+          "target": "在这项工作中，我们提出 Transformer：一种摒弃循环、完全依靠注意力机制来建立输入与输出之间全局依赖关系的模型架构。"
+        },
+        {
+          "source": "The Transformer allows for significantly more parallelization and can reach a new state of the art in translation quality after being trained for as little as twelve hours on eight P100 GPUs.",
+          "target": "Transformer 支持更多并行计算；在八块 P100 GPU 上训练仅需十二小时，就能在翻译质量上达到新的最佳水平。"
+        }
+      ]
+    },
+    {
+      "blockId": "p2-b6",
+      "sourceHash": "97d6b4fa1f87ac6aa9075e3ea570c80fe6c2acd64893fb557acb3e45e576ad89",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "2 Background",
+          "target": "2 背景"
+        }
+      ]
+    },
+    {
+      "blockId": "p2-b7",
+      "sourceHash": "8f74bb9cd181e64cf7ad85bcd3459c2363d1efb69deb9b19d637785e0a9e3e54",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "The goal of reducing sequential computation also forms the foundation of the Extended Neural GPU [16], ByteNet [18] and ConvS2S [9], all of which use convolutional neural networks as basic building block, computing hidden representations in parallel for all input and output positions.",
+          "target": "减少顺序计算的目标也是 Extended Neural GPU [16]、ByteNet [18] 和 ConvS2S [9] 的基础；这些模型都以卷积神经网络为基本构件，并行计算所有输入和输出位置的隐藏表示。"
+        },
+        {
+          "source": "In these models, the number of operations required to relate signals from two arbitrary input or output positions grows in the distance between positions, linearly for ConvS2S and logarithmically for ByteNet.",
+          "target": "在这些模型中，关联任意两个输入或输出位置的信号所需的操作数，会随着位置间距离增加而增长；ConvS2S 中呈线性增长，ByteNet 中则呈对数增长。"
+        },
+        {
+          "source": "This makes it more difficult to learn dependencies between distant positions [12].",
+          "target": "这使得模型更难学习相距较远位置之间的依赖关系 [12]。"
+        },
+        {
+          "source": "In the Transformer this is reduced to a constant number of operations, albeit at the cost of reduced effective resolution due to averaging attention-weighted positions, an effect we counteract with Multi-Head Attention as described in section 3.2.",
+          "target": "在 Transformer 中，操作数被降低为常数，但对注意力加权位置求平均会降低有效分辨率；正如第 3.2 节所述，我们通过多头注意力来抵消这一影响。"
+        }
+      ]
+    },
+    {
+      "blockId": "p2-b8",
+      "sourceHash": "a08c0f91257eb7d28ba4666ff88fb77b777f0600b6f30d387a887735bf80397a",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Self-attention, sometimes called intra-attention is an attention mechanism relating different positions of a single sequence in order to compute a representation of the sequence.",
+          "target": "自注意力有时也称为内部注意力，是一种关联单个序列中不同位置、以计算该序列表示的注意力机制。"
+        },
+        {
+          "source": "Self-attention has been used successfully in a variety of tasks including reading comprehension, abstractive summarization, textual entailment and learning task-independent sentence representations [4, 27, 28, 22].",
+          "target": "自注意力已成功用于多种任务，包括阅读理解、抽象式摘要、文本蕴含以及学习与任务无关的句子表示 [4, 27, 28, 22]。"
+        }
+      ]
+    },
+    {
+      "blockId": "p2-b9",
+      "sourceHash": "1d213e167650efae208eb776860da0c9a21f951992363e54d0365aac1e2200a6",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "End-to-end memory networks are based on a recurrent attention mechanism instead of sequence- aligned recurrence and have been shown to perform well on simple-language question answering and language modeling tasks [34].",
+          "target": "端到端记忆网络基于循环注意力机制，而非与序列对齐的循环结构；研究表明，它们在简单语言问答和语言建模任务中表现良好 [34]。"
+        }
+      ]
+    },
+    {
+      "blockId": "p3-b1",
+      "sourceHash": "9ed7abed3e5bf9a088465788cbf4604d16d01d0b364e96dabb761c6f799e0700",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Figure 1: The Transformer - model architecture.",
+          "target": "图 1：Transformer 模型架构。"
+        }
+      ]
+    },
+    {
+      "blockId": "p3-b2",
+      "sourceHash": "aedfbebfaad84b3bf3190c6c63308492b9b7915cc580e56328285fc2a41259e2",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "The Transformer follows this overall architecture using stacked self-attention and point-wise, fully connected layers for both the encoder and decoder, shown in the left and right halves of Figure 1, respectively.",
+          "target": "Transformer 遵循这一总体架构，在编码器和解码器中都使用堆叠的自注意力层和逐位置全连接层，分别如图 1 的左半部分和右半部分所示。"
+        }
+      ]
+    },
+    {
+      "blockId": "p3-b3",
+      "sourceHash": "a7647ac9a0ffee204c5294a21a0658b44b614db63203f69bf1a4bad7a7aeb42a",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "3.1 Encoder and Decoder Stacks",
+          "target": "3.1 编码器和解码器堆栈"
+        }
+      ]
+    },
+    {
+      "blockId": "p3-b4",
+      "sourceHash": "12a4808aff7627237f5a05ddf83d270737b6bdccf9c1e3dd34359c5661c740c7",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Encoder: The encoder is composed of a stack of N = 6 identical layers.",
+          "target": "编码器：编码器由 $N = 6$ 个相同层堆叠而成。"
+        },
+        {
+          "source": "Each layer has two sub-layers.",
+          "target": "每一层包含两个子层。"
+        },
+        {
+          "source": "The first is a multi-head self-attention mechanism, and the second is a simple, position- wise fully connected feed-forward network.",
+          "target": "第一个子层是多头自注意力机制，第二个子层是简单的逐位置全连接前馈网络。"
+        },
+        {
+          "source": "We employ a residual connection [11] around each of the two sub-layers, followed by layer normalization [1].",
+          "target": "我们在两个子层外分别使用残差连接 [11]，然后进行层归一化 [1]。"
+        },
+        {
+          "source": "That is, the output of each sub-layer is LayerNorm( x + Sublayer( x )) , where Sublayer( x ) is the function implemented by the sub-layer itself.",
+          "target": "也就是说，每个子层的输出为 LayerNorm($x$ + Sublayer($x$))，其中 Sublayer($x$) 是该子层自身实现的函数。"
+        },
+        {
+          "source": "To facilitate these residual connections, all sub-layers in the model, as well as the embedding layers, produce outputs of dimension d = 512 . model",
+          "target": "为便于使用这些残差连接，模型中的所有子层以及嵌入层都生成维度为 $d_{model} = 512$ 的输出。"
+        }
+      ]
+    },
+    {
+      "blockId": "p3-b5",
+      "sourceHash": "3da7fdd738a97c3e5da31f387898e5c7591a2802b033d17f0f94991ccf418d5a",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Decoder: The decoder is also composed of a stack of N = 6 identical layers.",
+          "target": "解码器：解码器也由 $N = 6$ 个相同层堆叠而成。"
+        },
+        {
+          "source": "In addition to the two sub-layers in each encoder layer, the decoder inserts a third sub-layer, which performs multi-head attention over the output of the encoder stack.",
+          "target": "除与每个编码器层相同的两个子层外，解码器还插入第三个子层，用于对编码器堆栈的输出执行多头注意力。"
+        },
+        {
+          "source": "Similar to the encoder, we employ residual connections around each of the sub-layers, followed by layer normalization.",
+          "target": "与编码器类似，我们在每个子层外使用残差连接，然后进行层归一化。"
+        },
+        {
+          "source": "We also modify the self-attention sub-layer in the decoder stack to prevent positions from attending to subsequent positions.",
+          "target": "我们还修改了解码器堆栈中的自注意力子层，以防止各位置关注后续位置。"
+        },
+        {
+          "source": "This masking, combined with fact that the output embeddings are offset by one position, ensures that the predictions for position i can depend only on the known outputs at positions less than i .",
+          "target": "这种掩码与输出嵌入向后偏移一个位置相结合，确保位置 $i$ 的预测只能依赖位置小于 $i$ 的已知输出。"
+        }
+      ]
+    },
+    {
+      "blockId": "p3-b6",
+      "sourceHash": "4612f4a8aa6dee70ae879100d59e79c13b708e805abc764c6a4c123662c02c09",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "3.2 Attention",
+          "target": "3.2 注意力"
+        }
+      ]
+    },
+    {
+      "blockId": "p3-b7",
+      "sourceHash": "65cad0244373d57ebb9a2fb3f2456a3cb171fe2e8c65e43a15ed6bdda7cf6a41",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "An attention function can be described as mapping a query and a set of key-value pairs to an output, where the query, keys, values, and output are all vectors.",
+          "target": "注意力函数可以描述为：将一个查询和一组键值对映射为一个输出，其中查询、键、值和输出都是向量。"
+        },
+        {
+          "source": "The output is computed as a weighted sum",
+          "target": "输出通过加权求和计算得到"
+        }
+      ]
+    },
+    {
+      "blockId": "p4-b1",
+      "sourceHash": "ca1fc420501626f9d8bd38ac2816b65cf27321edf154da6f172379719f356a3c",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Figure 2: (left) Scaled Dot-Product Attention. (right) Multi-Head Attention consists of several attention layers running in parallel.",
+          "target": "图 2：（左）缩放点积注意力。（右）多头注意力由若干并行运行的注意力层组成。"
+        }
+      ]
+    },
+    {
+      "blockId": "p4-b10",
+      "sourceHash": "195325a9351b43400038273fa50b3efd1ba3deab47f1c60ea8c42630aa0af8d4",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "3.2.2 Multi-Head Attention",
+          "target": "3.2.2 多头注意力"
+        }
+      ]
+    },
+    {
+      "blockId": "p4-b11",
+      "sourceHash": "1f8516b72a236c919a352ce1b4ab21714b283bb4055132b0551a5a6032441b2e",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Instead of performing a single attention function with d -dimensional keys, values and queries, model we found it beneficial to linearly project the queries, keys and values h times with different, learned linear projections to d , d and d dimensions, respectively.",
+          "target": "我们发现，与其使用 $d_{\\text{model}}$ 维的键、值和查询执行单次注意力函数，不如使用不同的、经过学习的线性投影，将查询、键和值分别投影 $h$ 次，投影到 $d_k$、$d_k$ 和 $d_v$ 维空间，这样做更有益。",
+          "anchor": "Instead of performing a single attention function with d -dimensional keys, values and queries, model we found it beneficial to linearly project the queries, keys and values h times with different, learned linear projections to d , d and d dimensions, respectively."
+        },
+        {
+          "source": "On each of these projected versions of queries, keys and values we then perform the attention function in parallel, yielding d -dimensional",
+          "target": "随后，我们在这些投影后的查询、键和值上并行执行注意力函数，得到 $d_v$ 维的",
+          "anchor": "On each of these projected versions of k k v queries, keys and values we then perform the attention function in parallel, yielding d -dimensional v"
+        }
+      ]
+    },
+    {
+      "blockId": "p4-b12",
+      "sourceHash": "15816b813333cdf29b3b937746c13455daa8fa122c11568924b2ff8078d32ec8",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "4 To illustrate why the dot products get large, assume that the components of q and k are independent random variables with mean 0 and variance 1 .",
+          "target": "4 为说明点积为何会变大，假设 $q$ 和 $k$ 的各个分量是相互独立的随机变量，均值为 0，方差为 1。"
+        },
+        {
+          "source": "Then their dot product, q · k = P d k q k , has mean 0 and variance d . i =1 i i k",
+          "target": "那么，它们的点积 $q \\cdot k = \\sum_{i=1}^{d_k} q_i k_i$ 的均值为 0，方差为 $d_k$。"
+        }
+      ]
+    },
+    {
+      "blockId": "p4-b2",
+      "sourceHash": "4a0d892cfc03c17a9203ee7f65d5df412807d8f63339facad174864feb158d26",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "of the values, where the weight assigned to each value is computed by a compatibility function of the query with the corresponding key.",
+          "target": "对各个值进行加权求和，其中分配给每个值的权重由查询与相应键之间的兼容性函数计算得出。"
+        }
+      ]
+    },
+    {
+      "blockId": "p4-b3",
+      "sourceHash": "5ba8013552aeee2b8105801d86c79fa385687a792ca070cc81361affc41c095e",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "3.2.1 Scaled Dot-Product Attention",
+          "target": "3.2.1 缩放点积注意力"
+        }
+      ]
+    },
+    {
+      "blockId": "p4-b4",
+      "sourceHash": "aca05565d56405754ec939416b36f22d4d039fa1e936d50fd72d3d4dc4c79c0e",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "We call our particular attention \"Scaled Dot-Product Attention\" (Figure 2).",
+          "target": "我们将这种特定的注意力称为“缩放点积注意力”（图 2）。"
+        },
+        {
+          "source": "The input consists of queries and keys of dimension d , and values of dimension √ d .",
+          "target": "输入包括维度为 $d_k$ 的查询和键，以及维度为 $d_v$ 的值。"
+        },
+        {
+          "source": "We compute the dot products of the k v query with all keys, divide each by d , and apply a softmax function to obtain the weights on the k values.",
+          "target": "我们计算查询与所有键的点积，将每个点积除以 $\\sqrt{d_k}$，再应用 softmax 函数，得到各个值的权重。"
+        }
+      ]
+    },
+    {
+      "blockId": "p4-b5",
+      "sourceHash": "4513cac99e435361a9c9562b8a8157a1eb569b9b897d91ae07fa65124d589e63",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "In practice, we compute the attention function on a set of queries simultaneously, packed together into a matrix Q .",
+          "target": "实际应用中，我们将一组查询合并为矩阵 $Q$，并同时计算它们的注意力函数。"
+        },
+        {
+          "source": "The keys and values are also packed together into matrices K and V .",
+          "target": "键和值也分别合并为矩阵 $K$ 和 $V$。"
+        },
+        {
+          "source": "We compute the matrix of outputs as:",
+          "target": "输出矩阵的计算方式如下："
+        }
+      ]
+    },
+    {
+      "blockId": "p4-b6",
+      "sourceHash": "a6c100fd6cd0f9921966863fc6b9a5612620db5a5cd6bfe53551bc46a4a1dd46",
+      "status": "complete",
+      "sentences": [],
+      "formulaMarkdown": "$$\n\\operatorname{Attention}(Q, K, V) = \\operatorname{softmax}\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V\n$$\n"
+    },
+    {
+      "blockId": "p4-b8",
+      "sourceHash": "ab32f813a7df78a80f5c1e577ae6ec3b52da999e4579b48fc5e740f74dfeabd3",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "The two most commonly used attention functions are additive attention [2], and dot-product (multi- plicative) attention.",
+          "target": "最常用的两种注意力函数是加性注意力 [2] 和点积（乘性）注意力。"
+        },
+        {
+          "source": "Dot-product attention is identical to our algorithm, except for the scaling factor of √ 1 .",
+          "target": "点积注意力与我们的算法相同，区别仅在于缩放因子 $\frac{1}{\\sqrt{d_k}}$。"
+        },
+        {
+          "source": "Additive attention computes the compatibility function using a feed-forward network with d k a single hidden layer.",
+          "target": "加性注意力使用具有单个隐藏层的前馈网络来计算兼容性函数。"
+        },
+        {
+          "source": "While the two are similar in theoretical complexity, dot-product attention is much faster and more space-efficient in practice, since it can be implemented using highly optimized matrix multiplication code.",
+          "target": "尽管两者的理论复杂度相近，点积注意力在实践中速度更快、空间效率更高，因为它可以通过高度优化的矩阵乘法代码实现。"
+        }
+      ]
+    },
+    {
+      "blockId": "p4-b9",
+      "sourceHash": "be8e523240e77e3c40e94f1f6ebc54baa22255c0767b4bdab5395c308ea309ea",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "While for small values of d the two mechanisms perform similarly, additive attention outperforms dot product attention without scaling for larger values of d [3].",
+          "target": "当 $d_k$ 较小时，这两种机制的表现相近；但当 $d_k$ 较大时，加性注意力的表现优于未进行缩放的点积注意力 [3]。",
+          "anchor": "While for small values of d the two mechanisms perform similarly, additive attention outperforms k dot product attention without scaling for larger values of d [3]."
+        },
+        {
+          "source": "We suspect that for large values of d , the dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients 4 .",
+          "target": "我们猜测，当 $d_k$ 较大时，点积的绝对值会变大，使 softmax 函数进入梯度极小的区域 4。",
+          "anchor": "We suspect that for large values of k d , the dot products grow large in magnitude, pushing the softmax function into regions where it has k extremely small gradients 4 ."
+        },
+        {
+          "source": "To counteract this effect, we scale the dot products by √ 1 . d k",
+          "target": "为抵消这种影响，我们将点积缩放为 $\\sqrt{1/d_k}$。",
+          "anchor": "To counteract this effect, we scale the dot products by √ 1 . d k"
+        }
+      ]
+    },
+    {
+      "blockId": "p5-b1",
+      "sourceHash": "4f508e46dd568edbc93b0a76859d0d91766aa595e519650adf93c5e54e9a7dd3",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "output values.",
+          "target": "输出值。"
+        },
+        {
+          "source": "These are concatenated and once again projected, resulting in the final values, as depicted in Figure 2.",
+          "target": "如图 2 所示，将这些输出拼接后再次进行投影，从而得到最终值。"
+        }
+      ]
+    },
+    {
+      "blockId": "p5-b10",
+      "sourceHash": "7db412e68c06fc5b5f83fd950a98f3c4447e8cce7a5a5e689b490fa724023d8e",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "• The encoder contains self-attention layers.",
+          "target": "• 编码器包含自注意力层。"
+        },
+        {
+          "source": "In a self-attention layer all of the keys, values and queries come from the same place, in this case, the output of the previous layer in the encoder.",
+          "target": "在自注意力层中，所有键、值和查询都来自同一处；在此处，它们来自编码器前一层的输出。"
+        },
+        {
+          "source": "Each position in the encoder can attend to all positions in the previous layer of the encoder.",
+          "target": "编码器中的每个位置都可以关注编码器前一层中的所有位置。"
+        }
+      ]
+    },
+    {
+      "blockId": "p5-b11",
+      "sourceHash": "4786a0405ac24d93cb0772dd1d2a1c5110112ec2ad2f3e689da3f55b75ba00d9",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "• Similarly, self-attention layers in the decoder allow each position in the decoder to attend to all positions in the decoder up to and including that position.",
+          "target": "• 类似地，解码器中的自注意力层允许解码器的每个位置关注解码器中截至该位置（包括该位置）的所有位置。"
+        },
+        {
+          "source": "We need to prevent leftward information flow in the decoder to preserve the auto-regressive property.",
+          "target": "为了保留自回归特性，我们需要阻止解码器中的信息向左流动。"
+        },
+        {
+          "source": "We implement this inside of scaled dot-product attention by masking out (setting to −∞ ) all values in the input of the softmax which correspond to illegal connections.",
+          "target": "我们在缩放点积注意力内部通过屏蔽所有对应非法连接的 softmax 输入值来实现这一点（将这些值设为 $-\\infty$）。"
+        },
+        {
+          "source": "See Figure 2.",
+          "target": "参见图 2。"
+        }
+      ]
+    },
+    {
+      "blockId": "p5-b12",
+      "sourceHash": "12b20ffa273680879e32e670c0745b2311a9d190e1d7008c7cad52c010ef2db1",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "3.3 Position-wise Feed-Forward Networks",
+          "target": "3.3 逐位置前馈网络"
+        }
+      ]
+    },
+    {
+      "blockId": "p5-b13",
+      "sourceHash": "7d87ffbe61116094c856a6520fb891d16c4035c47171754764db3d043d54d9d0",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "In addition to attention sub-layers, each of the layers in our encoder and decoder contains a fully connected feed-forward network, which is applied to each position separately and identically.",
+          "target": "除了注意力子层之外，我们的编码器和解码器中的每一层还包含一个全连接前馈网络，该网络以相同方式分别应用于每个位置。"
+        },
+        {
+          "source": "This consists of two linear transformations with a ReLU activation in between.",
+          "target": "该网络由两个线性变换组成，中间使用 ReLU 激活函数。"
+        }
+      ]
+    },
+    {
+      "blockId": "p5-b14",
+      "sourceHash": "21fc1e4efda42ab5e0687499205ddac777a984cf88934baf820219b8071bafce",
+      "status": "complete",
+      "sentences": [],
+      "formulaMarkdown": "$$\n\\mathrm{FFN}(x) = \\max(0, xW_1 + b_1)W_2 + b_2\n$$\n"
+    },
+    {
+      "blockId": "p5-b16",
+      "sourceHash": "68e31684db4ab84ea18ecef6cb0644713e76ec20a07539ff5ef57d97abe77df3",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "While the linear transformations are the same across different positions, they use different parameters from layer to layer.",
+          "target": "虽然不同位置使用相同的线性变换，但各层使用的参数不同。"
+        },
+        {
+          "source": "Another way of describing this is as two convolutions with kernel size 1.",
+          "target": "换一种说法，这相当于进行两次卷积，卷积核大小为 1。"
+        },
+        {
+          "source": "The dimensionality of input and output is d = 512 , and the inner-layer has dimensionality model d = 2048 . f f",
+          "target": "输入和输出的维度为 $d_{\\text{model}} = 512$，内部层的维度为 $d_{\\text{ff}} = 2048$。"
+        }
+      ]
+    },
+    {
+      "blockId": "p5-b17",
+      "sourceHash": "0123b9f4b8cb5582ddf40ad190bc5a3703e26d2d023431aa5c4c17733bc022c2",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "3.4 Embeddings and Softmax",
+          "target": "3.4 嵌入与 Softmax"
+        }
+      ]
+    },
+    {
+      "blockId": "p5-b18",
+      "sourceHash": "0f87666c0ea49206c3a07e39121980aa146f740beb653497615258b9ddebc8ef",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Similarly to other sequence transduction models, we use learned embeddings to convert the input tokens and output tokens to vectors of dimension d .",
+          "target": "与其他序列转换模型类似，我们使用经过学习的嵌入，将输入词元和输出词元转换为维度为 $d_{\\text{model}}$ 的向量。",
+          "anchor": "Similarly to other sequence transduction models, we use learned embeddings to convert the input tokens and output tokens to vectors of dimension d ."
+        },
+        {
+          "source": "We also use the usual learned linear transformation and softmax function to convert the decoder output to predicted next-token probabilities.",
+          "target": "我们还使用通常的、经过学习的线性变换和 softmax 函数，将解码器输出转换为预测的下一个词元的概率。",
+          "anchor": "We also use the usual learned linear transfor- model mation and softmax function to convert the decoder output to predicted next-token probabilities."
+        },
+        {
+          "source": "In our model, we share the same weight matrix between the two embedding layers and the pre-softmax linear transformation, similar to [30].",
+          "target": "与 [30] 类似，在我们的模型中，两个嵌入层与 softmax 之前的线性变换共用同一个权重矩阵。",
+          "anchor": "In our model, we share the same weight matrix between the two embedding layers and the pre-softmax √ linear transformation, similar to [30]."
+        },
+        {
+          "source": "In the embedding layers, we multiply those weights by √ d . model",
+          "target": "在嵌入层中，我们将这些权重乘以 $\\sqrt{d_{\\text{model}}}$。",
+          "anchor": "In the embedding layers, we multiply those weights by d . model"
+        }
+      ]
+    },
+    {
+      "blockId": "p5-b2",
+      "sourceHash": "a43c0757a9d27aaf2d1d2b2a95a714d1f5b3f81253b0bab1d7f0840797a401e1",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Multi-head attention allows the model to jointly attend to information from different representation subspaces at different positions.",
+          "target": "多头注意力使模型能够同时关注不同位置上来自不同表示子空间的信息。"
+        },
+        {
+          "source": "With a single attention head, averaging inhibits this.",
+          "target": "使用单个注意力头时，平均操作会妨碍这一点。"
+        }
+      ]
+    },
+    {
+      "blockId": "p5-b3",
+      "sourceHash": "2867a6d1b41d776be5b5f1014a8da781f33fc1e766c83b2cb49ec4632abbc069",
+      "status": "complete",
+      "sentences": [],
+      "formulaMarkdown": "$$\n\\operatorname{MultiHead}(Q, K, V) = \\operatorname{Concat}(\\mathrm{head}_1, \\ldots, \\mathrm{head}_h)W^O\n$$\n"
+    },
+    {
+      "blockId": "p5-b4",
+      "sourceHash": "ba4e7c23ebe341518a02cc314bccd507bdb857229c4c1aa3870372cf051c7b1a",
+      "status": "complete",
+      "sentences": [],
+      "formulaMarkdown": "$$\n\\text{where }\\mathrm{head}_i = \\operatorname{Attention}(QW_i^Q, KW_i^K, VW_i^V)\n$$\n"
+    },
+    {
+      "blockId": "p5-b5",
+      "sourceHash": "9912bc3458ac0503e90381b27016368fb887c7f7d41b6ede2d968a4d4aafb217",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Where the projections are parameter matrices W Q ∈ d × d K d × d V model k W ∈ × i R , d model k , model i R W ∈ d v i R and W O ∈ hd × d R v model .",
+          "target": "其中，投影参数矩阵为 $W_i^Q \\in \\mathbb{R}^{d_{\\text{model}} \\times d_k}$、$W_i^K \\in \\mathbb{R}^{d_{\\text{model}} \\times d_k}$、$W_i^V \\in \\mathbb{R}^{d_{\\text{model}} \\times d_v}$，以及 $W^O \\in \\mathbb{R}^{hd_v \\times d_{\\text{model}}}$。"
+        }
+      ]
+    },
+    {
+      "blockId": "p5-b6",
+      "sourceHash": "b57fdb85c2a69e838ebb8cfc78e652d9009439a51efab88c02bc6a0f5d65b598",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "In this work we employ h = 8 parallel attention layers, or heads.",
+          "target": "在本文中，我们使用 $h = 8$ 个并行注意力层，即注意力头。",
+          "anchor": "In this work we employ h = 8 parallel attention layers, or heads."
+        },
+        {
+          "source": "For each of these we use d = d = d /h = 64 . k v model",
+          "target": "对于每个注意力头，我们使用 $d_k = d_v = d_{\\text{model}}/h = 64$。",
+          "anchor": "For each of these we use d = d = d /h = 64 . D"
+        },
+        {
+          "source": "Due to the reduced dimension of each head, the total computational cost is similar to that of single-head attention with full dimensionality.",
+          "target": "由于每个注意力头的维度较低，其总计算成本与使用完整维度的单头注意力相近。",
+          "anchor": "ue to the reduced dimension of each head, the total computational cost k v model is similar to that of single-head attention with full dimensionality."
+        }
+      ]
+    },
+    {
+      "blockId": "p5-b7",
+      "sourceHash": "077635feeb79d5e27c1690553bbdc5212a8f5eeaf0ee1c901be4009b96e463c1",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "3.2.3 Applications of Attention in our Model",
+          "target": "3.2.3 注意力在我们模型中的应用"
+        }
+      ]
+    },
+    {
+      "blockId": "p5-b8",
+      "sourceHash": "2141862b0bd7c85c398a606e25e1a22cb93785189e6d7d13c1723faae29e57a7",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "The Transformer uses multi-head attention in three different ways:",
+          "target": "Transformer 以三种不同的方式使用多头注意力："
+        }
+      ]
+    },
+    {
+      "blockId": "p5-b9",
+      "sourceHash": "db917b205615f1f6c09aa3a4b27b115cf9175344b53a3dec0dbd617c1f9c4562",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "• In \"encoder-decoder attention\" layers, the queries come from the previous decoder layer, and the memory keys and values come from the output of the encoder.",
+          "target": "• 在“编码器-解码器注意力”层中，查询来自前一个解码器层，而记忆中的键和值来自编码器的输出。"
+        },
+        {
+          "source": "This allows every position in the decoder to attend over all positions in the input sequence.",
+          "target": "这使解码器中的每个位置都能关注输入序列中的所有位置。"
+        },
+        {
+          "source": "This mimics the typical encoder-decoder attention mechanisms in sequence-to-sequence models such as [38, 2, 9].",
+          "target": "这模拟了 [38, 2, 9] 等序列到序列模型中典型的编码器-解码器注意力机制。"
+        }
+      ]
+    },
+    {
+      "blockId": "p6-b1",
+      "sourceHash": "3ca28fd08663f9d2153d7ba4ecedc125c8d2c82a403602e34afa106073a17f83",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Table 1: Maximum path lengths, per-layer complexity and minimum number of sequential operations for different layer types.",
+          "target": "表 1：不同层类型的最大路径长度、每层复杂度和最少顺序操作次数。"
+        },
+        {
+          "source": "n is the sequence length, d is the representation dimension, k is the kernel size of convolutions and r the size of the neighborhood in restricted self-attention.",
+          "target": "其中，$n$ 是序列长度，$d$ 是表示维度，$k$ 是卷积核大小，$r$ 是受限自注意力中的邻域大小。"
+        }
+      ]
+    },
+    {
+      "blockId": "p6-b10",
+      "sourceHash": "86438b6062d0a7e7f4abb9998c68bcd1ab8f468d751738f320e3dad7d2644073",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "In this section we compare various aspects of self-attention layers to the recurrent and convolutional layers commonly used for mapping one variable-length sequence of symbol representations ( x , ..., x ) to another sequence of equal length ( z , ..., z ) , with x , z ∈ d , such as a hidden 1 n 1 n i i R layer in a typical sequence transduction encoder or decoder.",
+          "target": "在本节中，我们将自注意力层的各个方面与循环层和卷积层进行比较。循环层和卷积层通常用于将一个变长的符号表示序列 $(x_1, \\ldots, x_n)$ 映射到另一个等长序列 $(z_1, \\ldots, z_n)$，其中 $x_i, z_i \\in \\mathbb{R}^d$；典型例子是序列转换编码器或解码器中的隐藏层。",
+          "anchor": "In this section we compare various aspects of self-attention layers to the recurrent and convolu- tional layers commonly used for mapping one variable-length sequence of symbol representations ( x , ..., x ) to another sequence of equal length ( z , ..., z ) , with x , z ∈ d , such as a hidden 1 n 1 n i i R layer in a typical sequence transduction encoder or decoder."
+        },
+        {
+          "source": "Motivating our use of self-attention we consider three desiderata.",
+          "target": "为了说明我们采用自注意力的动机，我们考虑三个期望条件。",
+          "anchor": "Motivating our use of self-attention we consider three desiderata."
+        }
+      ]
+    },
+    {
+      "blockId": "p6-b11",
+      "sourceHash": "5793f22f8b777151d325edb82b39f337a1e2d552c6aaa609d07416cccbf5b30d",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "One is the total computational complexity per layer.",
+          "target": "第一项是每层的总计算复杂度。"
+        },
+        {
+          "source": "Another is the amount of computation that can be parallelized, as measured by the minimum number of sequential operations required.",
+          "target": "另一项是可并行化的计算量，以所需顺序操作的最少次数来衡量。"
+        }
+      ]
+    },
+    {
+      "blockId": "p6-b12",
+      "sourceHash": "b2795070791ae5e4d8c0892bf8f001a0a2e895c5db417f2a2bd430ab1b86f2ae",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "The third is the path length between long-range dependencies in the network.",
+          "target": "第三项是网络中长程依赖之间的路径长度。"
+        },
+        {
+          "source": "Learning long-range dependencies is a key challenge in many sequence transduction tasks.",
+          "target": "在许多序列转换任务中，学习长程依赖是一项关键挑战。"
+        },
+        {
+          "source": "One key factor affecting the ability to learn such dependencies is the length of the paths forward and backward signals have to traverse in the network.",
+          "target": "影响模型学习这类依赖的一个关键因素，是前向信号和反向信号必须在网络中经过的路径长度。"
+        },
+        {
+          "source": "The shorter these paths between any combination of positions in the input and output sequences, the easier it is to learn long-range dependencies [12].",
+          "target": "输入序列和输出序列中任意位置组合之间的路径越短，学习长程依赖就越容易 [12]。"
+        },
+        {
+          "source": "Hence we also compare the maximum path length between any two input and output positions in networks composed of the different layer types.",
+          "target": "因此，我们还比较由不同层类型构成的网络中，任意两个输入和输出位置之间的最大路径长度。"
+        }
+      ]
+    },
+    {
+      "blockId": "p6-b13",
+      "sourceHash": "1dacb3e3522fa7e128ac90bdf0432d34bba3e0feec2bf2e719636d006ec00841",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "As noted in Table 1, a self-attention layer connects all positions with a constant number of sequentially executed operations, whereas a recurrent layer requires O ( n ) sequential operations.",
+          "target": "如表 1 所示，自注意力层以固定数量的顺序执行操作连接所有位置，而循环层需要 $O(n)$ 次顺序操作。"
+        },
+        {
+          "source": "In terms of computational complexity, self-attention layers are faster than recurrent layers when the sequence",
+          "target": "在计算复杂度方面，当序列"
+        }
+      ]
+    },
+    {
+      "blockId": "p6-b2",
+      "sourceHash": "635d6125a02b32c2a885131ffbf7ce0594c5976456c7fd4e086de32593b3bbe9",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "3.5 Positional Encoding",
+          "target": "3.5 位置编码"
+        }
+      ]
+    },
+    {
+      "blockId": "p6-b3",
+      "sourceHash": "253cf4f2d6882e80232269cc577ce5ef7dfbcd66252cda2bca97fbed7134c128",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Since our model contains no recurrence and no convolution, in order for the model to make use of the order of the sequence, we must inject some information about the relative or absolute position of the tokens in the sequence.",
+          "target": "由于我们的模型不包含循环结构或卷积，为了让模型利用序列的顺序，我们必须向模型注入一些有关序列中词元相对位置或绝对位置的信息。"
+        },
+        {
+          "source": "To this end, we add \"positional encodings\" to the input embeddings at the bottoms of the encoder and decoder stacks.",
+          "target": "为此，我们在编码器和解码器堆栈的底部，将“位置编码”加到输入嵌入中。"
+        },
+        {
+          "source": "The positional encodings have the same dimension d model as the embeddings, so that the two can be summed.",
+          "target": "位置编码与嵌入具有相同的维度 $d_{\\text{model}}$，因此二者可以相加。"
+        },
+        {
+          "source": "There are many choices of positional encodings, learned and fixed [9].",
+          "target": "位置编码有许多选择，包括经过学习的和固定的位置编码 [9]。"
+        }
+      ]
+    },
+    {
+      "blockId": "p6-b4",
+      "sourceHash": "a00e0fba49366f2659fbfafb717e5707e07a2ce15c84783c8684bed16d2b2ec1",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "In this work, we use sine and cosine functions of different frequencies:",
+          "target": "在本文中，我们使用不同频率的正弦和余弦函数："
+        }
+      ]
+    },
+    {
+      "blockId": "p6-b5",
+      "sourceHash": "4145cab93eeb452681a88d8f8b7bd8f632ba77dffda2f9fc2bad2dc0d724afe8",
+      "status": "complete",
+      "sentences": [],
+      "formulaMarkdown": "$$\nPE_{(pos,2i)} = sin(pos/10000^{2i/d_{model}})\n$$\n"
+    },
+    {
+      "blockId": "p6-b6",
+      "sourceHash": "9586877609bd180624d1343da30cda3897bf1e9e68b16124622e684ee361e53b",
+      "status": "complete",
+      "sentences": [],
+      "formulaMarkdown": "$$\nPE_{(pos,2i+1)} = \\cos\\left(pos/10000^{2i/d_{model}}\\right)\n$$\n"
+    },
+    {
+      "blockId": "p6-b7",
+      "sourceHash": "eabe9c05b77125a3ca5f84eb645f6bd61afc0a2795c4db17a5ffb2da1c72d082",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "where pos is the position and i is the dimension.",
+          "target": "其中，$pos$ 表示位置，$i$ 表示维度。"
+        },
+        {
+          "source": "That is, each dimension of the positional encoding corresponds to a sinusoid.",
+          "target": "也就是说，位置编码的每个维度都对应一个正弦曲线。"
+        },
+        {
+          "source": "The wavelengths form a geometric progression from 2 π to 10000 · 2 π .",
+          "target": "波长构成等比数列，范围从 $2\\pi$ 到 $10000 \\cdot 2\\pi$。"
+        },
+        {
+          "source": "We chose this function because we hypothesized it would allow the model to easily learn to attend by relative positions, since for any fixed offset k , P E can be represented as a linear function of pos + k P E . pos",
+          "target": "我们选择这个函数，是因为我们假设它能让模型轻松学会根据相对位置进行关注；对于任意固定偏移量 $k$，$PE_{pos+k}$ 都可以表示为 $PE_{pos}$ 的线性函数。"
+        }
+      ]
+    },
+    {
+      "blockId": "p6-b8",
+      "sourceHash": "3e45c52bf2f6239fe0ac8babb578e8a1a9bc6ec443808c48ddce4a8608894b6b",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "We also experimented with using learned positional embeddings [9] instead, and found that the two versions produced nearly identical results (see Table 3 row (E)).",
+          "target": "我们还尝试改用经过学习的位置嵌入 [9]，发现这两个版本产生的结果几乎相同（见表 3 的 (E) 行）。"
+        },
+        {
+          "source": "We chose the sinusoidal version because it may allow the model to extrapolate to sequence lengths longer than the ones encountered during training.",
+          "target": "我们选择正弦版本，因为它可能使模型能够外推到比训练期间遇到的序列更长的序列长度。"
+        }
+      ]
+    },
+    {
+      "blockId": "p6-b9",
+      "sourceHash": "bf097123ed62d4a7adb2d2ea9b9466f5db02c411c8ee87536ff5eac90b59ec8f",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "4 Why Self-Attention",
+          "target": "4 为什么使用自注意力"
+        }
+      ]
+    },
+    {
+      "blockId": "p7-b1",
+      "sourceHash": "d2f40cb3c44a4176d82947d71bd348b374692abb6b382275151bbc9db79fd4c1",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "length n is smaller than the representation dimensionality d , which is most often the case with sentence representations used by state-of-the-art models in machine translations, such as word-piece [38] and byte-pair [31] representations.",
+          "target": "长度 $n$ 小于表示维度 $d$ 时，自注意力层比循环层更快；对于机器翻译领域最先进模型使用的句子表示，这通常就是如此，例如 word-piece [38] 和 byte-pair [31] 表示。"
+        },
+        {
+          "source": "To improve computational performance for tasks involving very long sequences, self-attention could be restricted to considering only a neighborhood of size r in the input sequence centered around the respective output position.",
+          "target": "为了提升涉及超长序列的任务的计算性能，可以将自注意力限制为只考虑输入序列中以相应输出位置为中心、大小为 $r$ 的邻域。"
+        },
+        {
+          "source": "This would increase the maximum path length to O ( n/r ) .",
+          "target": "这样会将最大路径长度增加到 $O(n/r)$。"
+        },
+        {
+          "source": "We plan to investigate this approach further in future work.",
+          "target": "我们计划在未来的工作中进一步研究这一方法。"
+        }
+      ]
+    },
+    {
+      "blockId": "p7-b10",
+      "sourceHash": "a9f34a987257c77b76bdd4d59aa73045bd0baa3b06606bb873624f0e27af13be",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "5.3 Optimizer",
+          "target": "5.3 优化器"
+        }
+      ]
+    },
+    {
+      "blockId": "p7-b11",
+      "sourceHash": "3576d4cf37eacb458563e8bb28d5e8d86534eb1db99f0bcae714af3c2d2ba250",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "We used the Adam optimizer [20] with β = 0 . 9 , β = 0 . 98 and ϵ = 10 − 9 .",
+          "target": "我们使用 Adam 优化器 [20]，其中 $\\beta_1 = 0.9$、$\\beta_2 = 0.98$，且 $\\epsilon = 10^{-9}$。"
+        },
+        {
+          "source": "We varied the learning 1 2 rate over the course of training, according to the formula:",
+          "target": "在训练过程中，我们按照以下公式调整学习率："
+        }
+      ]
+    },
+    {
+      "blockId": "p7-b12",
+      "sourceHash": "b92733f1ec38115dfc48fc845fbc1dcceebcd13dfcfa605133953b39a3bdb80c",
+      "status": "complete",
+      "sentences": [],
+      "formulaMarkdown": "$$\nlrate = d_{\\mathrm{model}}^{-0.5} \\cdot \\min\\left(step\\_num^{-0.5},\\; step\\_num \\cdot warmup\\_steps^{-1.5}\\right)\n$$\n"
+    },
+    {
+      "blockId": "p7-b14",
+      "sourceHash": "2a5c15d5f21dc5211147232f66725ed2bb547b1c202b96123b154692965ded77",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "This corresponds to increasing the learning rate linearly for the first warmup _ steps training steps, and decreasing it thereafter proportionally to the inverse square root of the step number.",
+          "target": "这相当于在最初的 $\\text{warmup\\_steps}$ 个训练步骤中线性提高学习率，之后则按步骤数平方根的倒数成比例地降低学习率。"
+        },
+        {
+          "source": "We used warmup _ steps = 4000 .",
+          "target": "我们使用 $\\text{warmup\\_steps} = 4000$。"
+        }
+      ]
+    },
+    {
+      "blockId": "p7-b15",
+      "sourceHash": "325549ebf15582934fd7edcb9bc82126443dff2af2449b50dbd34d49d7344922",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "5.4 Regularization",
+          "target": "5.4 正则化"
+        }
+      ]
+    },
+    {
+      "blockId": "p7-b16",
+      "sourceHash": "cef101eea3ee53124a4bad2644f99f3e1e22b39b1cf00beabd640e4153c44eeb",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "We employ three types of regularization during training:",
+          "target": "我们在训练期间采用了三种正则化方法："
+        }
+      ]
+    },
+    {
+      "blockId": "p7-b2",
+      "sourceHash": "be5049fe135f3712d2ee5b45b99e2bcc1e9b95f5c9ea217675df5d70ff3bd221",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "A single convolutional layer with kernel width k < n does not connect all pairs of input and output positions.",
+          "target": "卷积核宽度为 $k < n$ 的单个卷积层无法连接所有输入位置与输出位置的组合。",
+          "anchor": "A single convolutional layer with kernel width k < n does not connect all pairs of input and output positions."
+        },
+        {
+          "source": "Doing so requires a stack of O ( n/k ) convolutional layers in the case of contiguous kernels, or O ( log ( n )) in the case of dilated convolutions [18], increasing the length of the longest paths between any two positions in the network.",
+          "target": "若要实现这种连接，连续卷积核的情况需要堆叠 $O(n/k)$ 个卷积层，扩张卷积的情况则需要 $O(\\log(n))$ 个卷积层 [18]；这会增加网络中任意两个位置之间最长路径的长度。",
+          "anchor": "Doing so requires a stack of O ( n/k ) convolutional layers in the case of contiguous kernels, or O ( log ( n )) in the case of dilated convolutions [18], increasing the length of the longest paths k between any two positions in the network."
+        },
+        {
+          "source": "Convolutional layers are generally more expensive than recurrent layers, by a factor of k .",
+          "target": "卷积层的计算成本通常比循环层高出 $k$ 倍。",
+          "anchor": "Convolutional layers are generally more expensive than recurrent layers, by a factor of k ."
+        },
+        {
+          "source": "Separable convolutions [6], however, decrease the complexity considerably, to O ( k · n · d + n · d 2 ) .",
+          "target": "不过，可分离卷积 [6] 能大幅降低复杂度，将其降至 $O(k \\cdot n \\cdot d + n \\cdot d^2)$。",
+          "anchor": "Separable convolutions [6], however, decrease the complexity considerably, to O ( k · n · d + n · d 2 ) ."
+        },
+        {
+          "source": "Even with k = n , however, the complexity of a separable convolution is equal to the combination of a self-attention layer and a point-wise feed-forward layer, the approach we take in our model.",
+          "target": "然而，即使 $k = n$，可分离卷积的复杂度仍与自注意力层和逐位置前馈层的组合相同，而这正是我们模型采用的方法。",
+          "anchor": "Even with k = n , however, the complexity of a separable convolution is equal to the combination of a self-attention layer and a point-wise feed-forward layer, the approach we take in our model."
+        }
+      ]
+    },
+    {
+      "blockId": "p7-b3",
+      "sourceHash": "871e90ecfd32ad35bc04bc6c4c6f18d9ad12b6c5bce1e5448b2780c6ae43fadb",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "As side benefit, self-attention could yield more interpretable models.",
+          "target": "自注意力还可能带来一个额外好处：模型更容易解释。"
+        },
+        {
+          "source": "We inspect attention distributions from our models and present and discuss examples in the appendix.",
+          "target": "我们检查了模型的注意力分布，并在附录中展示和讨论了一些示例。"
+        },
+        {
+          "source": "Not only do individual attention heads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic and semantic structure of the sentences.",
+          "target": "各个注意力头不仅明显学会了执行不同任务，其中许多似乎还表现出与句子句法和语义结构相关的行为。"
+        }
+      ]
+    },
+    {
+      "blockId": "p7-b4",
+      "sourceHash": "d01437189f36ffceaeac1b0186cc013b9310355bdef6fb251854e62cc4ba102b",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "5 Training",
+          "target": "5 训练"
+        }
+      ]
+    },
+    {
+      "blockId": "p7-b5",
+      "sourceHash": "c17071bcb0ae26062a6c57a57374ffd767bb90bb57e47195762a37115592104d",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "This section describes the training regime for our models.",
+          "target": "本节介绍我们模型的训练方案。"
+        }
+      ]
+    },
+    {
+      "blockId": "p7-b6",
+      "sourceHash": "ffda463fdf4410a7d326fe30f3afed28f0513773fd58bd4976e789f7ecba4be0",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "5.1 Training Data and Batching",
+          "target": "5.1 训练数据与批处理"
+        }
+      ]
+    },
+    {
+      "blockId": "p7-b7",
+      "sourceHash": "a3b9e12c1fa97f1eed19fedb70840866ca7462512b2ae14ef923e73d02fd65bf",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs.",
+          "target": "我们使用标准的 WMT 2014 英德数据集进行训练，该数据集包含约 450 万个句对。"
+        },
+        {
+          "source": "Sentences were encoded using byte-pair encoding [3], which has a shared source-target vocabulary of about 37000 tokens.",
+          "target": "句子使用 byte-pair encoding [3] 进行编码，其源语言和目标语言共用一个约含 37000 个词元的词汇表。"
+        },
+        {
+          "source": "For English-French, we used the significantly larger WMT 2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece vocabulary [38].",
+          "target": "对于英法任务，我们使用规模大得多的 WMT 2014 英法数据集，其中包含 36M 个句子，并将词元拆分到一个包含 32000 个词元的 word-piece 词汇表中 [38]。"
+        },
+        {
+          "source": "Sentence pairs were batched together by approximate sequence length.",
+          "target": "句对按近似序列长度组成批次。"
+        },
+        {
+          "source": "Each training batch contained a set of sentence pairs containing approximately 25000 source tokens and 25000 target tokens.",
+          "target": "每个训练批次包含一组句对，其中约有 25000 个源词元和 25000 个目标词元。"
+        }
+      ]
+    },
+    {
+      "blockId": "p7-b8",
+      "sourceHash": "0c03223ef619c6a61114f52007b47af303d07fa53d46c8d2cb1d0aada32650f6",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "5.2 Hardware and Schedule",
+          "target": "5.2 硬件与训练安排"
+        }
+      ]
+    },
+    {
+      "blockId": "p7-b9",
+      "sourceHash": "b1ecb02496dec11991c87fd0b63614a61bad954dceea3a118450cee0ea4ff23c",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "We trained our models on one machine with 8 NVIDIA P100 GPUs.",
+          "target": "我们在一台配有 8 块 NVIDIA P100 GPU 的机器上训练模型。"
+        },
+        {
+          "source": "For our base models using the hyperparameters described throughout the paper, each training step took about 0.4 seconds.",
+          "target": "对于使用本文所述超参数的基础模型，每个训练步骤约耗时 0.4 秒。"
+        },
+        {
+          "source": "We trained the base models for a total of 100,000 steps or 12 hours.",
+          "target": "基础模型总共训练了 100,000 步，即 12 小时。"
+        },
+        {
+          "source": "For our big models,(described on the bottom line of table 3), step time was 1.0 seconds.",
+          "target": "对于大型模型（见表 3 最后一行），每步耗时为 1.0 秒。"
+        },
+        {
+          "source": "The big models were trained for 300,000 steps (3.5 days).",
+          "target": "大型模型训练了 300,000 步（3.5 天）。"
+        }
+      ]
+    },
+    {
+      "blockId": "p8-b1",
+      "sourceHash": "ce6f9e1f263711161c82073ca69d14a7a96b2947fd8590942e435b61a34c2b5a",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Table 2: The Transformer achieves better BLEU scores than previous state-of-the-art models on the English-to-German and English-to-French newstest2014 tests at a fraction of the training cost.",
+          "target": "表 2：在 newstest2014 英译德和英译法测试集上，Transformer 的 BLEU 分数优于此前最先进的模型，而训练成本仅为其一小部分。"
+        }
+      ]
+    },
+    {
+      "blockId": "p8-b10",
+      "sourceHash": "fb498d4cd092d4f20e8cf0ae3e8268cc6c1cd67951fa8d7a56d1a50a48ad8005",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "6.2 Model Variations",
+          "target": "6.2 模型变体"
+        }
+      ]
+    },
+    {
+      "blockId": "p8-b11",
+      "sourceHash": "caae59a62ebbc9781abc0ef1a1c69c3887888e959991eb7f9ea722ccc7bf1ea5",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "To evaluate the importance of different components of the Transformer, we varied our base model in different ways, measuring the change in performance on English-to-German translation on the",
+          "target": "为了评估 Transformer 不同组成部分的重要性，我们以不同方式调整了基础模型，并测量其在英译德任务上的性能变化。"
+        }
+      ]
+    },
+    {
+      "blockId": "p8-b12",
+      "sourceHash": "2e9db90adf236efaa3bd6a32f81e1e487f35dff61853856dd9ec3f8ce74b7e56",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "5 We used values of 2.8, 3.7, 6.0 and 9.5 TFLOPS for K80, K40, M40 and P100, respectively.",
+          "target": "5 对于 K80、K40、M40 和 P100，我们分别采用 2.8、3.7、6.0 和 9.5 TFLOPS 的数值。"
+        }
+      ]
+    },
+    {
+      "blockId": "p8-b2",
+      "sourceHash": "cd1f3794ba3a130e23892199b1874612cac0c18b3a6604ffcb1eb361861d33f2",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Residual Dropout We apply dropout [33] to the output of each sub-layer, before it is added to the sub-layer input and normalized.",
+          "target": "残差 Dropout：在每个子层的输出与该子层的输入相加并进行归一化之前，我们对输出应用 dropout [33]。"
+        },
+        {
+          "source": "In addition, we apply dropout to the sums of the embeddings and the positional encodings in both the encoder and decoder stacks.",
+          "target": "此外，我们还对编码器和解码器堆栈中嵌入与位置编码的和应用 dropout。"
+        },
+        {
+          "source": "For the base model, we use a rate of P = 0 . 1 . drop",
+          "target": "对于基础模型，我们使用的 dropout 率为 $P_{\\text{drop}} = 0.1$。"
+        }
+      ]
+    },
+    {
+      "blockId": "p8-b3",
+      "sourceHash": "96817fb6f0f5377104d4274367aded48dc16ce250dbd8aa0e4c69fb2a94106e9",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Label Smoothing During training, we employed label smoothing of value ϵ = 0 . 1 [36].",
+          "target": "标签平滑：训练期间，我们使用了取值为 $\\epsilon_{\\text{ls}} = 0.1$ 的标签平滑 [36]。",
+          "anchor": "Label Smoothing During training, we employed label smoothing of value ϵ = 0 . 1 [36]."
+        },
+        {
+          "source": "This hurts perplexity, as the model learns to be more unsure, but improves accuracy and BLEU score.",
+          "target": "这会损害困惑度指标，因为模型会学得更加不确定，但能提高准确率和 BLEU 分数。",
+          "anchor": "This ls hurts perplexity, as the model learns to be more unsure, but improves accuracy and BLEU score."
+        }
+      ]
+    },
+    {
+      "blockId": "p8-b4",
+      "sourceHash": "c65db9b7d1a806aa2834fed9b16927afff79ee6e32560403ab1031327671afdd",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "6 Results",
+          "target": "6 结果"
+        }
+      ]
+    },
+    {
+      "blockId": "p8-b5",
+      "sourceHash": "400fcec67034c8a966cf9e713363128330040a188abc7399e52195e2f3a94c57",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "6.1 Machine Translation",
+          "target": "6.1 机器翻译"
+        }
+      ]
+    },
+    {
+      "blockId": "p8-b6",
+      "sourceHash": "3d780d3f909ef66b887de78983f7e4edd4d0c10dc57c8c5e9f71e82943f3ecbb",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "On the WMT 2014 English-to-German translation task, the big transformer model (Transformer (big) in Table 2) outperforms the best previously reported models (including ensembles) by more than 2 . 0 BLEU, establishing a new state-of-the-art BLEU score of 28 . 4 .",
+          "target": "在 WMT 2014 英译德翻译任务中，大型 Transformer 模型（表 2 中的 Transformer（big））比此前报告的最佳模型（包括集成模型）高出 2.0 个以上 BLEU 分，创下 28.4 的最新 BLEU 得分。"
+        },
+        {
+          "source": "The configuration of this model is listed in the bottom line of Table 3.",
+          "target": "该模型的配置列于表 3 最后一行。"
+        },
+        {
+          "source": "Training took 3 . 5 days on 8 P100 GPUs.",
+          "target": "在 8 块 P100 GPU 上训练耗时 3.5 天。"
+        },
+        {
+          "source": "Even our base model surpasses all previously published models and ensembles, at a fraction of the training cost of any of the competitive models.",
+          "target": "即使是我们的基础模型，也超过了所有此前发表的模型和集成模型，而训练成本仅为任何有竞争力模型的一小部分。"
+        }
+      ]
+    },
+    {
+      "blockId": "p8-b7",
+      "sourceHash": "8fc16abc0c0c0578d6a88d27f0f901163aef4ba7a7a95842dabea6bee21d6d2d",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "On the WMT 2014 English-to-French translation task, our big model achieves a BLEU score of 41 . 0 , outperforming all of the previously published single models, at less than 1 / 4 the training cost of the previous state-of-the-art model.",
+          "target": "在 WMT 2014 英译法翻译任务中，我们的大型模型取得了 41.0 的 BLEU 分数，超过了所有此前发表的单一模型，而训练成本不到此前最先进模型的四分之一。"
+        },
+        {
+          "source": "The Transformer (big) model trained for English-to-French used dropout rate P = 0 . 1 , instead of 0 . 3 . drop",
+          "target": "用于英译法任务的 Transformer（big）模型使用的 dropout 率为 $P_{\\text{drop}} = 0.1$，而不是 0.3。"
+        }
+      ]
+    },
+    {
+      "blockId": "p8-b8",
+      "sourceHash": "5320c2fe87e7be63bddc534051aa60e9be24685184d5598bcdf441513ad658dc",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "For the base models, we used a single model obtained by averaging the last 5 checkpoints, which were written at 10-minute intervals.",
+          "target": "对于基础模型，我们使用了一个通过对最后 5 个检查点取平均得到的单一模型；这些检查点每隔 10 分钟写入一次。"
+        },
+        {
+          "source": "For the big models, we averaged the last 20 checkpoints.",
+          "target": "对于大型模型，我们对最后 20 个检查点取了平均。"
+        },
+        {
+          "source": "We used beam search with a beam size of 4 and length penalty α = 0 . 6 [38].",
+          "target": "我们使用了束宽为 4、长度惩罚 $\\alpha = 0.6$ 的束搜索 [38]。"
+        },
+        {
+          "source": "These hyperparameters were chosen after experimentation on the development set.",
+          "target": "这些超参数是在开发集上经过实验后选定的。"
+        },
+        {
+          "source": "We set the maximum output length during inference to input length + 50 , but terminate early when possible [38].",
+          "target": "我们将推理时的最大输出长度设为输入长度加 50，但在可能时会提前终止 [38]。"
+        }
+      ]
+    },
+    {
+      "blockId": "p8-b9",
+      "sourceHash": "6479c18df70047590f45610e0ecb30e31f2a68add08d55337fde1ab40eea9d20",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Table 2 summarizes our results and compares our translation quality and training costs to other model architectures from the literature.",
+          "target": "表 2 总结了我们的结果，并将我们的翻译质量和训练成本与文献中其他模型架构进行了比较。"
+        },
+        {
+          "source": "We estimate the number of floating point operations used to train a model by multiplying the training time, the number of GPUs used, and an estimate of the sustained single-precision floating-point capacity of each GPU 5 .",
+          "target": "我们通过将训练时间、所用 GPU 数量以及每块 GPU 持续单精度浮点运算能力的估计值相乘，来估算训练模型所用的浮点运算次数 5。"
+        }
+      ]
+    },
+    {
+      "blockId": "p9-b1",
+      "sourceHash": "499f07677833b3a1be5f7708f3d60200d1c4cd5e84848b59a83185f1070239ee",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "Table 3: Variations on the Transformer architecture.",
+          "target": "表 3：Transformer 架构的变体。"
+        },
+        {
+          "source": "Unlisted values are identical to those of the base model.",
+          "target": "未列出的数值与基础模型相同。"
+        },
+        {
+          "source": "All metrics are on the English-to-German translation development set, newstest2013.",
+          "target": "所有指标均在英译德翻译开发集 newstest2013 上计算。"
+        },
+        {
+          "source": "Listed perplexities are per-wordpiece, according to our byte-pair encoding, and should not be compared to per-word perplexities.",
+          "target": "所列困惑度按每个 wordpiece 计算，依据我们使用的字节对编码，因此不应与按词计算的困惑度进行比较。"
+        }
+      ]
+    },
+    {
+      "blockId": "p9-b2",
+      "sourceHash": "c8971f2e92a24a0531c7c4024f3cb8c83ffd9e7e3d2a653f380813e29d520a82",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "development set, newstest2013.",
+          "target": "开发集 newstest2013 上。"
+        },
+        {
+          "source": "We used beam search as described in the previous section, but no checkpoint averaging.",
+          "target": "我们使用了上一节所述的束搜索，但没有对检查点取平均。"
+        },
+        {
+          "source": "We present these results in Table 3.",
+          "target": "这些结果列于表 3。"
+        }
+      ]
+    },
+    {
+      "blockId": "p9-b3",
+      "sourceHash": "1da3425810945a12fbac63dea33d13944e69bdac647d115d28a20898dd688ff0",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "In Table 3 rows (A), we vary the number of attention heads and the attention key and value dimensions, keeping the amount of computation constant, as described in Section 3.2.2.",
+          "target": "在表 3 的 (A) 行中，我们按照第 3.2.2 节所述，在保持计算量不变的情况下，改变注意力头的数量以及注意力键和值的维度。"
+        },
+        {
+          "source": "While single-head attention is 0.9 BLEU worse than the best setting, quality also drops off with too many heads.",
+          "target": "单头注意力的表现比最佳设置低 0.9 个 BLEU 分；注意力头过多时，质量也会下降。"
+        }
+      ]
+    },
+    {
+      "blockId": "p9-b4",
+      "sourceHash": "0e0f2652ff90648a48c2ff3bc75720a5046fd72d22b4d7dddd0ba61bcacd618d",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "In Table 3 rows (B), we observe that reducing the attention key size d hurts model quality.",
+          "target": "在表 3 的 (B) 行中，我们观察到减小注意力键的维度 $d_k$ 会损害模型质量。",
+          "anchor": "In Table 3 rows (B), we observe that reducing the attention key size d hurts model quality."
+        },
+        {
+          "source": "This suggests that determining compatibility is not easy and that a more sophisticated compatibility function than dot product may be beneficial.",
+          "target": "这表明，确定兼容性并不容易，使用比点积更复杂的兼容性函数可能会有所帮助。",
+          "anchor": "This k suggests that determining compatibility is not easy and that a more sophisticated compatibility function than dot product may be beneficial."
+        },
+        {
+          "source": "We further observe in rows (C) and (D) that, as expected, bigger models are better, and dropout is very helpful in avoiding over-fitting.",
+          "target": "我们还从 (C) 行和 (D) 行观察到，正如预期的那样，更大的模型表现更好，而 dropout 对避免过拟合很有帮助。",
+          "anchor": "We further observe in rows (C) and (D) that, as expected, bigger models are better, and dropout is very helpful in avoiding over-fitting."
+        },
+        {
+          "source": "In row (E) we replace our sinusoidal positional encoding with learned positional embeddings [9], and observe nearly identical results to the base model.",
+          "target": "在 (E) 行中，我们用学习得到的位置嵌入 [9] 替换正弦位置编码，观察到的结果与基础模型几乎相同。",
+          "anchor": "In row (E) we replace our sinusoidal positional encoding with learned positional embeddings [9], and observe nearly identical results to the base model."
+        }
+      ]
+    },
+    {
+      "blockId": "p9-b5",
+      "sourceHash": "ab8c3832cb0318d9771c680d14822a29467816c5da359143240ac9ca4297d673",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "6.3 English Constituency Parsing",
+          "target": "6.3 英语成分句法分析"
+        }
+      ]
+    },
+    {
+      "blockId": "p9-b6",
+      "sourceHash": "7c8f7faba19189fcb86266cf7c2db7bc14d8aa2ee7b04d341460cd7bb84fd800",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "To evaluate if the Transformer can generalize to other tasks we performed experiments on English constituency parsing.",
+          "target": "为了评估 Transformer 能否泛化到其他任务，我们开展了英语成分句法分析实验。"
+        },
+        {
+          "source": "This task presents specific challenges: the output is subject to strong structural constraints and is significantly longer than the input.",
+          "target": "这项任务面临一些特定挑战：输出受严格的结构约束，而且明显长于输入。"
+        },
+        {
+          "source": "Furthermore, RNN sequence-to-sequence models have not been able to attain state-of-the-art results in small-data regimes [37].",
+          "target": "此外，在小数据场景中，RNN 序列到序列模型尚未达到最先进的结果 [37]。"
+        }
+      ]
+    },
+    {
+      "blockId": "p9-b7",
+      "sourceHash": "64164769a8118a3bfa0f2e910a0d707c0c4229505a2d3f62618ff499e1fbf7ea",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "We trained a 4-layer transformer with d = 1024 on the Wall Street Journal (WSJ) portion of the model Penn Treebank [25], about 40K training sentences.",
+          "target": "我们在 Penn Treebank [25] 的《华尔街日报》（WSJ）部分上训练了一个 4 层 Transformer，$d_{\\text{model}} = 1024$，训练句子约 40K。"
+        },
+        {
+          "source": "We also trained it in a semi-supervised setting, using the larger high-confidence and BerkleyParser corpora from with approximately 17M sentences [37].",
+          "target": "我们还在半监督设置下训练了该模型，使用规模更大的高置信度语料和 BerkleyParser 语料，共约 17M 个句子 [37]。"
+        },
+        {
+          "source": "We used a vocabulary of 16K tokens for the WSJ only setting and a vocabulary of 32K tokens for the semi-supervised setting.",
+          "target": "仅使用 WSJ 的设置采用了包含 16K 个词元的词汇表，半监督设置采用了包含 32K 个词元的词汇表。"
+        }
+      ]
+    },
+    {
+      "blockId": "p9-b8",
+      "sourceHash": "adee9ba67b047e53ae34e1d2e19854f9c45a96253638f9564bada6325af547d1",
+      "status": "complete",
+      "sentences": [
+        {
+          "source": "We performed only a small number of experiments to select the dropout, both attention and residual (section 5.4), learning rates and beam size on the Section 22 development set, all other parameters remained unchanged from the English-to-German base translation model.",
+          "target": "我们只在第 22 节开发集上进行了少量实验，以选择 dropout（包括注意力 dropout 和残差 dropout；见第 5.4 节）、学习率和束宽；所有其他参数均与英译德基础翻译模型保持不变。"
+        },
+        {
+          "source": "During inference, we",
+          "target": "在推理期间，我们"
+        }
+      ]
+    }
+  ]
+}

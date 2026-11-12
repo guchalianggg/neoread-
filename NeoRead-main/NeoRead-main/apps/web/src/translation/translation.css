@@ -1,0 +1,449 @@
+.pdf-reading,
+.epub-reading {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--background);
+}
+.translation-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0;
+  -webkit-app-region: no-drag;
+  flex: none;
+  overflow-x: auto;
+}
+.translation-panes {
+  display: flex;
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+/* Order the outer panel elements; Panel's style prop targets its inner content. */
+.translation-panes[data-swapped] > [data-group] > :first-child {
+  order: 2;
+}
+.translation-panes[data-swapped] > [data-group] > [data-separator] {
+  order: 1;
+}
+.translation-source {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+.translation-pane-content {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+}
+.translation-divider {
+  z-index: 5;
+  cursor: col-resize;
+  -webkit-app-region: no-drag;
+}
+.translation-divider[hidden] {
+  display: none;
+}
+.translation-divider[aria-orientation="horizontal"] {
+  cursor: row-resize;
+}
+.translation-pane-controls {
+  position: absolute;
+  top: 12px;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transform: translateX(-50%);
+}
+.translation-panes[data-stacked] .translation-pane-controls {
+  left: 12px;
+  flex-direction: row;
+  transform: translateY(-50%);
+}
+.translation-pane-controls > button {
+  cursor: pointer;
+  color: var(--muted-foreground);
+}
+.translation-document {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  padding: max(32px, var(--translation-inset, 32px)) clamp(16px, 3vw, 44px);
+  scrollbar-gutter: stable;
+  background: var(--background);
+  color: var(--foreground);
+  overflow-anchor: auto;
+}
+.pdf-reading[data-theme="dark"] .translation-document {
+  background: var(--pdf-dark-paper);
+  color: var(--pdf-dark-ink);
+}
+.pdf-reading .translation-document {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+.pdf-reading .translation-document section {
+  max-width: none;
+}
+/* A focused body block's width at the Focus Block zoom limit. */
+.pdf-reading .translation-document[data-column] section {
+  max-width: var(--pdf-column-width);
+}
+.translation-document section {
+  position: relative;
+  margin: 0 auto 1.25em;
+  max-width: 44rem;
+  overflow-wrap: anywhere;
+  outline: 0.5px solid transparent;
+  border-radius: 4px;
+  transition:
+    background-color 180ms ease-out,
+    outline-color 180ms ease-out,
+    box-shadow 180ms ease-out;
+}
+/* Match the source chapter's border-box width and reading margins. */
+.epub-reading .translation-panes[data-stacked] {
+  --epub-page-width: 54rem;
+}
+.epub-reading .translation-panes[data-stacked] .epub-web-reader {
+  scrollbar-gutter: stable;
+}
+.epub-reading .translation-panes[data-stacked] .translation-document {
+  padding-inline: var(--epub-margin, 32px);
+}
+.epub-reading .translation-panes[data-stacked] .translation-document section {
+  max-width: max(
+    0px,
+    calc(var(--epub-page-width) - 2 * var(--epub-margin, 32px))
+  );
+}
+.translation-document [data-label="doc_title"] {
+  font-size: 1.45em;
+  font-weight: 600;
+}
+.translation-document [data-label="paragraph_title"] {
+  font-size: 1.15em;
+  font-weight: 600;
+  margin-top: 1.8em;
+}
+.translation-sentence,
+.translation-sentence > .message-markdown,
+.translation-sentence > .message-markdown > p,
+.reflow-sentence > .message-markdown,
+.reflow-sentence > .message-markdown > p {
+  display: inline;
+  margin: 0;
+}
+.translation-sentence::after {
+  content: " ";
+}
+.translation-sentence[data-linked] {
+  background: color-mix(in srgb, var(--primary) 13%, transparent);
+  border-radius: 3px;
+}
+.translation-document ::highlight(neoread-translation-selection) {
+  background-color: rgba(59, 130, 246, 0.3);
+  background-color: color-mix(in srgb, AccentColor 30%, transparent);
+}
+/* KaTeX defaults to 1.21em, which reads larger than the surrounding prose. */
+.translation-document .katex,
+.epub-reflow-translation .katex {
+  font-size: 1em;
+}
+/* A selection touching a formula paints the formula's whole box (see
+   formula-highlight.ts); the more specific selector keeps it above marks. */
+.translation-document
+  .katex[data-formula-highlight~="neoread-translation-selection"] {
+  background-color: rgba(59, 130, 246, 0.3);
+  background-color: color-mix(in srgb, AccentColor 30%, transparent);
+  border-radius: 2px;
+}
+.translation-document .katex ::highlight(neoread-translation-selection) {
+  background-color: transparent;
+}
+.translation-document[data-compact-selection]::selection,
+.translation-document[data-compact-selection] ::selection {
+  background-color: transparent;
+  color: inherit;
+}
+.translation-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 12px auto;
+  border-radius: 3px;
+}
+.translation-pending {
+  min-height: 5em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted-foreground);
+  font-size: 0.85em;
+}
+.translation-warning {
+  font-size: 0.8em;
+  color: var(--muted-foreground);
+  margin-bottom: 24px;
+}
+.translation-popover {
+  width: min(440px, calc(100vw - 32px));
+  max-height: min(55vh, 500px);
+  overflow: auto;
+  line-height: 1.8;
+  padding: 16px;
+}
+.pdf-reading-controls {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  -webkit-app-region: no-drag;
+}
+.pdf-reading-controls > * {
+  pointer-events: auto;
+}
+.pdf-page-navigation {
+  height: 32px;
+  border: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+  border-radius: 10px;
+  padding: 3px;
+  background: var(--background);
+  color: var(--foreground);
+  box-shadow: 0 2px 10px #0000000d;
+}
+.pdf-page-navigation .page-navigation {
+  gap: 4px;
+}
+.pdf-page-navigation button {
+  width: 24px;
+  height: 24px;
+}
+.pdf-page-navigation button svg {
+  width: 14px;
+  height: 14px;
+}
+.pdf-page-navigation input {
+  width: 44px;
+  height: 24px;
+  background: transparent;
+}
+.pdf-reading[data-theme="sepia"] .pdf-page-navigation,
+.epub-reading[data-theme="sepia"] .pdf-page-navigation {
+  background: #f7f6f2;
+  color: #1f1e1d;
+}
+
+.textLayer ::highlight(neoread-linked-sentences) {
+  /* A subtle linked-sentence cue; visible glyphs remain on the PDF canvas. */
+  background-color: rgba(128, 128, 128, 0.22);
+  color: transparent;
+}
+.textLayer br::highlight(neoread-linked-sentences) {
+  background-color: transparent;
+}
+.translation-note-indicator {
+  position: absolute;
+  left: -10px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 3px;
+  background: #e6b94c;
+}
+:root[data-theme="sepia"] .translation-note-indicator {
+  background: var(--brand-30);
+}
+:root[data-reduced-motion="true"] {
+  .translation-document {
+    scroll-behavior: auto;
+  }
+}
+.pdf-reading[data-theme="sepia"] .translation-document,
+.epub-reading[data-theme="sepia"] .translation-document {
+  background: #f7f6f2;
+  color: #1f1e1d;
+}
+::highlight(neoread-translation-marks) {
+  background: #e6b94c66;
+  color: inherit;
+}
+::highlight(neoread-translation-underlines) {
+  text-decoration: underline 2px #e6b94c;
+}
+
+.translation-document [data-translation-block][data-focused],
+.translation-document [data-translation-block][data-hovered] {
+  background: rgb(97 137 113 / 7%);
+  border-radius: 4px;
+  outline: 1px solid rgb(88 122 104 / 30%);
+  box-shadow: 0 0 0 3px rgb(97 137 113 / 3%);
+}
+.translation-document [data-translation-block][data-search-hit] {
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+.translation-document [data-translation-block][data-focused],
+.neoread-block-hover.neoread-block-focus,
+.neoread-block-hover[data-block-kind="text"],
+.translation-document [data-block-kind="text"][data-hovered] {
+  background: rgb(128 128 128 / 5%);
+  box-shadow: none;
+}
+.neoread-block-hover.neoread-block-focus,
+.neoread-block-hover[data-block-kind="text"] {
+  border: 0.5px solid rgb(128 128 128 / 22%);
+}
+.translation-document [data-translation-block][data-focused],
+.translation-document [data-block-kind="text"][data-hovered] {
+  outline: 0.5px solid rgb(128 128 128 / 22%);
+}
+:root[data-theme="sepia"] .neoread-block-hover[data-block-kind="text"],
+:root[data-theme="sepia"] .neoread-block-hover.neoread-block-focus,
+:root[data-theme="sepia"]
+  .translation-document
+  :is(
+    [data-translation-block][data-focused],
+    [data-block-kind="text"][data-hovered]
+  ) {
+  background: var(--brand-10);
+}
+:root[data-theme="sepia"] .neoread-block-hover[data-block-kind="text"],
+:root[data-theme="sepia"] .neoread-block-hover.neoread-block-focus {
+  border-color: var(--brand-10);
+}
+:root[data-theme="sepia"]
+  .translation-document
+  :is(
+    [data-translation-block][data-focused],
+    [data-block-kind="text"][data-hovered]
+  ) {
+  outline-color: var(--brand-10);
+}
+
+.neoread-sentence-hover-mark {
+  background: rgb(128 128 128 / 22%);
+}
+:root[data-theme="sepia"] .neoread-sentence-hover-mark {
+  background: var(--brand-10);
+}
+
+.neoread-block-focus[data-fading] {
+  animation: block-focus-fade 180ms ease-out forwards;
+}
+@keyframes block-focus-fade {
+  to {
+    opacity: 0;
+  }
+}
+:root[data-reduced-motion="true"] {
+  .translation-document section {
+    transition: none;
+  }
+  .neoread-block-focus[data-fading] {
+    animation-duration: 0s;
+  }
+}
+
+.assistance-controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.translation-formula-source {
+  margin-top: 0.5em;
+  font-size: 0.85em;
+  color: var(--muted-foreground);
+}
+.translation-formula-source summary {
+  cursor: pointer;
+  width: fit-content;
+}
+
+.translation-formula-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+}
+.translation-formula-content {
+  min-width: 0;
+  overflow-x: auto;
+}
+.translation-formula-number {
+  white-space: nowrap;
+}
+
+.translation-formula-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8em;
+  color: var(--muted-foreground);
+}
+
+.neoread-block-hover:not(.neoread-block-focus) {
+  animation: block-hover-in 160ms ease-out;
+}
+@keyframes block-hover-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+:root[data-reduced-motion="true"] {
+  .neoread-block-hover:not(.neoread-block-focus) {
+    animation: none;
+  }
+}
+/* Reflowed text: each translation sits under its source paragraph. */
+.epub-reflow-translation {
+  display: block;
+  margin-top: 0.35em;
+  font-family: var(--reflow-translation-font, inherit);
+  font-size: calc(1em * var(--reflow-translation-scale, 1));
+  font-weight: var(--reflow-translation-weight, inherit);
+}
+.epub-reflow[data-reflow-mode="translation"] .epub-web-chapter [data-epub-run] {
+  display: none;
+}
+.epub-reflow[data-reflow-mode="translation"] .epub-reflow-translation {
+  margin-top: 0;
+}
+.epub-reflow-translation .translation-pending,
+.pdf-reading[data-reflow] .translation-pending {
+  min-height: 0;
+  justify-content: flex-start;
+}
+/* The block overlay positions its boxes inside the scrolling column. */
+.pdf-reading[data-reflow] .translation-document {
+  position: relative;
+  padding-top: 32px;
+  padding-inline: var(--reflow-margin, 48px);
+}
+.reflow-source {
+  font-family: var(--reflow-source-font, inherit);
+  font-size: var(--reflow-source-size, 1em);
+  font-weight: var(--reflow-source-weight, inherit);
+}
+.pdf-reading[data-reflow][data-reading-mode="parallel"] .reflow-source {
+  margin-bottom: 0.35em;
+}

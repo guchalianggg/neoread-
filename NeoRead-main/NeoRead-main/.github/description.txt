@@ -1,0 +1,1 @@
+NeoRead: a local-first EPUB/PDF reader with annotations, side-by-side translation, and AI assistance through Claude Code, Codex CLI, and Kimi CLI.

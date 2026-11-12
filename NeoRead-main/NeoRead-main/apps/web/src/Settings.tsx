@@ -1,0 +1,1426 @@
+import { loadModelCatalog } from "./model-catalog";
+import { Switch } from "@neoread/ui/components/switch";
+import { PaperServiceSettings } from "./papers/PaperServiceSettings";
+import { AutoTranslationSettings } from "./papers/AutoTranslationSettings";
+import { TranslationPromptSettings } from "./TranslationPromptSettings";
+import { WebSearchSettings } from "./WebSearchSettings";
+import { useEffect, useRef, useState } from "react";
+import {
+  ChevronLeft,
+  FileText,
+  Bot,
+  CircleCheck,
+  CircleHelp,
+  Highlighter,
+  Library,
+  LoaderCircle,
+  Monitor,
+  Pencil,
+  RefreshCw,
+  TriangleAlert,
+  X,
+} from "lucide-react";
+import { LegacyAnnotationMigration } from "./LegacyAnnotationMigration";
+import { DiagnosticExport } from "./DiagnosticExport";
+import { PaperRefreshSettings } from "./PaperRefreshSettings";
+import { LibraryLocationSettings } from "./LibraryLocationSettings";
+import { CommandLineSettings } from "./CommandLineSettings";
+import { ProviderIcon, providerLabel } from "./ProviderIdentity";
+import { TaskModels } from "./TaskModels";
+import { APIAgentForm, APIModelForm } from "./APIAgentForm";
+import { api } from "@neoread/api";
+import type {
+  AICapability,
+  AIConfig,
+  AgentModel,
+  APIConnection,
+  LibraryMode,
+  JournalRankConfig,
+  PaperColumn,
+  Provider,
+} from "@neoread/core";
+import { Button } from "@neoread/ui/components/button";
+import { cn } from "@neoread/ui/lib/utils";
+import { Input } from "@neoread/ui/components/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@neoread/ui/components/dialog";
+import { Badge } from "@neoread/ui/components/badge";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@neoread/ui/components/tooltip";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@neoread/ui/components/tabs";
+import { CitePluginSettings } from "./cite/CitePluginSettings";
+import { HighlightColorsEditor } from "./HighlightColorsEditor";
+import { ProxySettings } from "./ProxySettings";
+import {
+  libraryMode,
+  primaryLibraryMode,
+  updateLibraryPreferences,
+  useReaderStore,
+} from "./store";
+import { libraryModes } from "./LibraryModeSwitcher";
+import { Checkbox } from "@neoread/ui/components/checkbox";
+import { toast } from "sonner";
+import { columnLabels, defaultColumns, toggleColumn } from "./papers/model";
+import { savePaperPreferences } from "./papers/actions";
+import { AppearancePicker } from "./AppearancePicker";
+import { AgentDeck, type DeckItem } from "./AgentDeck";
+import { recentAgentCalls } from "./agentUsage";
+// Checks run automatically for this many API models; the rest on demand.
+const autoAPIChecks = 12;
+// Terminal commands that sign each CLI agent in.
+const cliLogin: Record<string, string> = {
+  codex: "codex login",
+  claude: "claude auth login",
+  kimi: "kimi",
+};
+
+export function Settings({
+  open,
+  onOpenChange,
+  onOpenGuide,
+}: {
+  open: boolean;
+  onOpenChange: (value: boolean) => void;
+  onOpenGuide?: () => void;
+}) {
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [testing, setTesting] = useState<Map<string, "text" | "vision">>(
+    new Map(),
+  );
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const checked = useRef(new Set<string>());
+  const refreshing = useRef(false);
+  const [saving, setSaving] = useState(false);
+  const pendingAgent = useRef<string | null>(null);
+  const agentSaveRunning = useRef(false);
+  const [deckOpen, setDeckOpen] = useState(false);
+  // This is a presentation preference, independent of asynchronous detection.
+  const [deckFront, setDeckFront] = useState(() => {
+    try {
+      const saved = localStorage.getItem("neoread.agent-deck-front");
+      return saved && ["codex", "claude", "kimi", "api"].includes(saved)
+        ? saved
+        : "codex";
+    } catch {
+      return "codex";
+    }
+  });
+  const rememberCard = (id: string) => {
+    setDeckFront(id);
+    try {
+      localStorage.setItem("neoread.agent-deck-front", id);
+    } catch {
+      /* Storage may be unavailable. */
+    }
+  };
+  const [searchSaving, setSearchSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
+  // Whether a detection has finished since the dialog opened.
+  const [probed, setProbed] = useState(false);
+  const [modelRefresh, setModelRefresh] = useState(0);
+  const [apiModels, setAPIModels] = useState<AgentModel[]>([]);
+  const [apiModelsError, setAPIModelsError] = useState("");
+  const [apiDetails, setAPIDetails] = useState(false);
+  const [probeWait, setProbeWait] = useState("");
+  const probeSeconds = Number(probeWait);
+  const validProbeWait =
+    Number.isInteger(probeSeconds) && probeSeconds >= 0 && probeSeconds <= 600;
+  const [journalRank, setJournalRank] = useState<JournalRankConfig | null>(
+    null,
+  );
+  const [journalKey, setJournalKey] = useState("");
+  const [journalSaving, setJournalSaving] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    let mounted = true;
+    void api
+      .journalRankConfig()
+      .then((config) => {
+        if (mounted) setJournalRank(config);
+      })
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
+  }, [open]);
+  const saveJournalRank = async (
+    patch: Partial<
+      Pick<JournalRankConfig, "enabled" | "filterMode" | "selected">
+    >,
+    key?: string,
+  ) => {
+    if (!journalRank) return;
+    setJournalSaving(true);
+    try {
+      const saved = await api.saveJournalRankConfig({
+        enabled: patch.enabled ?? journalRank.enabled,
+        filterMode: patch.filterMode ?? journalRank.filterMode,
+        selected: patch.selected ?? journalRank.selected,
+        ...(key !== undefined ? { key } : {}),
+      });
+      setJournalRank(saved);
+      setJournalKey("");
+      window.dispatchEvent(new Event("neoread:journal-rank-config"));
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setJournalSaving(false);
+    }
+  };
+  useEffect(() => {
+    if (!open) {
+      setAPIDetails(false);
+      setDeckOpen(false);
+    }
+  }, [open]);
+  const {
+    theme,
+    setTheme,
+    aiConfig: config,
+    setAIConfig,
+    aiModelSaving,
+    libraryPreferences,
+    documents,
+  } = useReaderStore();
+  const currentLibrary = libraryMode(libraryPreferences);
+  const paperPreferences =
+    useReaderStore((s) => s.libraryPreferences.papers) || {};
+  // Run the text check, then the vision check, for an agent or an API model
+  // ("api:<model>"). A result is dropped if its configuration changed meanwhile.
+  const check = async (
+    id: string,
+    first: "text" | "vision",
+    snapshot: AIConfig,
+    timeoutSeconds?: number,
+  ) => {
+    const model = id.startsWith("api:") ? id.slice(4) : undefined;
+    const run = (stage: "text" | "vision") =>
+      model
+        ? timeoutSeconds
+          ? api.testAI("api", stage, model, timeoutSeconds)
+          : api.testAI("api", stage, model)
+        : api.testAI(id, stage);
+    let stage = first;
+    const update = (capability: AICapability) => {
+      const current = useReaderStore.getState().aiConfig;
+      if (
+        !current ||
+        (model
+          ? current.api.url !== snapshot.api.url
+          : current.models[id] !== snapshot.models[id])
+      )
+        return false;
+      setAIConfig({
+        ...current,
+        capabilities: { ...current.capabilities, [id]: capability },
+      });
+      return true;
+    };
+    try {
+      if (stage === "text") {
+        const capability = await run("text");
+        if (!update(capability) || !capability.text) return;
+        stage = "vision";
+        setTesting((current) => new Map(current).set(id, "vision"));
+      }
+      update(await run("vision"));
+    } catch (error) {
+      setErrors((current) => ({
+        ...current,
+        [`${id}:${stage}`]: (error as Error).message,
+      }));
+    } finally {
+      setTesting((current) => {
+        const next = new Map(current);
+        next.delete(id);
+        return next;
+      });
+    }
+  };
+  const checkAll = async (
+    ids: string[],
+    firstStage: (id: string) => "text" | "vision",
+    snapshot: AIConfig,
+    timeoutSeconds?: number,
+  ) => {
+    setTesting((current) => {
+      const next = new Map(current);
+      for (const id of ids) next.set(id, firstStage(id));
+      return next;
+    });
+    setErrors((current) =>
+      Object.fromEntries(
+        Object.entries(current).filter(
+          ([key]) => !ids.some((id) => key.startsWith(`${id}:`)),
+        ),
+      ),
+    );
+    await Promise.all(
+      ids.map((id) => check(id, firstStage(id), snapshot, timeoutSeconds)),
+    );
+  };
+  const warnWithoutVision = (models: AgentModel[]) => {
+    const capabilities = useReaderStore.getState().aiConfig?.capabilities;
+    const results = models.map(({ id }) => capabilities?.[`api:${id}`]);
+    if (
+      results.length &&
+      results.every(Boolean) &&
+      !results.some((r) => r?.vision)
+    )
+      toast.warning(
+        "此 API Key 不符合图片理解要求：拉取到的模型都没有通过图片理解检测。",
+      );
+  };
+  const refresh = async (force = false) => {
+    if (refreshing.current) return;
+    refreshing.current = true;
+    // Reopening refreshes metadata silently; preserve the last confirmed UI.
+    if (force) setLoading(true);
+    try {
+      const before = useReaderStore.getState().aiConfig;
+      const [providers, loadedConfig] = await Promise.all([
+        api.providers(false),
+        api.aiConfig(),
+      ]);
+      setProviders(providers);
+      // Keep config changes published while this settings snapshot was loading.
+      const latest = useReaderStore.getState().aiConfig;
+      const config =
+        latest === before ? loadedConfig : (latest ?? loadedConfig);
+      if (latest === before) setAIConfig(config);
+      // CLI agents are checked as a whole, the API agent one model at a time.
+      const pending = providers
+        .filter((provider) => {
+          if (provider.id === "api" || !provider.installed) return false;
+          // Saved results survive dialog remounts and application restarts.
+          // Only an explicit retry replaces an existing result, including failures.
+          if (
+            !force &&
+            config.capabilities[provider.id] &&
+            !config.capabilities[provider.id].pendingVision
+          )
+            return false;
+          const key = JSON.stringify([provider.id, config.models[provider.id]]);
+          if (!force && checked.current.has(key)) return false;
+          checked.current.add(key);
+          return true;
+        })
+        .map(({ id }) => id);
+      // Initialize missing catalogs; only the Settings model picker checks expiry.
+      const catalogProviders = providers.filter(({ installed }) => installed);
+      const results = await Promise.allSettled(
+        catalogProviders.map(({ id }) => loadModelCatalog(id)),
+      );
+      let models: AgentModel[] = [];
+      const apiIndex = catalogProviders.findIndex(({ id }) => id === "api");
+      const apiResult = results[apiIndex];
+      if (apiResult?.status === "fulfilled") {
+        models = apiResult.value;
+        setAPIModelsError("");
+      } else if (apiResult?.status === "rejected") {
+        setAPIModelsError((apiResult.reason as Error).message);
+      }
+      setAPIModels(models);
+      // Large catalogs are checked on demand, row by row.
+      const modelChecks = models
+        .filter((model) => {
+          const saved = config.capabilities[`api:${model.id}`];
+          if (!force && saved && !saved.pendingVision) return false;
+          return (
+            force || !checked.current.has(JSON.stringify(["api", model.id]))
+          );
+        })
+        .slice(0, autoAPIChecks);
+      for (const model of modelChecks)
+        checked.current.add(JSON.stringify(["api", model.id]));
+      const firstStage = (id: string): "text" | "vision" =>
+        !force && config.capabilities[id]?.pendingVision ? "vision" : "text";
+      await checkAll(
+        [...pending, ...modelChecks.map(({ id }) => `api:${id}`)],
+        firstStage,
+        config,
+      );
+      if (modelChecks.length) warnWithoutVision(models);
+    } catch (e) {
+      toast.error(String(e));
+    } finally {
+      refreshing.current = false;
+      setLoading(false);
+      setProbed(true);
+      setModelRefresh((n) => n + 1);
+    }
+  };
+  useEffect(() => {
+    if (open) void refresh();
+  }, [open]);
+  const checkModel = async (model: AgentModel) => {
+    const snapshot = useReaderStore.getState().aiConfig;
+    if (!snapshot || !validProbeWait) return;
+    checked.current.add(JSON.stringify(["api", model.id]));
+    await checkAll(
+      [`api:${model.id}`],
+      () => "text",
+      snapshot,
+      probeSeconds || undefined,
+    );
+    warnWithoutVision(apiModels);
+  };
+  const checkTools = async (model: AgentModel) => {
+    const snapshot = useReaderStore.getState().aiConfig;
+    if (!snapshot) return;
+    setSaving(true);
+    try {
+      const capability = await api.testAI("api", "tools", model.id);
+      const current = useReaderStore.getState().aiConfig;
+      if (current && current.api.url === snapshot.api.url)
+        setAIConfig({
+          ...current,
+          capabilities: {
+            ...current.capabilities,
+            [`api:${model.id}`]: capability,
+          },
+        });
+      if (capability.tools !== "passed")
+        toast.error(
+          capability.toolError || "工具调用未通过，仍可使用检索辅助回答",
+        );
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  };
+  const saveConfig = async (
+    change: (latest: AIConfig) => AIConfig,
+    refreshAfter = true,
+  ) => {
+    setSaving(true);
+    try {
+      setAIConfig(await api.saveAIConfig(change(await api.aiConfig())));
+    } catch (e) {
+      toast.error((e as Error).message);
+      return false;
+    } finally {
+      setSaving(false);
+    }
+    if (refreshAfter) await refresh();
+    return true;
+  };
+  const saveAPI = async (connection: APIConnection) => {
+    // A new address or key is a new connection: test its models again.
+    for (const key of checked.current)
+      if (key.startsWith('["api"')) checked.current.delete(key);
+    if (await saveConfig((latest) => ({ ...latest, api: connection }), false)) {
+      await refresh();
+    }
+  };
+  const saveAPIModels = async (change: (models: string[]) => string[]) => {
+    await saveConfig((latest) => ({
+      ...latest,
+      apiModels: change(latest.apiModels ?? []),
+    }));
+  };
+  const checkStatus = (id: string, capability?: AICapability) => (
+    <div className="flex flex-wrap gap-x-5">
+      {(
+        [
+          ["text", "文本推理"],
+          ["vision", "图片理解"],
+        ] as const
+      ).map(([kind, label]) => {
+        const stage = testing.get(id);
+        const pending =
+          stage === "text" || (stage === "vision" && kind === "vision");
+        const error = errors[`${id}:${kind}`] || capability?.error;
+        const ready =
+          !errors[`${id}:text`] &&
+          !errors[`${id}:${kind}`] &&
+          !!capability?.[kind];
+        const state = pending ? "pending" : ready ? "passed" : "failed";
+        const apiModel = id.startsWith("api:");
+        return (
+          <div
+            key={kind}
+            className="agent-check-status"
+            role="status"
+            aria-live="polite"
+            aria-label={`${label}：${pending ? "检测中" : ready ? "已通过" : "未通过"}`}
+          >
+            <span className="agent-check-icon" key={state} data-state={state}>
+              {pending ? (
+                <LoaderCircle className="animate-spin" />
+              ) : ready ? (
+                <CircleCheck />
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger
+                    render={<Button variant="ghost" size="icon" />}
+                    className="pointer-events-auto size-4 p-0 text-inherit hover:bg-transparent hover:text-inherit"
+                    aria-label={`${label}未通过：查看详情`}
+                  >
+                    <TriangleAlert />
+                  </TooltipTrigger>
+                  <TooltipContent className="block max-w-xs space-y-2 leading-5 break-words">
+                    <p>
+                      {error ||
+                        (capability?.text
+                          ? "文本推理可用，图片理解未通过检测。"
+                          : apiModel
+                            ? "检测未通过，请检查 API 地址、Key、模型名称、网络或额度。"
+                            : "检测未通过，请检查终端中的 Agent、API 配置、网络或额度。")}
+                    </p>
+                    {!capability?.text && !apiModel && (
+                      <p>
+                        支持 CLI 当前使用的订阅登录或 API Key
+                        配置；以实际调用结果为准。
+                      </p>
+                    )}
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </span>
+            <span>{label}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+  const apiReady = (kind: "text" | "vision") =>
+    // The API agent uses a separate model for each task. One passing model
+    // is enough for the corresponding capability on this summary card.
+    apiModels.some((model) => {
+      const id = `api:${model.id}`;
+      return (
+        !errors[`${id}:text`] &&
+        !errors[`${id}:${kind}`] &&
+        !!config?.capabilities[id]?.[kind]
+      );
+    });
+  const apiPending = () =>
+    loading || [...testing.keys()].some((id) => id.startsWith("api:"));
+  const cliReady = (name: string, kind: "text" | "vision") =>
+    !errors[`${name}:text`] &&
+    !errors[`${name}:${kind}`] &&
+    !!config?.capabilities[name]?.[kind];
+  // Why an agent card cannot be selected, or "" once it passed every check.
+  const agentBlocker = (name: string) => {
+    const installed = providers.find((p) => p.id === name)?.installed;
+    if (name === "api") {
+      if (!installed) return "需要先配置 API Key";
+      if (apiReady("text") && apiReady("vision")) return "";
+      if (apiPending()) return "正在检测，请稍候";
+      if (apiModelsError) return "无法获取模型列表，请检查 API 配置";
+      return apiReady("text")
+        ? "没有图片理解能力"
+        : "没有通过文本推理检测的模型";
+    }
+    if (loading || (testing.has(name) && !config?.capabilities[name]))
+      return "正在检测，请稍候";
+    if (!installed) return "未安装 CLI";
+    if (!cliReady(name, "text")) return "文本推理未通过检测";
+    return cliReady(name, "vision") ? "" : "没有图片理解能力";
+  };
+  // Read by the first-run tour to point at an agent that works.
+  const agentStatus = (name: string) => {
+    const installed = providers.find((p) => p.id === name)?.installed;
+    if (name === "api") {
+      if (!installed) return "missing";
+      return !agentBlocker(name)
+        ? "ready"
+        : apiPending()
+          ? "pending"
+          : "failed";
+    }
+    if (loading || (testing.has(name) && !config?.capabilities[name]))
+      return "pending";
+    if (!probed && !providers.length)
+      return config?.capabilities[name]
+        ? cliReady(name, "text") && cliReady(name, "vision")
+          ? "ready"
+          : "failed"
+        : "pending";
+    if (!installed) return "missing";
+    return agentBlocker(name) ? "failed" : "ready";
+  };
+  const selectAgent = async (name: string) => {
+    const blocker = agentBlocker(name);
+    if (blocker) {
+      toast.warning(`${providerLabel(name)} 未配置好：${blocker}`);
+      return;
+    }
+    // Serialize writes and retain the last choice while a previous save runs.
+    pendingAgent.current = name;
+    if (agentSaveRunning.current) return;
+    agentSaveRunning.current = true;
+    setSaving(true);
+    try {
+      while (pendingAgent.current) {
+        const next = pendingAgent.current;
+        pendingAgent.current = null;
+        try {
+          const latest = await api.aiConfig();
+          setAIConfig(
+            latest.primary === next
+              ? latest
+              : await api.saveAIConfig({ ...latest, primary: next }),
+          );
+          rememberCard(next);
+          setModelRefresh((n) => n + 1);
+        } catch (e) {
+          toast.error((e as Error).message);
+        }
+      }
+    } finally {
+      agentSaveRunning.current = false;
+      setSaving(false);
+    }
+  };
+  const apiCardStatus = () => (
+    <span className="flex flex-wrap gap-x-5">
+      {(["text", "vision"] as const).map((kind) => {
+        const label = kind === "text" ? "文本推理" : "图片理解";
+        const ready = apiReady(kind);
+        const pending = !ready && apiPending();
+        const state = pending ? "pending" : ready ? "passed" : "failed";
+        return (
+          <span
+            key={kind}
+            className="agent-check-status"
+            role="status"
+            aria-live="polite"
+            aria-label={`${label}：${pending ? "检测中" : ready ? "已通过" : "未通过"}`}
+          >
+            <span className="agent-check-icon" data-state={state}>
+              {pending ? (
+                <LoaderCircle className="animate-spin" />
+              ) : ready ? (
+                <CircleCheck />
+              ) : (
+                <TriangleAlert />
+              )}
+            </span>
+            <span>{label}</span>
+          </span>
+        );
+      })}
+    </span>
+  );
+  const installed = (name: string) =>
+    !!providers.find((p) => p.id === name)?.installed;
+  // Explains why a CLI agent cannot be used and points at the guide.
+  const cliHint = (name: string) => {
+    const label = providerLabel(name);
+    toast.warning(
+      installed(name) ? `${label} 还不能使用` : `未安装 ${label} CLI`,
+      {
+        description: installed(name)
+          ? `请在终端运行 ${cliLogin[name]} 完成登录，然后重新检测。`
+          : `请先安装 ${label} CLI，在终端运行 ${cliLogin[name]} 登录，然后重新检测。`,
+        action: onOpenGuide && { label: "查看指南", onClick: onOpenGuide },
+      },
+    );
+  };
+  const openAPIConfig = () => {
+    setDeckOpen(true);
+    setAPIDetails(true);
+  };
+  // Handles a card click in the open deck; true moves the card to the middle.
+  const pickCard = (id: string) => {
+    if (!config || aiModelSaving) return false;
+    const status = agentStatus(id);
+    if (id === "api" && status === "missing") {
+      openAPIConfig();
+      return false;
+    }
+    if (status === "pending") {
+      toast.info("正在检测 Agent，请稍候");
+      return false;
+    }
+    if (id !== "api" && status !== "ready") {
+      cliHint(id);
+      return false;
+    }
+    void selectAgent(id);
+    return status === "ready";
+  };
+  const openDetail = (id: string) => {
+    const status = agentStatus(id);
+    if (status === "ready") return true;
+    if (status === "pending") toast.info("正在检测 Agent，请稍候");
+    else if (id === "api") toast.warning("请先配置 API Key");
+    else cliHint(id);
+    return false;
+  };
+  const deckItems: DeckItem[] = [
+    ...(["codex", "claude", "kimi", "api"] as const).map((name): DeckItem => {
+      const capability = config?.capabilities[name];
+      const ready = installed(name);
+      const selected = config?.primary === name;
+      return {
+        id: name,
+        title: providerLabel(name),
+        subtitle:
+          !loading && !ready
+            ? name === "api"
+              ? "未配置"
+              : "未安装"
+            : undefined,
+        icon: <ProviderIcon provider={name} size={40} />,
+        status: agentStatus(name),
+        selected,
+        checks:
+          name === "api"
+            ? ready && apiCardStatus()
+            : (testing.has(name) || ready || capability) &&
+              checkStatus(name, capability),
+        passed:
+          name === "api"
+            ? ready && apiReady("text") && apiReady("vision")
+            : !testing.has(name) &&
+              cliReady(name, "text") &&
+              cliReady(name, "vision"),
+        tour: "agent-card",
+        extra: name === "api" && (
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="pointer-events-auto -mb-1"
+            aria-label="配置 API Key"
+            title="配置 API Key"
+            onClick={openAPIConfig}
+          >
+            <Pencil />
+          </Button>
+        ),
+      };
+    }),
+  ];
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        data-tour="settings"
+        className="settings-dialog p-6 sm:max-w-3xl"
+      >
+        <DialogHeader>
+          <DialogTitle>设置</DialogTitle>
+          <DialogDescription className="sr-only">
+            Agent 连接、显示、阅读、诊断与{libraryModes[currentLibrary].label}
+          </DialogDescription>
+        </DialogHeader>
+        <Tabs defaultValue="agent" className="settings-tabs">
+          <TabsList aria-label="设置分类" className="settings-nav">
+            <TabsTrigger value="agent" data-tour="settings-agent-tab">
+              <Bot />
+              Agent
+            </TabsTrigger>
+            <TabsTrigger value="display">
+              <Monitor />
+              显示
+            </TabsTrigger>
+            <TabsTrigger value="reading">
+              <Highlighter />
+              阅读
+            </TabsTrigger>
+            <TabsTrigger value="diagnostics">
+              <FileText />
+              诊断
+            </TabsTrigger>
+            <TabsTrigger value="papers">
+              <Library />
+              {libraryModes[currentLibrary].label}
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent
+            value="diagnostics"
+            className="settings-panel"
+            keepMounted
+          >
+            {window.neoreadDesktop?.proxySettings && (
+              <ProxySettings open={open} />
+            )}
+            <section>
+              <PaperRefreshSettings open={open} />
+            </section>
+            <section>
+              <LegacyAnnotationMigration />
+            </section>
+            <section>
+              <div className="flex items-start justify-between gap-3">
+                <h3 className="shrink-0 pt-2 text-sm font-medium">本地日志</h3>
+                <DiagnosticExport />
+              </div>
+              <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                导出全部已保留日志和运行环境供开发者排查。凭据、用户路径和翻译诊断中的正文会脱敏；不包含文档、聊天或批注。日志最多保留
+                7 天、100 MiB，仅在本机保存。
+              </p>
+            </section>
+          </TabsContent>
+          <TabsContent value="display" className="settings-panel" keepMounted>
+            <section>
+              <div className="flex items-center justify-between gap-3">
+                <h3
+                  id="primary-library-label"
+                  className="shrink-0 text-sm font-medium"
+                >
+                  主要模式
+                </h3>
+                <Tabs
+                  className="min-w-0"
+                  value={primaryLibraryMode(libraryPreferences)}
+                  onValueChange={(value) => {
+                    if (value !== "papers" && value !== "books") return;
+                    void updateLibraryPreferences({ primaryMode: value }).catch(
+                      (error) => toast.error((error as Error).message),
+                    );
+                  }}
+                >
+                  <TabsList
+                    aria-labelledby="primary-library-label"
+                    className="w-full"
+                  >
+                    {(Object.keys(libraryModes) as LibraryMode[]).map(
+                      (mode) => (
+                        <TabsTrigger key={mode} value={mode}>
+                          {libraryModes[mode].label}
+                        </TabsTrigger>
+                      ),
+                    )}
+                  </TabsList>
+                </Tabs>
+              </div>
+            </section>
+            <section>
+              <AppearancePicker
+                theme={theme}
+                setTheme={setTheme}
+                layout="settings"
+              />
+            </section>
+            <section className="space-y-3">
+              <div className="flex items-center justify-between gap-3 text-sm">
+                <span id="authors-label">显示作者名称</span>
+                <Switch
+                  aria-labelledby="authors-label"
+                  checked={paperPreferences.showAuthors !== false}
+                  onCheckedChange={(checked) =>
+                    void savePaperPreferences((prefs) => ({
+                      ...prefs,
+                      showAuthors: !!checked,
+                    }))
+                  }
+                />
+              </div>
+              <div className="flex items-center justify-between gap-3 text-sm">
+                <span id="motion-label">动态效果</span>
+                <Switch
+                  id="motion-enabled"
+                  aria-labelledby="motion-label"
+                  checked={theme.reducedMotion !== true}
+                  onCheckedChange={(enabled) =>
+                    setTheme({ reducedMotion: !enabled })
+                  }
+                />
+              </div>
+            </section>
+            <section>
+              <fieldset>
+                <legend className="mb-1 text-sm font-medium">表格显示列</legend>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                  {(Object.keys(columnLabels) as PaperColumn[]).map(
+                    (column) => (
+                      <label
+                        key={column}
+                        htmlFor={`paper-column-${column}`}
+                        className="flex items-center gap-2 text-sm"
+                      >
+                        <Checkbox
+                          id={`paper-column-${column}`}
+                          checked={(
+                            paperPreferences.columns ?? defaultColumns
+                          ).includes(column)}
+                          onCheckedChange={() =>
+                            void savePaperPreferences((prefs) => ({
+                              ...prefs,
+                              columns: toggleColumn(
+                                prefs.columns ?? defaultColumns,
+                                column,
+                              ),
+                            }))
+                          }
+                        />
+                        {columnLabels[column]}
+                      </label>
+                    ),
+                  )}
+                </div>
+              </fieldset>
+            </section>
+            <section>
+              <h3 className="mb-3 text-sm font-medium">期刊指标</h3>
+              <div className="flex items-center justify-between gap-4 text-sm">
+                <span>
+                  在论文库显示 easyScholar 期刊指标
+                  <span className="block text-xs text-muted-foreground">
+                    默认开启；配置 SecretKey 后按论文出处查询。
+                  </span>
+                </span>
+                <Switch
+                  aria-label="在论文库显示 easyScholar 期刊指标"
+                  checked={journalRank?.enabled ?? true}
+                  disabled={!journalRank || journalSaving}
+                  onCheckedChange={(checked) =>
+                    void saveJournalRank({ enabled: !!checked })
+                  }
+                />
+              </div>
+              {journalRank?.enabled && (
+                <>
+                  <div className="mt-4 flex items-center gap-2">
+                    <Input
+                      type="password"
+                      autoComplete="off"
+                      aria-label="easyScholar SecretKey"
+                      placeholder={
+                        journalRank.hasKey
+                          ? "已保存 SecretKey；输入新密钥可替换"
+                          : "输入 easyScholar SecretKey"
+                      }
+                      value={journalKey}
+                      onChange={(event) => setJournalKey(event.target.value)}
+                    />
+                    <Button
+                      variant="outline"
+                      disabled={!journalKey.trim() || journalSaving}
+                      onClick={() =>
+                        void saveJournalRank({}, journalKey.trim())
+                      }
+                    >
+                      保存
+                    </Button>
+                  </div>
+                  <div className="mt-4 flex items-center gap-2 text-xs">
+                    <span id="journal-rank-filter-label">指标筛选</span>
+                    <Tabs
+                      value={journalRank.filterMode}
+                      className="ml-auto w-1/2 min-w-fit"
+                      onValueChange={(value) => {
+                        if (value !== "include" && value !== "exclude") return;
+                        void saveJournalRank({
+                          filterMode: value,
+                          selected:
+                            value === "include"
+                              ? journalRank.available.map((field) => field.key)
+                              : [],
+                        });
+                      }}
+                    >
+                      <TabsList
+                        aria-labelledby="journal-rank-filter-label"
+                        className="w-full"
+                      >
+                        <TabsTrigger value="include" disabled={journalSaving}>
+                          只显示选中的指标
+                        </TabsTrigger>
+                        <TabsTrigger value="exclude" disabled={journalSaving}>
+                          隐藏选中的指标
+                        </TabsTrigger>
+                      </TabsList>
+                    </Tabs>
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {journalRank.filterMode === "include"
+                      ? "勾选要显示的指标。"
+                      : "勾选不想显示的指标。"}
+                    无数据或超出标题列宽度的标签会省略。
+                  </p>
+                  <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-2">
+                    {journalRank.available.map((field) => (
+                      <label
+                        key={field.key}
+                        className="flex min-w-0 items-center gap-2 text-xs"
+                      >
+                        <Checkbox
+                          checked={journalRank.selected.includes(field.key)}
+                          disabled={journalSaving}
+                          onCheckedChange={(checked) =>
+                            void saveJournalRank({
+                              selected: checked
+                                ? [...journalRank.selected, field.key]
+                                : journalRank.selected.filter(
+                                    (value) => value !== field.key,
+                                  ),
+                            })
+                          }
+                        />
+                        <span className="truncate" title={field.name}>
+                          {field.name}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                  {journalRank.hasKey && (
+                    <Button
+                      className="mt-4"
+                      size="sm"
+                      variant="outline"
+                      onClick={() =>
+                        window.dispatchEvent(
+                          new Event("neoread:journal-rank-refresh"),
+                        )
+                      }
+                    >
+                      <RefreshCw />
+                      刷新当前列表的期刊指标
+                    </Button>
+                  )}
+                </>
+              )}
+            </section>
+          </TabsContent>
+          <TabsContent value="reading" className="settings-panel" keepMounted>
+            <section>
+              <div className="flex items-center justify-between gap-3">
+                <h3
+                  id="document-context-label"
+                  className="min-w-0 text-sm font-medium"
+                >
+                  文档上下文上限
+                </h3>
+                <Input
+                  aria-labelledby="document-context-label"
+                  className="w-48 shrink-0"
+                  type="number"
+                  min={8192}
+                  max={1048576}
+                  step={1024}
+                  defaultValue={theme.documentContextTokens || ""}
+                  placeholder="自动获取"
+                  key={theme.documentContextTokens}
+                  onBlur={(e) => {
+                    const n = Number(e.currentTarget.value);
+                    if (
+                      Number.isInteger(n) &&
+                      (n === 0 || n >= 8192) &&
+                      n <= 1048576
+                    )
+                      setTheme({ documentContextTokens: n });
+                    else
+                      e.currentTarget.value = String(
+                        theme.documentContextTokens || "",
+                      );
+                  }}
+                />
+              </div>
+            </section>
+            <section className="space-y-4">
+              <h3 className="text-sm font-medium">阅读交互</h3>
+              <label className="flex items-center justify-between gap-4 text-sm">
+                <span>多文档标签页</span>
+                <Switch
+                  aria-label="多文档标签页"
+                  checked={theme.documentTabs === true}
+                  onCheckedChange={(checked) =>
+                    setTheme({ documentTabs: !!checked })
+                  }
+                />
+              </label>
+              <label className="flex items-center justify-between gap-4 text-sm">
+                <span>自动复制选中文字</span>
+                <Switch
+                  aria-label="自动复制选中文字"
+                  checked={theme.autoCopySelection === true}
+                  onCheckedChange={(checked) =>
+                    setTheme({ autoCopySelection: !!checked })
+                  }
+                />
+              </label>
+              <label className="flex items-center justify-between gap-4 text-sm">
+                <span>
+                  原文译文悬停关联
+                  <span className="block text-xs text-muted-foreground">
+                    悬停时提示另一侧对应的完整句子
+                  </span>
+                </span>
+                <Switch
+                  aria-label="原文译文悬停关联"
+                  checked={theme.linkTranslationAnnotations !== false}
+                  onCheckedChange={(checked) =>
+                    setTheme({ linkTranslationAnnotations: !!checked })
+                  }
+                />
+              </label>
+              <label className="flex items-center justify-between gap-4 text-sm">
+                <span>
+                  文字重排
+                  <span className="block text-xs text-muted-foreground">
+                    按段落重排正文，译文显示在对应原文下方。
+                    <span className="font-semibold text-foreground">
+                      建议配置 Agent 后再开启，部分原文的 LaTeX 公式需要依靠 AI
+                      识别
+                    </span>
+                  </span>
+                </span>
+                <Switch
+                  aria-label="文字重排"
+                  checked={theme.textReflow === true}
+                  onCheckedChange={(checked) =>
+                    setTheme({ textReflow: !!checked })
+                  }
+                />
+              </label>
+              <label className="flex items-center justify-between gap-4 text-sm">
+                <span>点击段落聚焦</span>
+                <Switch
+                  aria-label="点击段落聚焦"
+                  checked={theme.blockFocus !== false}
+                  onCheckedChange={(checked) =>
+                    setTheme({ blockFocus: !!checked })
+                  }
+                />
+              </label>
+            </section>
+            <section>
+              <HighlightColorsEditor />
+            </section>
+          </TabsContent>
+          <TabsContent value="papers" className="settings-panel" keepMounted>
+            {window.neoreadDesktop?.libraryLocation && (
+              <LibraryLocationSettings open={open} />
+            )}
+            {currentLibrary === "papers" && (
+              <>
+                <CitePluginSettings open={open} />
+                <section>
+                  <h3 className="mb-3 text-sm font-medium">导入设置</h3>
+                  <label className="flex items-center justify-between gap-4 text-sm">
+                    <span>
+                      导入 PDF 后自动补全论文信息
+                      <span className="block text-xs text-muted-foreground">
+                        通过文中的 DOI 或 arXiv 编号向 arXiv、Crossref 与
+                        Semantic Scholar 查询
+                      </span>
+                    </span>
+                    <Switch
+                      aria-label="导入 PDF 后自动补全论文信息"
+                      checked={paperPreferences.autoLookup !== false}
+                      onCheckedChange={(checked) =>
+                        void updateLibraryPreferences({
+                          papers: {
+                            ...paperPreferences,
+                            autoLookup: !!checked,
+                          },
+                        }).catch((e) => toast.error(e.message))
+                      }
+                    />
+                  </label>
+                  <label className="mt-4 flex items-center justify-between gap-4 text-sm">
+                    <span>
+                      导入后生成文档概要
+                      <span className="block text-xs text-muted-foreground">
+                        使用已配置的文字模型，单独记录用量；已有文档按需生成。
+                      </span>
+                    </span>
+                    <Switch
+                      aria-label="导入后生成文档概要"
+                      checked={theme.autoGenerateOverview ?? false}
+                      onCheckedChange={(checked) =>
+                        setTheme({ autoGenerateOverview: !!checked })
+                      }
+                    />
+                  </label>
+                  <AutoTranslationSettings theme={theme} setTheme={setTheme} />
+                </section>
+                <PaperServiceSettings open={open} />
+              </>
+            )}
+          </TabsContent>
+          <TabsContent value="agent" className="settings-panel" keepMounted>
+            <section
+              data-tour="agent-section"
+              data-deck-open={deckOpen}
+              data-detecting={!probed || loading || testing.size > 0}
+            >
+              <div data-tour="agent-connection">
+                <div className="mb-3 flex items-center justify-between">
+                  <h3 className="text-sm font-medium">Agent 连接</h3>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label="重新检测 Agent"
+                    title="重新检测 Agent"
+                    data-tour="agent-refresh"
+                    disabled={loading || testing.size > 0}
+                    onClick={() => void refresh(true)}
+                  >
+                    <RefreshCw className={loading ? "animate-spin" : ""} />
+                  </Button>
+                </div>
+                <AgentDeck
+                  items={deckItems}
+                  disabled={!config}
+                  front={config?.primary || deckFront}
+                  open={deckOpen}
+                  onOpenChange={setDeckOpen}
+                  panel={
+                    apiDetails ? (
+                      <div className="p-5" data-tour="api-panel">
+                        <Button
+                          variant="ghost"
+                          aria-label="返回 Agent 设置"
+                          data-tour="api-back"
+                          onClick={() => setAPIDetails(false)}
+                        >
+                          <ChevronLeft />
+                          API 配置
+                        </Button>
+                        <div className="settings-panel" data-tour="api-details">
+                          <section data-tour="api-form">
+                            {config && (
+                              <APIAgentForm
+                                connection={config.api}
+                                disabled={saving || testing.size > 0}
+                                onSave={saveAPI}
+                              />
+                            )}
+                            {config &&
+                              providers.some(
+                                (p) => p.id === "api" && p.installed,
+                              ) && (
+                                <div className="mt-6">
+                                  <h3 className="mb-1 text-sm font-medium">
+                                    模型
+                                  </h3>
+                                  <label className="mb-1 flex items-center gap-3 text-xs text-muted-foreground">
+                                    检测等待上限（秒）
+                                    <Input
+                                      type="number"
+                                      min={0}
+                                      max={600}
+                                      step={1}
+                                      value={probeWait}
+                                      onChange={(event) =>
+                                        setProbeWait(event.target.value)
+                                      }
+                                      aria-label="检测等待上限（秒）"
+                                      aria-describedby="api-probe-wait-help"
+                                      aria-invalid={!validProbeWait}
+                                      placeholder="默认"
+                                      className="h-7 w-24"
+                                    />
+                                  </label>
+                                  <p
+                                    id="api-probe-wait-help"
+                                    className="mb-3 text-xs text-muted-foreground"
+                                  >
+                                    仅用于手动检测，每阶段最多 600 秒；留空或 0
+                                    使用文本 45 秒、图片 90 秒
+                                  </p>
+                                  {!validProbeWait && (
+                                    <p
+                                      className="mb-2 text-xs text-destructive"
+                                      role="alert"
+                                    >
+                                      请输入 0–600 的整数
+                                    </p>
+                                  )}
+                                  <ul className="api-model-list">
+                                    {apiModels.map((model) => {
+                                      const id = `api:${model.id}`;
+                                      const result = config.capabilities[id];
+                                      const error =
+                                        errors[`${id}:vision`] ||
+                                        errors[`${id}:text`] ||
+                                        result?.error;
+                                      const retry = result || error;
+                                      const timings = [
+                                        !errors[`${id}:text`] &&
+                                        result?.textFirstOutputMs != null
+                                          ? `文本首输出 ${(result.textFirstOutputMs / 1000).toFixed(2)} s`
+                                          : "",
+                                        !errors[`${id}:text`] &&
+                                        !errors[`${id}:vision`] &&
+                                        result?.visionFirstOutputMs != null
+                                          ? `图片首输出 ${(result.visionFirstOutputMs / 1000).toFixed(2)} s`
+                                          : "",
+                                      ]
+                                        .filter(Boolean)
+                                        .join(" · ");
+                                      return (
+                                        <li
+                                          key={model.id}
+                                          className="flex min-h-9 flex-wrap items-center gap-x-3 gap-y-1 py-1"
+                                        >
+                                          <span
+                                            className="min-w-0 flex-1 truncate text-sm"
+                                            title={model.id}
+                                          >
+                                            {model.name}
+                                          </span>
+                                          {(testing.has(id) ||
+                                            result ||
+                                            error) &&
+                                            checkStatus(id, result)}
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            disabled={
+                                              saving ||
+                                              testing.has(id) ||
+                                              !validProbeWait
+                                            }
+                                            aria-label={`${retry ? "重新检测" : "检测"} ${model.id}`}
+                                            onClick={() =>
+                                              void checkModel(model)
+                                            }
+                                          >
+                                            {retry ? "重新检测" : "检测"}
+                                          </Button>
+                                          {result?.text && (
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              disabled={
+                                                saving || testing.has(id)
+                                              }
+                                              onClick={() =>
+                                                void checkTools(model)
+                                              }
+                                              title={result.toolError}
+                                            >
+                                              {result.tools === "passed"
+                                                ? "检索工具已通过"
+                                                : "检测检索工具"}
+                                            </Button>
+                                          )}
+                                          {model.custom && (
+                                            <Button
+                                              variant="destructive-ghost"
+                                              size="icon-sm"
+                                              aria-label={`移除 ${model.name}`}
+                                              title="移除"
+                                              disabled={
+                                                saving || testing.has(id)
+                                              }
+                                              onClick={() =>
+                                                void saveAPIModels((models) =>
+                                                  models.filter(
+                                                    (item) => item !== model.id,
+                                                  ),
+                                                )
+                                              }
+                                            >
+                                              <X />
+                                            </Button>
+                                          )}
+                                          {!testing.has(id) &&
+                                            (timings || error) && (
+                                              <div className="w-full break-words text-xs text-muted-foreground">
+                                                {timings && (
+                                                  <p title="本次首次收到思考或正文的耗时，不含模型列表加载，受网络和服务负载影响">
+                                                    {timings}
+                                                  </p>
+                                                )}
+                                                {error && <p>{error}</p>}
+                                              </div>
+                                            )}
+                                        </li>
+                                      );
+                                    })}
+                                  </ul>
+                                  {apiModelsError && (
+                                    <p
+                                      className="mt-1 text-xs text-muted-foreground"
+                                      role="alert"
+                                    >
+                                      {apiModelsError}
+                                    </p>
+                                  )}
+                                  <APIModelForm
+                                    disabled={saving}
+                                    onAdd={(id) =>
+                                      saveAPIModels((models) => [...models, id])
+                                    }
+                                  />
+                                </div>
+                              )}
+                          </section>
+                        </div>
+                      </div>
+                    ) : null
+                  }
+                  onPanelClose={() => {
+                    setAPIDetails(false);
+                  }}
+                  onFallback={rememberCard}
+                  usable={(id) => agentStatus(id) === "ready"}
+                  onPick={pickCard}
+                  onDetail={openDetail}
+                  onRefresh={() => void refresh(true)}
+                  refreshing={loading}
+                  loadCalls={(id, signal) =>
+                    recentAgentCalls(id, documents, signal)
+                  }
+                />
+              </div>
+              {config && (
+                <div className="mt-4 flex flex-col gap-2">
+                  <div data-tour="task-models">
+                    <TaskModels
+                      disabled={saving || testing.size > 0}
+                      refreshKey={modelRefresh}
+                      onAPIModelsLoaded={setAPIModels}
+                    />
+                  </div>
+                </div>
+              )}
+              <p className="mt-4 flex gap-2 text-xs leading-5 text-muted-foreground">
+                <CircleHelp className="mt-0.5 size-4 shrink-0" />
+                NeoRead 调用已安装的 CLI，不读取账号凭据，保护您的隐私。
+              </p>
+            </section>
+            {config && (
+              <WebSearchSettings
+                value={config.webSearch}
+                disabled={aiModelSaving || (saving && !searchSaving)}
+                onSave={async (webSearch) => {
+                  setSearchSaving(true);
+                  try {
+                    return await saveConfig(
+                      (latest) => ({ ...latest, webSearch }),
+                      false,
+                    );
+                  } finally {
+                    setSearchSaving(false);
+                  }
+                }}
+              />
+            )}
+            <CommandLineSettings open={open} />
+            {config && (
+              <TranslationPromptSettings
+                value={config.translationPrompt ?? ""}
+                disabled={saving || aiModelSaving || testing.size > 0}
+                onSave={(translationPrompt) =>
+                  saveConfig((latest) => ({ ...latest, translationPrompt }))
+                }
+              />
+            )}
+          </TabsContent>
+        </Tabs>
+      </DialogContent>
+    </Dialog>
+  );
+}
