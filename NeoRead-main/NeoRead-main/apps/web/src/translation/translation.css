@@ -97,6 +97,20 @@
 .pdf-reading .translation-document[data-column] section {
   max-width: var(--pdf-column-width);
 }
+/* Mirrored two-column translation: each band flows left column then right. */
+.translation-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: clamp(1.25rem, 4%, 2.5rem);
+  align-items: start;
+}
+.translation-column {
+  min-width: 0;
+}
+/* Keep the focused-column width without overflowing a mirrored cell. */
+.pdf-reading .translation-document[data-column] .translation-columns section {
+  max-width: min(var(--pdf-column-width), 100%);
+}
 .translation-document section {
   position: relative;
   margin: 0 auto 1.25em;

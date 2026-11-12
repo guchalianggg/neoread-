@@ -452,6 +452,11 @@ export interface ReaderTheme {
   linkTranslationAnnotations?: boolean;
   /** Source and translation paragraphs alternate in one reflowed text column. */
   textReflow?: boolean;
+  /**
+   * Two-column PDF pages render their translation in matching mirrored
+   * columns, keeping scroll correspondence with the source layout.
+   */
+  translationMirrorColumns?: boolean;
   /** Clicking a paragraph centers and outlines it, with or without reflow. */
   blockFocus?: boolean;
   translationFontWeight?: "normal" | "bold";
@@ -498,6 +503,7 @@ export const defaultTheme: ReaderTheme = {
   pdfTranslationMargin: 48,
   linkTranslationAnnotations: true,
   textReflow: false,
+  translationMirrorColumns: true,
   blockFocus: true,
   epubFlow: "scroll",
 };

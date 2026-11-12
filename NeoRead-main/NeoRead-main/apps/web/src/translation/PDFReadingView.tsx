@@ -2,6 +2,11 @@ import { figureTarget } from "../readers/figure-references";
 import { readerLayout, updateReaderLayout } from "../neoread-layout";
 import { pdfFocusWidth, pdfTranslationColumn } from "./pdf-column";
 import {
+  columnBands,
+  pageColumns,
+  type TranslationBand,
+} from "../readers/pdf-columns";
+import {
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -270,9 +275,52 @@ export function PDFReadingView({
   const blockImages =
     imageCache?.theme === imageTheme ? imageCache.cache : undefined;
   const imageKey = `${imageTheme}:${blockImages ? "ready" : "pending"}`;
-  const visibleBlocks = blocks.filter(
-    (b) => !isPDFPageDecoration(b) && !equationNumbers.pairedIds.has(b.id),
+  const visibleBlocks = useMemo(
+    () =>
+      blocks.filter(
+        (b) => !isPDFPageDecoration(b) && !equationNumbers.pairedIds.has(b.id),
+      ),
+    [blocks, equationNumbers],
   );
+  // Two-column pages mirror their columns in the translation so both panes
+  // scroll through matching vertical bands; single-column pages stay flat.
+  const mirrorColumns = theme.translationMirrorColumns !== false && !reflow;
+  const columnLayouts = useMemo(
+    () => (mirrorColumns ? pageColumns(blocks) : undefined),
+    [blocks, mirrorColumns],
+  );
+  const translationSegments = useMemo(() => {
+    if (!columnLayouts) return undefined;
+    const raw: (
+      | { kind: "block"; block: PDFBlock }
+      | { kind: "page"; page: number; blocks: PDFBlock[] }
+    )[] = [];
+    let open: { kind: "page"; page: number; blocks: PDFBlock[] } | undefined;
+    for (const block of visibleBlocks) {
+      if (columnLayouts.get(block.page)?.columns === 2) {
+        if (!open || open.page !== block.page) {
+          open = { kind: "page", page: block.page, blocks: [] };
+          raw.push(open);
+        }
+        open.blocks.push(block);
+        continue;
+      }
+      open = undefined;
+      raw.push({ kind: "block", block });
+    }
+    return raw.map((segment) =>
+      segment.kind === "page"
+        ? {
+            kind: "page" as const,
+            page: segment.page,
+            bands: columnBands(
+              segment.blocks,
+              columnLayouts.get(segment.page),
+            ),
+          }
+        : segment,
+    );
+  }, [columnLayouts, visibleBlocks]);
   const [pageWidth, setPageWidth] = useState<number>();
   useEffect(() => {
     let current = true;
@@ -1004,6 +1052,144 @@ export function PDFReadingView({
       </Tabs>
     </div>
   );
+  // One translated block, shared by the flat flow and mirrored column bands.
+  const renderBlock = (block: PDFBlock) => {
+    const translated = byId.get(block.id),
+      noteIndexes = annotations.flatMap((a) => {
+        const mark =
+          a.location.type === "pdf"
+            ? a.location.translation
+            : undefined;
+        return mark
+          ? (mark.ranges ?? [mark])
+              .filter(
+                (r) =>
+                  r.blockId === block.id &&
+                  r.sourceHash === translated?.sourceHash,
+              )
+              .flatMap((r) => r.sentenceIndexes)
+          : [];
+      });
+    const text = (
+      <TranslationText
+        block={block}
+        onCitation={(blockId, label) =>
+          void visitCitation(blockId, label)
+        }
+        formulaNumber={equationNumbers.byFormula.get(block.id)}
+        translation={translated}
+        documentId={doc.id}
+        renderImage={blockImages?.url}
+        imageTheme={imageKey}
+        retry={() => void translate(block.id)}
+        paused={processing?.enabled === false}
+      />
+    );
+    const indicator = noteIndexes.length > 0 && (
+      <span
+        className="translation-note-indicator"
+        title="此段有已保存的标注"
+        aria-label="此段有已保存的标注"
+      />
+    );
+    if (reflow)
+      return (
+        <section
+          key={block.id}
+          data-reflow-block={block.id}
+          data-block-kind={block.image ? "image" : "text"}
+          data-label={block.label}
+          data-search-hit={
+            searchBlockIds.includes(block.id) || undefined
+          }
+          className={
+            noteIndexes.length ? "translation-annotated" : ""
+          }
+        >
+          {showsOriginal(block) ? (
+            <div data-translation-block={block.id}>{text}</div>
+          ) : (
+            <TranslationText
+              {...text.props}
+              source={
+                mode !== "translation" && (
+                  <ReflowSource
+                    block={block}
+                    translation={translated}
+                    onCitation={text.props.onCitation}
+                  />
+                )
+              }
+              showTranslation={mode !== "source"}
+              markTranslation
+            />
+          )}
+          {indicator}
+        </section>
+      );
+    return (
+      <section
+        key={block.id}
+        data-translation-block={block.id}
+        data-block-kind={block.image ? "image" : "text"}
+        data-label={block.label}
+        data-hovered={hoveredBlock === block.id || undefined}
+        data-focused={focusedBlock === block.id || undefined}
+        data-search-hit={
+          searchBlockIds.includes(block.id) || undefined
+        }
+        aria-current={focusedBlock === block.id || undefined}
+        tabIndex={0}
+        onClick={(event) => {
+          const pressed = pressedBlock.current;
+          pressedBlock.current = undefined;
+          if (
+            (event.target as Element).closest(
+              "a, button, input, textarea, select, [role=button], [contenteditable=true]",
+            ) ||
+            window.getSelection()?.toString().trim() ||
+            (event.detail > 0 &&
+              (!pressed ||
+                pressed.id !== block.id ||
+                Math.hypot(
+                  event.clientX - pressed.x,
+                  event.clientY - pressed.y,
+                ) > 5))
+          )
+            return;
+          if (theme.blockFocus !== false)
+            deferredFocus.schedule(event.detail, () => {
+              if (!window.getSelection()?.toString().trim())
+                focusTranslation(block);
+            });
+        }}
+        onKeyDown={(event) => {
+          if (
+            event.target === event.currentTarget &&
+            (event.key === "Enter" || event.key === " ")
+          ) {
+            event.preventDefault();
+            focusTranslation(block);
+          }
+        }}
+        onPointerEnter={(event) => {
+          if (!event.buttons && !selecting.current)
+            hover("translation", block.id);
+        }}
+        onPointerMove={(event) => {
+          if (!event.buttons && !selecting.current)
+            hover("translation", block.id);
+        }}
+        onPointerLeave={() => hover("translation")}
+        className={
+          noteIndexes.length ? "translation-annotated" : ""
+        }
+      >
+        {text}
+        {indicator}
+      </section>
+    );
+  };
   return (
     <div
       className="pdf-reading"
@@ -1216,143 +1402,37 @@ export function PDFReadingView({
                     : "正文仍在解析中，完成的段落会在这里显示。"}
                 </p>
               )}
-              {visibleBlocks.map((block) => {
-                const translated = byId.get(block.id),
-                  noteIndexes = annotations.flatMap((a) => {
-                    const mark =
-                      a.location.type === "pdf"
-                        ? a.location.translation
-                        : undefined;
-                    return mark
-                      ? (mark.ranges ?? [mark])
-                          .filter(
-                            (r) =>
-                              r.blockId === block.id &&
-                              r.sourceHash === translated?.sourceHash,
-                          )
-                          .flatMap((r) => r.sentenceIndexes)
-                      : [];
-                  });
-                const text = (
-                  <TranslationText
-                    block={block}
-                    onCitation={(blockId, label) =>
-                      void visitCitation(blockId, label)
-                    }
-                    formulaNumber={equationNumbers.byFormula.get(block.id)}
-                    translation={translated}
-                    documentId={doc.id}
-                    renderImage={blockImages?.url}
-                    imageTheme={imageKey}
-                    retry={() => void translate(block.id)}
-                    paused={processing?.enabled === false}
-                  />
-                );
-                const indicator = noteIndexes.length > 0 && (
-                  <span
-                    className="translation-note-indicator"
-                    title="此段有已保存的标注"
-                    aria-label="此段有已保存的标注"
-                  />
-                );
-                if (reflow)
-                  return (
-                    <section
-                      key={block.id}
-                      data-reflow-block={block.id}
-                      data-block-kind={block.image ? "image" : "text"}
-                      data-label={block.label}
-                      data-search-hit={
-                        searchBlockIds.includes(block.id) || undefined
-                      }
-                      className={
-                        noteIndexes.length ? "translation-annotated" : ""
-                      }
-                    >
-                      {showsOriginal(block) ? (
-                        <div data-translation-block={block.id}>{text}</div>
-                      ) : (
-                        <TranslationText
-                          {...text.props}
-                          source={
-                            mode !== "translation" && (
-                              <ReflowSource
-                                block={block}
-                                translation={translated}
-                                onCitation={text.props.onCitation}
-                              />
-                            )
-                          }
-                          showTranslation={mode !== "source"}
-                          markTranslation
-                        />
-                      )}
-                      {indicator}
-                    </section>
-                  );
-                return (
-                  <section
-                    key={block.id}
-                    data-translation-block={block.id}
-                    data-block-kind={block.image ? "image" : "text"}
-                    data-label={block.label}
-                    data-hovered={hoveredBlock === block.id || undefined}
-                    data-focused={focusedBlock === block.id || undefined}
-                    data-search-hit={
-                      searchBlockIds.includes(block.id) || undefined
-                    }
-                    aria-current={focusedBlock === block.id || undefined}
-                    tabIndex={0}
-                    onClick={(event) => {
-                      const pressed = pressedBlock.current;
-                      pressedBlock.current = undefined;
-                      if (
-                        (event.target as Element).closest(
-                          "a, button, input, textarea, select, [role=button], [contenteditable=true]",
-                        ) ||
-                        window.getSelection()?.toString().trim() ||
-                        (event.detail > 0 &&
-                          (!pressed ||
-                            pressed.id !== block.id ||
-                            Math.hypot(
-                              event.clientX - pressed.x,
-                              event.clientY - pressed.y,
-                            ) > 5))
-                      )
-                        return;
-                      if (theme.blockFocus !== false)
-                        deferredFocus.schedule(event.detail, () => {
-                          if (!window.getSelection()?.toString().trim())
-                            focusTranslation(block);
-                        });
-                    }}
-                    onKeyDown={(event) => {
-                      if (
-                        event.target === event.currentTarget &&
-                        (event.key === "Enter" || event.key === " ")
-                      ) {
-                        event.preventDefault();
-                        focusTranslation(block);
-                      }
-                    }}
-                    onPointerEnter={(event) => {
-                      if (!event.buttons && !selecting.current)
-                        hover("translation", block.id);
-                    }}
-                    onPointerMove={(event) => {
-                      if (!event.buttons && !selecting.current)
-                        hover("translation", block.id);
-                    }}
-                    onPointerLeave={() => hover("translation")}
-                    className={
-                      noteIndexes.length ? "translation-annotated" : ""
-                    }
-                  >
-                    {text}
-                    {indicator}
-                  </section>
-                );
-              })}
+              {translationSegments
+                ? translationSegments.map((segment) =>
+                    segment.kind === "block" ? (
+                      renderBlock(segment.block)
+                    ) : (
+                      <div
+                        key={`page-${segment.page}`}
+                        className="translation-page"
+                        data-columns="2"
+                      >
+                        {segment.bands.map((band, bandIndex) =>
+                          band.kind === "span" ? (
+                            renderBlock(band.block!)
+                          ) : (
+                            <div
+                              key={`band-${bandIndex}`}
+                              className="translation-columns"
+                            >
+                              <div className="translation-column">
+                                {band.left!.map(renderBlock)}
+                              </div>
+                              <div className="translation-column">
+                                {band.right!.map(renderBlock)}
+                              </div>
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    ),
+                  )
+                : visibleBlocks.map((block) => renderBlock(block))}
             </div>
           )
         }

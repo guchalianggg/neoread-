@@ -1082,6 +1082,21 @@ export function Settings({
                 />
               </label>
               <label className="flex items-center justify-between gap-4 text-sm">
+                <span>
+                  译文镜像分栏
+                  <span className="block text-xs text-muted-foreground">
+                    双栏论文的译文按原版面分栏显示，两侧滚动更易对应。
+                  </span>
+                </span>
+                <Switch
+                  aria-label="译文镜像分栏"
+                  checked={theme.translationMirrorColumns !== false}
+                  onCheckedChange={(checked) =>
+                    setTheme({ translationMirrorColumns: !!checked })
+                  }
+                />
+              </label>
+              <label className="flex items-center justify-between gap-4 text-sm">
                 <span>点击段落聚焦</span>
                 <Switch
                   aria-label="点击段落聚焦"

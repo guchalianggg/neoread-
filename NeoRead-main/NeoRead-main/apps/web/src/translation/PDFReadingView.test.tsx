@@ -1541,3 +1541,87 @@ it("starts a first reflow session at its own first page, independently of the PD
     expect.any(Number),
   );
 });
+
+const twoColumnBlocks: PDFBlock[] = [
+  {
+    id: "p1-title",
+    page: 1,
+    label: "paragraph_title",
+    text: "Wide title",
+    bounds: { x: 0.08, y: 0.04, width: 0.84, height: 0.05 },
+  },
+  {
+    id: "p1-l2",
+    page: 1,
+    label: "text",
+    text: "Left column paragraph.",
+    bounds: { x: 0.08, y: 0.5, width: 0.36, height: 0.3 },
+  },
+  {
+    id: "p1-r1",
+    page: 1,
+    label: "text",
+    text: "Right column paragraph one.",
+    bounds: { x: 0.56, y: 0.15, width: 0.36, height: 0.3 },
+  },
+  {
+    id: "p1-r2",
+    page: 1,
+    label: "text",
+    text: "Right column paragraph two.",
+    bounds: { x: 0.56, y: 0.5, width: 0.36, height: 0.3 },
+  },
+];
+
+it("mirrors two-column pages as banded left and right flows", async () => {
+  await renderView(defaultTheme, twoColumnBlocks);
+  await click("仅译文");
+  const page = host.querySelector<HTMLElement>(".translation-page");
+  expect(page?.getAttribute("data-columns")).toBe("2");
+  // The default p1-b1 leads the source order, so the page mirrors as a lone
+  // left block, then the spanning title, then the paired columns.
+  const bands = [...host.querySelectorAll<HTMLElement>(".translation-columns")];
+  expect(bands).toHaveLength(2);
+  const ids = (cell: Element) =>
+    [...cell.querySelectorAll("[data-translation-block]")].map((node) =>
+      node.getAttribute("data-translation-block"),
+    );
+  expect(bands[0].children).toHaveLength(2);
+  expect(ids(bands[0].children[0])).toEqual(["p1-b1"]);
+  expect(ids(bands[0].children[1])).toEqual([]);
+  expect(bands[1].children).toHaveLength(2);
+  expect(ids(bands[1].children[0])).toEqual(["p1-l2"]);
+  expect(ids(bands[1].children[1])).toEqual(["p1-r1", "p1-r2"]);
+  expect(
+    [...bands[0].children, ...bands[1].children].every(
+      (cell) => cell.className === "translation-column",
+    ),
+  ).toBe(true);
+  // A spanning title band sits outside both column flows.
+  expect(
+    page!.querySelector(
+      `.translation-columns [data-translation-block="p1-title"]`,
+    ),
+  ).toBeNull();
+  expect(page!.querySelector('[data-translation-block="p1-title"]')).toBeTruthy();
+  // The document order still follows the source reading order.
+  expect(
+    [...host.querySelectorAll("[data-translation-block]")].map(
+      (node) => node.getAttribute("data-translation-block"),
+    ),
+  ).toEqual(["p1-b1", "p1-title", "p1-l2", "p1-r1", "p1-r2"]);
+});
+
+it("keeps the translation flat when mirroring is off or pages are single-column", async () => {
+  await renderView(
+    { ...defaultTheme, translationMirrorColumns: false },
+    twoColumnBlocks,
+  );
+  await click("仅译文");
+  expect(host.querySelector(".translation-page")).toBeNull();
+  const children = [...host.querySelector(".translation-document")!.children];
+  expect(children.every((node) => node.tagName === "SECTION")).toBe(true);
+  expect(children).toHaveLength(5);
+  await renderView(defaultTheme);
+  expect(host.querySelector(".translation-page")).toBeNull();
+});
