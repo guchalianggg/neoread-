@@ -43,6 +43,12 @@ vi.mock("@neoread/api", () => ({
     relateDocuments: vi.fn(async () => ({})),
     unrelateDocuments: vi.fn(async () => ({})),
     process: vi.fn(async () => ({})),
+    assistance: vi.fn(async () => ({
+      enabled: true,
+      phase: "learning",
+      status: "running",
+      detail: "等待解析 PDF",
+    })),
     setAssistance: vi.fn(async () => ({})),
   },
   coverURL: (id: string) => `/covers/${id}`,

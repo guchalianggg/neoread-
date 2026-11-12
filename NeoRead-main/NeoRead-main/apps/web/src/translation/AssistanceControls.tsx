@@ -24,9 +24,14 @@ type Action = "start" | "pause" | "resume";
 export function AssistanceControls({
   documentId,
   processing,
+  variant = "ghost",
+  className = "assistance-controls",
 }: {
   documentId: string;
   processing?: Processing;
+  /** The reader uses a toolbar button; detail sheets show a full-width action. */
+  variant?: "ghost" | "outline";
+  className?: string;
 }) {
   const [saved, setSaved] = useState<Processing>();
   const [busy, setBusy] = useState(false);
@@ -80,11 +85,13 @@ export function AssistanceControls({
         ? "暂停重译"
         : "继续重译"
       : label;
+  // A detail sheet marks finished papers instead of offering a no-op action.
+  const shownLabel = finished && variant === "outline" ? "已翻译" : actionLabel;
   const run = () => api.setAssistance(documentId, action);
   return (
-    <div className="assistance-controls">
+    <div className={className}>
       <Button
-        variant="ghost"
+        variant={variant}
         size="sm"
         disabled={busy || !job || finished || parsingPending}
         title={job?.enabled ? job.detail : "使用当前 AI 连接翻译全文与公式"}
@@ -112,7 +119,7 @@ export function AssistanceControls({
         ) : (
           <Languages />
         )}
-        {actionLabel}
+        {shownLabel}
       </Button>
       {finished && (
         <AlertDialog open={confirming} onOpenChange={setConfirming}>

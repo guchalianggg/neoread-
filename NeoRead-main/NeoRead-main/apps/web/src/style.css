@@ -3555,6 +3555,17 @@ body[data-resizing] * {
   border-radius: 999px;
   font-size: 14px;
 }
+/* Translation sits under the primary action: same pill, outline surface. */
+.paper-detail-translate {
+  width: 100%;
+  margin-bottom: 4px;
+}
+.paper-detail-translate > button:first-child {
+  flex: 1;
+  height: 40px;
+  border-radius: 999px;
+  font-size: 13px;
+}
 /* Cite, star, pin and more share the row equally. */
 .paper-detail-actions {
   display: grid;

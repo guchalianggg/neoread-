@@ -78,6 +78,7 @@ import { PaperMenuItems, type PaperMenuActions } from "./PaperMenu";
 import { CitationMenuItems } from "./CitationMenu";
 import { RelatedPapers } from "./RelatedPapers";
 import { PaperAttachments } from "./PaperAttachments";
+import { AssistanceControls } from "../translation/AssistanceControls";
 
 const fieldLabels: Partial<Record<PaperMetadataField, string>> = {
   date: "日期",
@@ -273,6 +274,11 @@ export function PaperDetail({
           <BookOpen />
           {percent > 1 ? `继续阅读 · ${percent}%` : "开始阅读"}
         </Button>
+        <AssistanceControls
+          documentId={doc.id}
+          variant="outline"
+          className="assistance-controls paper-detail-translate"
+        />
         <div className="paper-detail-actions">
           <DropdownMenu>
             <DropdownMenuTrigger
