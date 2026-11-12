@@ -139,12 +139,11 @@ func TestWholeDocumentTranslationReusesCachedResults(t *testing.T) {
 		t.Fatal("explicit cached paragraph request failed")
 	}
 }
-func TestImportWithAutoTranslationDisabledDoesNotStartBackgroundAI(t *testing.T) {
+
+// Importing parses and indexes locally; translation needs an explicit limit.
+func TestImportWithoutAutoTranslationDoesNotStartBackgroundAI(t *testing.T) {
 	s := testServer(t)
 	s.Token = "test-secret"
-	if w := request(t, s, "PUT", "/api/settings", strings.NewReader(`{"autoTranslatePDF":false}`)); w.Code != 200 {
-		t.Fatal(w.Body.String())
-	}
 	d := paperDoc(t, s, sample(t, "reading-notes.pdf"))
 	p, e := s.Store.processing(d.ID)
 	if e != nil || !p.Enabled || p.Status != "queued" || p.AutoTranslateMaxPages == nil || *p.AutoTranslateMaxPages != 0 {
@@ -171,25 +170,25 @@ func TestFullProcessingIgnoresEarlierOCRWarnings(t *testing.T) {
 func TestImportAutoTranslationPreferenceOnlyAffectsNewDocuments(t *testing.T) {
 	s := testServer(t)
 	s.Token = "test-secret"
-	if w := request(t, s, "PUT", "/api/settings", strings.NewReader(`{"autoTranslatePDF":false}`)); w.Code != 200 {
+	if w := request(t, s, "PUT", "/api/settings", strings.NewReader(`{"autoTranslateMaxPages":0}`)); w.Code != 200 {
 		t.Fatal(w.Body.String())
 	}
 	first := paperDoc(t, s, sample(t, "reading-notes.pdf"))
-	for _, enabled := range []bool{true, false} {
-		body, _ := json.Marshal(map[string]any{"autoTranslatePDF": enabled, "appearance": "dark"})
+	for _, limit := range []int{50, 0} {
+		body, _ := json.Marshal(map[string]any{"autoTranslateMaxPages": limit, "appearance": "dark"})
 		w := request(t, s, "PUT", "/api/settings", strings.NewReader(string(body)))
 		if w.Code != 200 {
 			t.Fatal(w.Body.String())
 		}
 		settings := request(t, s, "GET", "/api/settings", nil)
 		var saved map[string]any
-		if err := json.Unmarshal(settings.Body.Bytes(), &saved); err != nil || saved["autoTranslatePDF"] != enabled || saved["appearance"] != "dark" {
+		if err := json.Unmarshal(settings.Body.Bytes(), &saved); err != nil || saved["autoTranslateMaxPages"] != float64(limit) || saved["appearance"] != "dark" {
 			t.Fatalf("settings not persisted: %s", settings.Body.String())
 		}
 		content := append(sample(t, "reading-notes.pdf"), []byte("\n% preference "+string(body))...)
 		next := paperDoc(t, s, content)
 		p, err := s.Store.processing(next.ID)
-		if err != nil || !p.Enabled || p.Status != "queued" || p.AutoTranslateMaxPages == nil || (*p.AutoTranslateMaxPages > 0) != enabled {
+		if err != nil || !p.Enabled || p.Status != "queued" || p.AutoTranslateMaxPages == nil || *p.AutoTranslateMaxPages != limit {
 			t.Fatalf("preference ignored: %+v %v", p, err)
 		}
 		original, _ := s.Store.processing(first.ID)

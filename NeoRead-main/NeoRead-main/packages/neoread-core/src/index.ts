@@ -412,8 +412,9 @@ export interface ReaderTheme {
   readerLayout?: Partial<ReaderLayout>;
   /** Opt in to copying text selections and selected annotations. */
   autoCopySelection?: boolean;
+  /** @deprecated Auto-translation is opt-in through autoTranslateMaxPages. */
   autoTranslatePDF?: boolean;
-  /** 0 means manual only; otherwise auto translate papers up to this many pages. */
+  /** 0 means manual only (the default); otherwise auto translate papers up to this many pages. */
   autoTranslateMaxPages?: number;
   /** How figures and embedded images are displayed when a PDF uses dark mode. */
   pdfDarkImageMode?: "preserve" | "invert" | "adaptive";
@@ -473,7 +474,8 @@ export const defaultTheme: ReaderTheme = {
   documentTabs: true,
   reducedMotion: false,
   autoCopySelection: false,
-  autoTranslatePDF: true,
+  autoTranslatePDF: false,
+  autoTranslateMaxPages: 0,
   pdfDarkImageMode: "adaptive",
   pdfDarkContrast: "soft",
   autoGenerateOverview: false,

@@ -29,6 +29,11 @@ func processingFixture(t *testing.T) (*Server, Processing) {
 		t.Fatal(e)
 	}
 	p, _ := store.processing("doc")
+	// The fixture stands for a paper the reader opted to auto-translate, so
+	// translation-dependent stages stay reachable. Tests that assert the import
+	// default build their own processed document through importedProcessing.
+	limit := 100
+	p.AutoTranslateMaxPages = &limit
 	p.Enabled = true
 	p.Status = "queued"
 	if e = store.saveProcessing(p); e != nil {

@@ -129,8 +129,8 @@ func TestZoteroMigrationRoundTrip(t *testing.T) {
 	}
 	var p Processing
 	json.Unmarshal([]byte(processingBody), &p)
-	if !p.Enabled || p.AutoTranslateMaxPages == nil || *p.AutoTranslateMaxPages != 50 {
-		t.Fatal("migration must use the default translation threshold")
+	if !p.Enabled || p.AutoTranslateMaxPages == nil || *p.AutoTranslateMaxPages != 0 {
+		t.Fatal("migration must keep manual translation by default")
 	}
 	// Curated NeoRead data, including removed imported annotations, survives a retry.
 	if _, err = s.Store.DB.Exec(`UPDATE document_notes SET body='NeoRead 编辑' WHERE document_id=?; DELETE FROM annotations WHERE document_id=?`, doc.ID, doc.ID); err != nil {

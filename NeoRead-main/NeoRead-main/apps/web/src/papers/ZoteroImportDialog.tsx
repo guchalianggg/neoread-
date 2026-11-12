@@ -316,7 +316,7 @@ export function ZoteroImportDialog({
             ))}
             <p className="text-muted-foreground text-xs">
               同一论文的多个 PDF 分别导入。超过 100 页且大于 100 MB
-              时需确认是否是论文。自动翻译遵循设置中的页数上限。
+              时需确认是否是论文。导入后先解析原文，自动翻译仅在设置中选择了页数上限时生效。
             </p>
             {phase === "running" && (
               <div role="status" className="grid gap-2">

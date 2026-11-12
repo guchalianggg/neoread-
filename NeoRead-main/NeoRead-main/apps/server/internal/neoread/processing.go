@@ -151,11 +151,16 @@ func (s *Store) recoverPausedPaperParsing() error {
 
 // Only document creation reads this preference; updating settings never wakes a job.
 // PDF books wait for an explicit chapter request before layout or translation.
+//
+// Auto-translation is opt-in: an imported paper always parses and indexes
+// locally, and reaches the translation lane only when the reader picked a
+// positive page limit. A fresh library therefore spends no model tokens on
+// import, and the legacy autoTranslatePDF flag no longer enables translation
+// by itself.
 func importedProcessing(id, library, value string) Processing {
 	p := initialProcessing(id)
 	var settings struct {
-		AutoTranslatePDF      *bool `json:"autoTranslatePDF"`
-		AutoTranslateMaxPages *int  `json:"autoTranslateMaxPages"`
+		AutoTranslateMaxPages *int `json:"autoTranslateMaxPages"`
 	}
 	if library == "books" {
 		// Book chapters are parsed and translated when the reader asks.
@@ -164,13 +169,9 @@ func importedProcessing(id, library, value string) Processing {
 		aggregateProcessing(&p)
 		return p
 	}
-	limit := 50
-	if value != "" && json.Unmarshal([]byte(value), &settings) != nil {
-		limit = 0
-	} else if settings.AutoTranslateMaxPages != nil {
+	limit := 0
+	if value != "" && json.Unmarshal([]byte(value), &settings) == nil && settings.AutoTranslateMaxPages != nil && *settings.AutoTranslateMaxPages > 0 {
 		limit = *settings.AutoTranslateMaxPages
-	} else if settings.AutoTranslatePDF != nil && !*settings.AutoTranslatePDF {
-		limit = 0
 	}
 	p.AutoTranslateMaxPages = &limit
 	p.Enabled, p.Status, p.Detail = true, "queued", "等待解析 PDF"
@@ -612,7 +613,18 @@ func (s *Server) learnPDF(ctx context.Context, p *Processing) error {
 		return e
 	}
 	p.TranslationsDone, p.TranslationsTotal = translationCounts(items)
-	if limit := p.AutoTranslateMaxPages; limit != nil && (*limit == 0 || m.Pages > *limit) {
+	manual := p.AutoTranslateMaxPages != nil && (*p.AutoTranslateMaxPages == 0 || m.Pages > *p.AutoTranslateMaxPages)
+	// The translation target is Simplified Chinese, so a Chinese source needs
+	// none. The import-time snapshot is only non-nil on the automatic decision:
+	// an explicit start clears it and still translates on request.
+	if p.AutoTranslateMaxPages != nil && !manual && predominantlyChinese(m) {
+		p.Enabled = false
+		p.ManualTranslation = true
+		p.Phase, p.Status, p.Detail = "translating", "paused", "中文文献，无需翻译"
+		p.Translating = &ProcessingStage{Status: "paused", Detail: "中文文献，无需翻译"}
+		return s.Store.saveProcessing(*p)
+	}
+	if manual {
 		p.Enabled = false
 		p.ManualTranslation = true
 		p.Phase, p.Status, p.Detail = "translating", "paused", "解析完成，等待手动翻译"

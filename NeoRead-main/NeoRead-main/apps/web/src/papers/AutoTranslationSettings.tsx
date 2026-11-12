@@ -8,14 +8,13 @@ export function AutoTranslationSettings({
   theme: ReaderTheme;
   setTheme: (patch: Partial<ReaderTheme>) => void;
 }) {
-  const limit =
-    theme.autoTranslateMaxPages ?? (theme.autoTranslatePDF === false ? 0 : 50);
+  const limit = theme.autoTranslateMaxPages ?? 0;
   return (
     <div className="mt-5 space-y-3 text-sm">
       <h4 className="font-medium">自动翻译</h4>
       <p>
         {limit === 0 ? (
-          "所有论文全部手动翻译"
+          "导入后只解析原文，译文全部手动发起。"
         ) : (
           <>
             论文超过{" "}
@@ -26,6 +25,9 @@ export function AutoTranslationSettings({
           </>
         )}
       </p>
+      <p className="text-muted-foreground text-xs">
+        正文以中文为主的文献不自动翻译。
+      </p>
       <Slider
         thumbLabel="自动翻译页数上限"
         // Position directly from the value before the settings panel has measurable dimensions.
@@ -35,7 +37,7 @@ export function AutoTranslationSettings({
         step={10}
         value={[limit]}
         getAriaValueText={(_, value) =>
-          value === 0 ? "所有论文全部手动翻译" : `超过 ${value} 页则手动翻译`
+          value === 0 ? "导入后不自动翻译" : `超过 ${value} 页则手动翻译`
         }
         onValueChange={(value) =>
           setTheme({

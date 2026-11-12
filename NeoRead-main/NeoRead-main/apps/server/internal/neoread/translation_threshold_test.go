@@ -16,7 +16,8 @@ func TestPaperTranslationThreshold(t *testing.T) {
 		pages    int
 		manual   bool
 	}{
-		{"", 50, false}, {"", 51, true},
+		{"", 1, true}, {"", 150, true},
+		{`{"autoTranslatePDF":true}`, 1, true},
 		{`{"autoTranslateMaxPages":0}`, 1, true},
 		{`{"autoTranslateMaxPages":10}`, 10, false},
 		{`{"autoTranslateMaxPages":10}`, 11, true},
@@ -82,6 +83,40 @@ func TestPaperTranslationThreshold(t *testing.T) {
 				t.Fatalf("manual start did not queue translation: %+v", p)
 			}
 		})
+	}
+}
+
+// A Chinese paper needs no translation into Chinese: the automatic gate stays
+// closed even when the page limit would allow auto-translation, and an explicit
+// start still queues the translation lane.
+func TestChinesePaperSkipsAutoTranslation(t *testing.T) {
+	s, _ := processingFixture(t)
+	p := importedProcessing("doc", "papers", `{"autoTranslateMaxPages":150}`)
+	p.StartedAt = now()
+	block := PDFBlock{ID: "p1-b1", Page: 1, Label: "text", Text: strings.Repeat("中文正文段落测试内容", 30)}
+	block.Bounds.Width, block.Bounds.Height = .5, .5
+	data, _ := json.Marshal(layoutManifest{Pages: 2, Blocks: []PDFBlock{block}})
+	if err := os.WriteFile(filepath.Join(s.analysisDir("doc"), "manifest.json"), data, 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Store.saveProcessing(p); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.learnPDF(context.Background(), &p); err != nil {
+		t.Fatal(err)
+	}
+	if !p.ManualTranslation || p.Enabled || p.Detail != "中文文献，无需翻译" {
+		t.Fatalf("Chinese paper entered the translation lane: %+v", p)
+	}
+	p = assistanceRequest(t, s, "start")
+	if p.ManualTranslation || p.AutoTranslateMaxPages != nil {
+		t.Fatalf("explicit action did not remove the gate: %+v", p)
+	}
+	if err := s.learnPDF(context.Background(), &p); err != nil {
+		t.Fatal(err)
+	}
+	if !p.Enabled || p.Translating.Status != "queued" {
+		t.Fatalf("explicit start did not queue translation: %+v", p)
 	}
 }
 
