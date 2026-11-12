@@ -1,4 +1,4 @@
-const releaseURL = "https://github.com/cynicalight/NeoRead/releases";
+export const releaseURL = "https://github.com/guchalianggg/neoread-/releases";
 export const day = 24 * 60 * 60 * 1000;
 export const retryDelay = 60 * 60 * 1000;
 
