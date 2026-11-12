@@ -33,6 +33,9 @@ beforeEach(() => {
   useReaderStore.getState().open(null);
   useReaderStore.setState({
     documents: [doc],
+    tabIds: [],
+    visitedTabs: [],
+    closedTabGroups: [],
     linkTarget: null,
     libraryPreferences: { mode: "books" },
   });
@@ -157,4 +160,53 @@ it("replaces an earlier Open With wait", async () => {
   } finally {
     vi.useRealTimers();
   }
+});
+
+it("switches to a visited tab immediately without waiting for processing", async () => {
+  const other = paper({ id: "other" });
+  useReaderStore.setState({
+    documents: [doc, other],
+    tabIds: [doc.id, other.id],
+    visitedTabs: [doc.id, other.id],
+    active: other,
+  });
+  vi.mocked(api.processing).mockReturnValue(new Promise(() => {}));
+  const pending = openLibraryDocument(doc);
+  expect(useReaderStore.getState().active).toEqual(doc);
+  expect(api.processing).not.toHaveBeenCalled();
+  expect(await pending).toBe(true);
+});
+
+it("still checks parsing for a restored but unvisited tab", async () => {
+  useReaderStore.setState({ tabIds: [doc.id], visitedTabs: [] });
+  vi.mocked(api.processing).mockResolvedValue([job()]);
+  await expect(openLibraryDocument(doc)).rejects.toThrow("论文飞速解析中");
+  expect(api.processing).toHaveBeenCalledOnce();
+  expect(useReaderStore.getState().active).toBeNull();
+});
+
+it("does not trust a visited entry after its tab has closed", async () => {
+  useReaderStore.setState({ tabIds: [], visitedTabs: [doc.id] });
+  vi.mocked(api.processing).mockResolvedValue([job()]);
+  await expect(openLibraryDocument(doc)).rejects.toThrow("论文飞速解析中");
+});
+
+it("keeps the visited tab selected when an older processing request finishes", async () => {
+  const other = paper({ id: "other" });
+  useReaderStore.setState({
+    documents: [doc, other],
+    tabIds: [other.id],
+    visitedTabs: [other.id],
+  });
+  let resolve!: (jobs: Processing[]) => void;
+  vi.mocked(api.processing).mockReturnValue(
+    new Promise((done) => {
+      resolve = done;
+    }),
+  );
+  const pending = openLibraryDocument(doc);
+  expect(await openLibraryDocument(other)).toBe(true);
+  resolve([job({ phase: "ready" })]);
+  expect(await pending).toBe(false);
+  expect(useReaderStore.getState().active).toEqual(other);
 });

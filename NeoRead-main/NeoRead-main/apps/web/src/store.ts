@@ -311,13 +311,16 @@ export async function refreshTrash() {
   const trash = await api.trash(libraryMode(state.libraryPreferences));
   if (revision === trashRevision) useReaderStore.getState().setTrash(trash);
 }
-/** Check the persisted parsing stage before entering a paper reader. */
+/** Check parsing on first entry, not when resuming an already visited tab. */
 export async function openLibraryDocument(
   doc: Document,
   target?: NeoReadLinkTarget,
 ) {
   const revision = ++openRevision;
-  if (doc.library === "papers") {
+  const current = useReaderStore.getState();
+  const visited =
+    current.tabIds.includes(doc.id) && current.visitedTabs.includes(doc.id);
+  if (doc.library === "papers" && !visited) {
     const jobs = await api.processing();
     if (revision !== openRevision) return false;
     const job = jobs.find((job) => job.documentId === doc.id);

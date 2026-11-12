@@ -6,6 +6,7 @@ import { defaultTheme, type Document, type ReaderEvents } from "@neoread/core";
 import { ReaderView } from "./ReaderView";
 const fixture = vi.hoisted(() => ({
   events: new Map<string, ReaderEvents>(),
+  opened: [] as string[],
   destroyed: [] as string[],
 }));
 vi.mock("./readers/pdf", () => ({
@@ -17,6 +18,7 @@ vi.mock("./readers/pdf", () => ({
     ) {}
     async open(doc: Document) {
       this.id = doc.id;
+      fixture.opened.push(doc.id);
       fixture.events.set(doc.id, this.events);
       this.events.location({ type: "pdf", page: 1 }, 0.1);
     }
@@ -65,6 +67,7 @@ afterEach(async () => {
   host.remove();
   fixture.events.clear();
   fixture.destroyed.length = 0;
+  fixture.opened.length = 0;
   vi.clearAllMocks();
   vi.unstubAllGlobals();
 });
@@ -101,4 +104,27 @@ it("does not let hidden reader events change progress or zoom, and reuses its en
   expect(zoom).toHaveBeenLastCalledWith(1.25, "layout", 0.5);
   expect(fixture.events.get("a")).toBe(previous);
   expect(fixture.destroyed).toEqual([]);
+});
+
+it("does not reopen loaded PDFs during repeated tab switches and releases only the closed reader", async () => {
+  await act(async () => root.render(readers("a", ["a"])));
+  await act(async () => {
+    await vi.waitFor(() => expect(fixture.events.size).toBe(1));
+  });
+  await act(async () => root.render(readers("b")));
+  await act(async () => {
+    await vi.waitFor(() => expect(fixture.events.size).toBe(2));
+  });
+  const a = fixture.events.get("a"),
+    b = fixture.events.get("b");
+  for (const id of ["b", "a", "b", "a"]) {
+    await act(async () => root.render(readers(id)));
+  }
+  expect(fixture.opened).toEqual(["a", "b"]);
+  expect(fixture.events.get("a")).toBe(a);
+  expect(fixture.events.get("b")).toBe(b);
+  expect(fixture.destroyed).toEqual([]);
+  await act(async () => root.render(readers("a", ["a"])));
+  expect(fixture.destroyed).toEqual(["b"]);
+  expect(fixture.opened).toEqual(["a", "b"]);
 });
