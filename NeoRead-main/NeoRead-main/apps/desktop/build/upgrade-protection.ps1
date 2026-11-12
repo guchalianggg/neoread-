@@ -13,6 +13,7 @@ param(
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+$script:protectionPhase = 'initialization'
 
 function Stop-Protection([string]$Code) { throw [InvalidOperationException]::new($Code) }
 
@@ -38,7 +39,12 @@ function Assert-PlainPath([string]$Path) {
     }
     # Expand existing 8.3 aliases too, so lexical containment cannot be bypassed.
     if (-not ('NeoReadLongPath' -as [type])) {
-        Add-Type -TypeDefinition 'using System; using System.Text; using System.Runtime.InteropServices; public static class NeoReadLongPath { [DllImport("kernel32.dll", CharSet=CharSet.Unicode, SetLastError=true)] public static extern uint GetLongPathName(string path, StringBuilder buffer, uint size); }'
+        # NSIS's plugin cwd contains a native System.dll. Never let the C# compiler
+        # resolve the .NET reference by that relative name (CS0009 / bad image).
+        $previousPhase = $script:protectionPhase
+        $script:protectionPhase = 'path_interop'
+        Add-Type -ReferencedAssemblies ([Uri].Assembly.Location) -TypeDefinition 'using System; using System.Text; using System.Runtime.InteropServices; public static class NeoReadLongPath { [DllImport("kernel32.dll", CharSet=CharSet.Unicode, SetLastError=true)] public static extern uint GetLongPathName(string path, StringBuilder buffer, uint size); }'
+        $script:protectionPhase = $previousPhase
     }
     $cursor = $full
     $tail = [Collections.Generic.List[string]]::new()
@@ -258,6 +264,7 @@ function Invoke-NeoReadUpgradeProtection {
 }
 
 function Remove-NeoReadProgramFiles([string]$Directory, [string]$Manifest, [string]$UninstallerName) {
+    $script:protectionPhase = 'program_manifest'
     $root = Assert-PlainPath $Directory
     if ($root.Length -le 3) { Stop-Protection 'unsafe_install_location' }
     $known = Read-ProgramManifest $Manifest
@@ -265,6 +272,7 @@ function Remove-NeoReadProgramFiles([string]$Directory, [string]$Manifest, [stri
     if ($UninstallerName.Contains('\')) { Stop-Protection 'invalid_manifest' }
     $null = $known.Add($UninstallerName)
     $directories = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    $script:protectionPhase = 'program_paths'
     # Validate the entire whitelist first. Do not follow a junction even for an exact known filename.
     foreach ($file in $known) {
         $target = Assert-PlainPath ([IO.Path]::Combine($root, $file))
@@ -276,10 +284,12 @@ function Remove-NeoReadProgramFiles([string]$Directory, [string]$Manifest, [stri
             $parent = [IO.Path]::GetDirectoryName($parent)
         }
     }
+    $script:protectionPhase = 'program_files'
     foreach ($file in $known) {
         $target = [IO.Path]::Combine($root, $file)
         if ([IO.File]::Exists($target)) { [IO.File]::Delete($target) }
     }
+    $script:protectionPhase = 'program_directories'
     foreach ($directory in @($directories | Sort-Object Length -Descending) + @($root)) {
         # Empty directories only. Unknown files and directories always remain in place.
         if ([IO.Directory]::Exists($directory) -and [IO.Directory]::GetFileSystemEntries($directory).Length -eq 0) { [IO.Directory]::Delete($directory, $false) }
@@ -290,9 +300,11 @@ function Remove-NeoReadProgramFiles([string]$Directory, [string]$Manifest, [stri
 if ($MyInvocation.InvocationName -ne '.') {
     try {
         if ($Mode -eq 'Install') {
+            $script:protectionPhase = 'install_preflight'
             $old = @(Get-RegisteredInstallDirs $InstallRegistryKey @($UninstallRegistryKey, $UninstallRegistryKey2))
             $result = Invoke-NeoReadUpgradeProtection -Destination $Destination -UserData $UserData -BackupRoot $BackupRoot -OldInstallDirs $old -Manifest $Manifest -UninstallerName $UninstallerName
         } elseif ($Mode -eq 'UninstallCheck') {
+            $script:protectionPhase = 'process_check'
             Assert-NeoReadStopped @((Assert-PlainPath $Destination))
             $result = @{ event = 'uninstall.protection.stopped' }
         } else {
@@ -305,7 +317,9 @@ if ($MyInvocation.InvocationName -ne '.') {
         # No raw exceptions, paths, database/config contents or credentials in installer output.
         $code = 'io_or_verification_failed'
         if ($_.Exception -is [InvalidOperationException] -and $_.Exception.Message -match '^[a-z_]+$') { $code = $_.Exception.Message }
-        @{ event = 'upgrade.protection.blocked'; reason = $code } | ConvertTo-Json -Compress
+        $exceptionType = $_.Exception.GetType().Name
+        if ($exceptionType -notin @('Exception', 'MethodInvocationException', 'UnauthorizedAccessException', 'IOException', 'InvalidOperationException', 'RuntimeException')) { $exceptionType = 'Other' }
+        @{ event = 'upgrade.protection.blocked'; reason = $code; mode = $Mode; phase = $script:protectionPhase; exceptionType = $exceptionType } | ConvertTo-Json -Compress
         exit 73
     }
 }

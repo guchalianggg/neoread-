@@ -58,7 +58,11 @@
   Pop $1
   DetailPrint "$1"
   ${If} $0 != 0
-    MessageBox MB_OK|MB_ICONSTOP "数据保护检查未通过，未继续安装或卸载。请正常退出 NeoRead 和后台任务后重试；若书库、未知文件位于程序目录内，请先在旧应用中迁移到外部目录。配置损坏、路径不可访问或备份失败时也会中止。不要直接运行旧卸载器。错误：$1" /SD IDOK
+    !ifdef BUILD_UNINSTALLER
+      MessageBox MB_OK|MB_ICONSTOP "卸载未完成。请正常退出 NeoRead 后重试；若仍失败，请记录下方错误信息。错误：$1" /SD IDOK
+    !else
+      MessageBox MB_OK|MB_ICONSTOP "安装检查未通过。请正常退出 NeoRead 和后台任务后重试；若书库或未知文件位于程序目录内，请先迁移到外部目录。错误：$1" /SD IDOK
+    !endif
     SetErrorLevel 73
     Quit
   ${EndIf}

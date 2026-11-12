@@ -2,7 +2,7 @@
 
 ## 构建约束与 hook 顺序
 
-`builder.config.cjs` 的 `afterPack` 调用 `prepare-upgrade-protection.cjs`，扫描**本次打包产物**生成 `build/program-files-<arch>.json`。白名单只含精确相对文件名，不含 glob；拒绝路径穿越、驱动器/UNC/ADS、设备名、NSIS 特殊字符及链接。JSON 作为不经 NSIS 插值的文件嵌入安装器和卸载器，不把文件名拼成 NSIS 指令。
+`builder.config.cjs` 的 `afterPack` 调用 `prepare-upgrade-protection.cjs`，扫描**本次打包产物**生成 `build/program-files-<arch>.json`。另外按已审查的 26.17.0 NSIS 规则，包含在 afterPack 之后追加到安装负载的精确路径 `resources\elevate.exe`（遵循 `packElevateHelper` / `perMachine` 配置），避免卸载残留和后续安装误报未知文件。白名单不含 glob；拒绝路径穿越、驱动器/UNC/ADS、设备名、NSIS 特殊字符及链接。JSON 作为不经 NSIS 插值的文件嵌入安装器和卸载器，不把文件名拼成 NSIS 指令。
 
 已审查 electron-builder/app-builder-lib **26.17.0** 的以下顺序，并在 afterPack 校验四份模板的 SHA-256；模板变化会阻止打包，必须先重新审查，不能直接更新 hash 绕过检查：
 
@@ -42,6 +42,10 @@
 - `-Mode Clean -Destination <合成程序目录> -Manifest <白名单JSON> -UninstallerName "Uninstall NeoRead.exe"`：精确清理。切勿用于真实目录测试。
 - 成功退出 0；保护拒绝退出 **73**。无特殊参数能够关闭保护后继续安装。
 
+0.10.6 修复了 `customRemoveFiles` 使用插件目录作为工作目录时的程序集冲突：NSIS 插件的原生 `System.dll` 会遮蔽 `Add-Type` 默认的同名 .NET 引用。脚本显式引用当前运行时的 `[Uri].Assembly.Location`，不再从工作目录查找引用；32 位和 64 位 PowerShell CLI 均以带同名无效 DLL 的独立工作目录回归验证。
+
+失败状态沿用受控 `event` / `reason`，增加 `mode`、白名单 `phase` 和归一化 `exceptionType`，用于区分进程检查、互操作初始化、清单、路径、文件及空目录清理。安装与卸载分别显示对应提示；不输出原始异常消息、路径、配置或清单正文。
+
 ```powershell
 pnpm exec vitest run apps/desktop/main/library-location.test.ts apps/desktop/build/upgrade-protection.test.ts --pool=threads --maxWorkers=1 --no-file-parallelism
 pnpm typecheck
@@ -55,4 +59,4 @@ powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File apps/desktop
 
 主流程正常打包即会自动生成本架构白名单，无需手写生成物。保留 `include: "installer.nsh"`、afterPack 与上述模板校验；不要设置自定义 `nsis.script`，它会改变 builder 的卸载器生成流程。当前拒绝多架构合并安装器，x64/arm64 应分别出包。
 
-本次不访问真实书库或 AppData，不执行真实安装/卸载。最终发包者仍需完成 NSIS 编译，并仅在隔离测试目录/虚拟机人工检查普通安装、静默目标选择、正常退出后升级和卸载；对安装目录内库、权限错误或损坏位置配置应看到中止，不应看到旧卸载器运行。应用已将实际 `dirname(process.execPath)` 传入目录验证；开发模式不启用程序目录限制，现有违规库启动时明确提示先迁移，而不是换成空库。
+发包前必须完成 NSIS 编译，并在隔离测试目录/虚拟机检查普通安装、静默目标选择、正常退出后卸载；不能以原始卸载启动进程 exit=0 代替实际卸载结果。需要等待实际执行副本，核验程序文件、注册表与快捷方式均已移除；测试普通用户与全用户 UAC 路径。对安装目录内库、权限错误或损坏位置配置仍应看到中止，不应看到旧卸载器运行。应用已将实际 `dirname(process.execPath)` 传入目录验证；开发模式不启用程序目录限制，现有违规库启动时明确提示先迁移，而不是换成空库。

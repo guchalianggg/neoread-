@@ -8,7 +8,7 @@ import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 const require = createRequire(import.meta.url);
 const protection = require("./prepare-upgrade-protection.cjs") as {
-  prepare: (options: { appOutDir: string; buildResourcesDir: string; templateDir: string; arch: string }) => Promise<{ schema: number; files: string[] }>;
+  prepare: (options: { appOutDir: string; buildResourcesDir: string; templateDir: string; arch: string; packElevateHelper?: boolean }) => Promise<{ schema: number; files: string[] }>;
   createProgramManifest: (directory: string) => Promise<{ files: string[] }>;
   validateRelativeFile: (file: string) => void;
   assertReviewedTemplates: (directory: string) => Promise<void>;
@@ -64,9 +64,53 @@ it.runIf(process.platform === "win32")("the real CLI returns 73 and sanitized st
   const error = failure as { code: number; stdout: string; stderr: string };
   expect(error.code).toBe(73);
   expect(error.stderr).toBe("");
-  expect(JSON.parse(error.stdout)).toMatchObject({ event: "upgrade.protection.blocked" });
+  expect(JSON.parse(error.stdout)).toMatchObject({ event: "upgrade.protection.blocked", mode: "Install", phase: "install_preflight" });
   expect(error.stdout).not.toContain("FAKE-OPAQUE");
 }, 70_000);
+
+it.runIf(process.platform === "win32").each(["System32", "SysWOW64"])("checks and cleans from a plugin cwd containing native System.dll (%s)", async (systemDirectory) => {
+  const root = await temporary();
+  const plugins = join(root, "plugins");
+  const program = join(root, "NeoRead");
+  await mkdir(plugins);
+  await mkdir(join(program, "resources"), { recursive: true });
+  // NSIS System.dll is native, not the .NET reference assembly C# expects.
+  await writeFile(join(plugins, "System.dll"), "FAKE-NATIVE-NSIS-DLL");
+  await writeFile(join(program, "NeoRead.exe"), "synthetic executable");
+  await writeFile(join(program, "resources", "app.asar"), "synthetic app");
+  await writeFile(join(program, "Uninstall NeoRead.exe"), "synthetic uninstaller");
+  await writeFile(join(program, "personal.sqlite"), "unknown data must survive");
+  const manifest = join(root, "manifest.json");
+  await writeFile(manifest, JSON.stringify({ schema: 1, files: ["NeoRead.exe", "resources\\app.asar"] }));
+  const powershell = join(process.env.WINDIR!, systemDirectory, "WindowsPowerShell", "v1.0", "powershell.exe");
+  const args = ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", join(here, "upgrade-protection.ps1")];
+  const check = await execute(powershell, [...args, "-Mode", "UninstallCheck", "-Destination", program], { cwd: plugins, timeout: 30_000, windowsHide: true });
+  expect(check.stderr).toBe("");
+  expect(JSON.parse(check.stdout)).toMatchObject({ event: "uninstall.protection.stopped" });
+  const clean = await execute(powershell, [...args, "-Mode", "Clean", "-Destination", program, "-Manifest", manifest, "-UninstallerName", "Uninstall NeoRead.exe"], { cwd: plugins, timeout: 30_000, windowsHide: true });
+  expect(clean.stderr).toBe("");
+  expect(JSON.parse(clean.stdout)).toMatchObject({ event: "uninstall.protection.complete" });
+  for (const name of ["NeoRead.exe", "resources/app.asar", "Uninstall NeoRead.exe"]) {
+    await expect(readFile(join(program, name))).rejects.toMatchObject({ code: "ENOENT" });
+  }
+  expect(await readFile(join(program, "personal.sqlite"), "utf8")).toBe("unknown data must survive");
+}, 70_000);
+
+it("includes the late NSIS elevate helper exactly once only when it is packaged", async () => {
+  const root = await temporary();
+  const appOutDir = join(root, "app");
+  await mkdir(join(appOutDir, "resources"), { recursive: true });
+  await writeFile(join(appOutDir, "NeoRead.exe"), "synthetic executable");
+  await writeFile(join(appOutDir, "resources", "app.asar"), "synthetic app");
+  const options = { appOutDir, buildResourcesDir: root, templateDir, arch: "x64" };
+  const without = await protection.prepare({ ...options, packElevateHelper: false });
+  expect(without.files).not.toContain("resources\\elevate.exe");
+  const withHelper = await protection.prepare({ ...options, packElevateHelper: true });
+  expect(withHelper.files).toEqual(["NeoRead.exe", "resources\\app.asar", "resources\\elevate.exe"]);
+  await writeFile(join(appOutDir, "resources", "elevate.exe"), "synthetic helper");
+  const existing = await protection.prepare({ ...options, packElevateHelper: true });
+  expect(existing.files.filter((file) => file === "resources\\elevate.exe")).toHaveLength(1);
+});
 
 it("afterPack emits only exact program paths and pins the real upstream hook contract", async () => {
   const root = await temporary();
@@ -152,3 +196,23 @@ Invoke-NeoReadUpgradeProtection @options | ConvertTo-Json -Compress
   } finally { recovered.close(); }
   expect(stdout).not.toContain("FAKE-TEST-ONLY");
 }, 70_000);
+
+it.runIf(process.platform === "win32")("identifies the cleanup phase without exposing private filenames or manifest contents", async () => {
+  const root = await temporary();
+  const program = join(root, "program");
+  await mkdir(program);
+  await writeFile(join(program, "NeoRead.exe"), "must survive rejected manifest");
+  const manifest = join(root, "manifest.json");
+  await writeFile(manifest, JSON.stringify({ schema: 1, files: ["NeoRead.exe", "..\\FAKE-PRIVATE-FILENAME"] }));
+  let failure: unknown;
+  try {
+    await execute("powershell.exe", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", join(here, "upgrade-protection.ps1"), "-Mode", "Clean", "-Destination", program, "-Manifest", manifest, "-UninstallerName", "Uninstall NeoRead.exe"], { timeout: 30_000, windowsHide: true });
+  } catch (error) { failure = error; }
+  const error = failure as { code: number; stdout: string; stderr: string };
+  expect(error.code).toBe(73);
+  expect(error.stderr).toBe("");
+  expect(JSON.parse(error.stdout)).toMatchObject({ event: "upgrade.protection.blocked", reason: "invalid_manifest", mode: "Clean", phase: "program_manifest", exceptionType: "InvalidOperationException" });
+  expect(error.stdout).not.toContain("FAKE-PRIVATE");
+  expect(error.stdout).not.toContain(root);
+  expect(await readFile(join(program, "NeoRead.exe"), "utf8")).toBe("must survive rejected manifest");
+}, 40_000);

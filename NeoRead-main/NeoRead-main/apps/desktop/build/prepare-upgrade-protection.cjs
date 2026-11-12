@@ -53,10 +53,16 @@ async function assertReviewedTemplates(templateDir) {
   }
 }
 
-async function prepare({ appOutDir, buildResourcesDir, templateDir, arch }) {
+async function prepare({ appOutDir, buildResourcesDir, templateDir, arch, packElevateHelper = false }) {
   if (!["x64", "ia32", "arm64"].includes(arch)) throw new Error("Unsupported protection manifest architecture");
   await assertReviewedTemplates(templateDir);
   const manifest = await createProgramManifest(appOutDir);
+  // app-builder-lib 26.17.0 appends this exact helper AFTER afterPack, directly
+  // into the NSIS archive. Mirror that reviewed rule, not a guessed file glob.
+  if (packElevateHelper && !manifest.files.includes("resources\\elevate.exe")) {
+    manifest.files.push("resources\\elevate.exe");
+    manifest.files.sort();
+  }
   // JSON is embedded as an opaque File, never interpolated into NSIS instructions.
   // Thus packaged names cannot inject NSIS variables/macros/commands.
   await fs.writeFile(path.join(buildResourcesDir, `program-files-${arch}.json`), JSON.stringify(manifest, null, 2) + "\n");
@@ -70,11 +76,13 @@ async function afterPack(context) {
   if (JSON.parse(await fs.readFile(lib, "utf8")).version !== "26.17.0")
     throw new Error("Unreviewed app-builder-lib version; upgrade protection review required");
   const arch = { 0: "ia32", 1: "x64", 3: "arm64" }[context.arch];
+  const nsis = context.packager.config.nsis ?? {};
   await prepare({
     appOutDir: context.appOutDir,
     buildResourcesDir: context.packager.info.buildResourcesDir,
     templateDir: path.join(path.dirname(lib), "templates", "nsis"),
     arch,
+    packElevateHelper: nsis.packElevateHelper !== false || nsis.perMachine === true,
   });
 }
 module.exports = afterPack;
