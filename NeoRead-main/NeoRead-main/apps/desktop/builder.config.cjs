@@ -58,8 +58,10 @@ module.exports = {
   nsis: {
     oneClick: false,
     perMachine: false,
-    // Fail closed rather than run an elevated inner instance without the user's snapshot.
-    allowElevation: false,
+    // "All users" elevates an inner UAC instance; build/installer.nsh runs the
+    // snapshot preflight inside that inner instance too, so the radio stays
+    // available without weakening protection.
+    allowElevation: true,
     allowToChangeInstallationDirectory: true,
     deleteAppDataOnUninstall: false,
     // build/installer.nsh lists NeoRead under Open With for PDF and EPUB.

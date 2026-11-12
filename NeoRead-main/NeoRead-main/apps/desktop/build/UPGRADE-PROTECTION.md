@@ -7,9 +7,9 @@
 已审查 electron-builder/app-builder-lib **26.17.0** 的以下顺序，并在 afterPack 校验四份模板的 SHA-256；模板变化会阻止打包，必须先重新审查，不能直接更新 hash 绕过检查：
 
 1. `.onInit` → `initMultiUser` → `customInit`。
-2. 最终目录选择后（静默 `/S /D=...` 同样适用），`installSection.nsh` → `CHECK_APP_RUNNING` → **`customCheckAppRunning` 完成预检和快照**。
+2. 最终目录选择后，`installSection.nsh` → `CHECK_APP_RUNNING` → `customCheckAppRunning` 完成预检和快照（仅外层实例到达此处；内层路径见第 4 条）。
 3. 只有保护脚本退出码为 0，才进入 `uninstallOldVersion` → `installApplicationFiles` → `customInstall`。
-4. 上游 UAC 内层会跳过 `CHECK_APP_RUNNING`，所以 `customInit` 一律拒绝内层实例；当前版本只支持原用户、普通权限、单架构安装，全用户/提升权限请求保守中止。
+4. 上游 UAC 内层会跳过 `CHECK_APP_RUNNING`，因此预检在所有内层可达的钩子补齐：GUI 内层在 `customPageAfterChangeDir`（目录页后、instfiles 前的隐藏页）执行；静默内层在 `customInit`（先强制 per-machine 模式定稿 `$INSTDIR`）执行。外层仍走 `customCheckAppRunning`，每个实例恰好命中一个钩子，每次安装只做一次快照。快照始终用原用户上下文（`SetShellVarContext current` 包裹调用，之后按 `$installMode` 恢复），跨用户提升时管理员蜂巢缺数据则 fail-safe 跳过。`--delete-app-data` 一律拒绝。单架构安装限制不变。
 5. 新卸载器的 `customRemoveFiles` 替代上游 `un.atomicRMDir` / `RMDir /r $INSTDIR`，只删除嵌入白名单文件及已知卸载器文件名，再尝试**非递归**删除已空的程序目录。未知文件、未知目录、后来放入的书库均保留；先校验全部待删路径，遇到 reparse 点则中止。
 6. 安装和卸载均拒绝 `--delete-app-data`，避免激活上游额外的 AppData 递归删除分支。
 

@@ -3,14 +3,31 @@
 ; after uninstall, so only ProgIDs and OpenWithProgids are written here; users
 ; choose the default app in Windows.
 
-; Protected assisted per-user installs only. In builder 26.17.0 the inner UAC
-; install section SKIPS CHECK_APP_RUNNING. Reject it in customInit rather than
-; ever reaching an old uninstaller without the final-directory preflight.
+; The upgrade-protection preflight must run on every path that reaches
+; uninstallOldVersion with a usable $INSTDIR, because builder 26.17.0 skips
+; CHECK_APP_RUNNING inside elevated (inner UAC) instances:
+;   - outer instance: customCheckAppRunning, unchanged (per-user GUI,
+;     all-users GUI started as admin, already-elevated silent upgrades);
+;   - inner GUI instance (user picked "all users" without admin):
+;     customPageAfterChangeDir right after the directory page;
+;   - inner silent instance (the install section elevated a per-machine
+;     upgrade): customInit after forcing the per-machine mode.
+; Each instance reaches exactly one of those hooks, so the snapshot preflight
+; runs exactly once per install.
+
 !macro customInit
+  ; A silent inner instance only exists when installer.nsi's install section
+  ; elevated a per-machine upgrade, so re-forcing the mode here is safe. The
+  ; section repeats setInstallModePerAllUsers later (idempotent) and resets
+  ; $INSTDIR, so do NOT sanitize $INSTDIR in this branch; the preflight and
+  ; the real install share the variable either way.
   ${If} ${UAC_IsInnerInstance}
-    MessageBox MB_OK|MB_ICONSTOP "为保护原用户书库，已中止提升权限安装。请退出安装器，用原用户普通权限启动，并选择用户可写的程序目录。" /SD IDOK
-    SetErrorLevel 73
-    Quit
+    ${AndIf} ${Silent}
+    !ifndef BUILD_UNINSTALLER
+      !insertmacro setInstallModePerAllUsers
+      !insertmacro neoreadExtractProtection
+      !insertmacro neoreadRunInstallProtection
+    !endif
   ${EndIf}
 !macroend
 
@@ -47,33 +64,84 @@
   ${EndIf}
 !macroend
 
+; Mirror assistedInstaller.nsh instFilesPre (same !ifdef guard, same
+; APP_FILENAME subfolder rule). Our hidden page runs BEFORE that MUI PRE
+; callback fixes $INSTDIR, and the preflight must see the final directory.
+!macro neoreadSanitizeInstallDir
+  !ifdef allowToChangeInstallationDirectory
+    ${StrContains} $0 "${APP_FILENAME}" $INSTDIR
+    ${If} $0 == ""
+      StrCpy $INSTDIR "$INSTDIR\${APP_FILENAME}"
+    ${EndIf}
+  !endif
+!macroend
+
+; Full install preflight. The snapshot must always describe the ORIGINAL
+; user's data, so SetShellVarContext current keeps $APPDATA/$LOCALAPPDATA on
+; the elevating user during the call; afterwards restore the context chosen
+; by $installMode so later SHELL_CONTEXT writes hit the intended registry
+; hive (HKLM for all-users installs, HKCU otherwise).
+!macro neoreadRunInstallProtection
+  ${If} ${isDeleteAppData}
+    MessageBox MB_OK|MB_ICONSTOP "NeoRead 数据保护禁止 --delete-app-data。" /SD IDOK
+    SetErrorLevel 73
+    Quit
+  ${EndIf}
+  SetShellVarContext current
+  !ifdef UNINSTALL_REGISTRY_KEY_2
+    !define NEOREAD_SECOND_UNINSTALL_KEY "${UNINSTALL_REGISTRY_KEY_2}"
+  !else
+    !define NEOREAD_SECOND_UNINSTALL_KEY ""
+  !endif
+  nsExec::ExecToStack '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\neoread-upgrade-protection.ps1" -Mode Install -Destination "$INSTDIR" -UserData "$APPDATA\NeoRead" -BackupRoot "$LOCALAPPDATA\NeoRead Upgrade Backups" -Manifest "$PLUGINSDIR\neoread-program-files.json" -InstallRegistryKey "${INSTALL_REGISTRY_KEY}" -UninstallRegistryKey "${UNINSTALL_REGISTRY_KEY}" -UninstallRegistryKey2 "${NEOREAD_SECOND_UNINSTALL_KEY}" -UninstallerName "${UNINSTALL_FILENAME}"'
+  !undef NEOREAD_SECOND_UNINSTALL_KEY
+  ${If} $installMode == "all"
+    SetShellVarContext all
+  ${Else}
+    SetShellVarContext current
+  ${EndIf}
+  !insertmacro neoreadRequireProtectionSuccess
+!macroend
+
 ; installSection.nsh calls this AFTER final directory selection (also /S /D),
 ; BEFORE uninstallOldVersion and installApplicationFiles. No process is killed.
+; Only outer instances reach it; upstream skips it for inner instances.
 !macro customCheckAppRunning
   !insertmacro neoreadExtractProtection
   !ifdef BUILD_UNINSTALLER
     nsExec::ExecToStack '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\neoread-upgrade-protection.ps1" -Mode UninstallCheck -Destination "$INSTDIR"'
+    !insertmacro neoreadRequireProtectionSuccess
   !else
-    ${If} $installMode == "all"
-      MessageBox MB_OK|MB_ICONSTOP "为保护每个用户的书库，已中止全用户安装。请用原用户普通权限安装。" /SD IDOK
-      SetErrorLevel 73
-      Quit
-    ${EndIf}
-    ${If} ${isDeleteAppData}
-      MessageBox MB_OK|MB_ICONSTOP "NeoRead 数据保护禁止 --delete-app-data。" /SD IDOK
-      SetErrorLevel 73
-      Quit
-    ${EndIf}
-    SetShellVarContext current
-    !ifdef UNINSTALL_REGISTRY_KEY_2
-      !define NEOREAD_SECOND_UNINSTALL_KEY "${UNINSTALL_REGISTRY_KEY_2}"
-    !else
-      !define NEOREAD_SECOND_UNINSTALL_KEY ""
-    !endif
-    nsExec::ExecToStack '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\neoread-upgrade-protection.ps1" -Mode Install -Destination "$INSTDIR" -UserData "$APPDATA\NeoRead" -BackupRoot "$LOCALAPPDATA\NeoRead Upgrade Backups" -Manifest "$PLUGINSDIR\neoread-program-files.json" -InstallRegistryKey "${INSTALL_REGISTRY_KEY}" -UninstallRegistryKey "${UNINSTALL_REGISTRY_KEY}" -UninstallRegistryKey2 "${NEOREAD_SECOND_UNINSTALL_KEY}" -UninstallerName "${UNINSTALL_FILENAME}"'
-    !undef NEOREAD_SECOND_UNINSTALL_KEY
+    !insertmacro neoreadRunInstallProtection
   !endif
-  !insertmacro neoreadRequireProtectionSuccess
+!macroend
+
+; Hidden custom page between the directory page and instfiles: the only point
+; where an elevated inner GUI instance has a final $INSTDIR before files are
+; touched. Silent runs skip page callbacks entirely (they preflight in
+; customInit) and outer instances keep using customCheckAppRunning.
+!macro customPageAfterChangeDir
+  PageEx custom
+    PageCallbacks neoreadInnerInstallPreflight
+  PageExEnd
+!macroend
+
+; This file is compiled before the NSIS templates, but function bodies may
+; only be compiled after UAC/LogicLib/StrContents are included by them, so
+; define the callback from customHeader: installer.nsi expands it after
+; including assistedInstaller.nsh and before .onInit.
+!macro customHeader
+  !ifndef BUILD_UNINSTALLER
+    Function neoreadInnerInstallPreflight
+      ${If} ${UAC_IsInnerInstance}
+        ${AndIfNot} ${Silent}
+        !insertmacro neoreadSanitizeInstallDir
+        !insertmacro neoreadExtractProtection
+        !insertmacro neoreadRunInstallProtection
+      ${EndIf}
+      Abort ; preflight hook only, the page itself is never shown
+    FunctionEnd
+  !endif
 !macroend
 
 !macro customUnInit
