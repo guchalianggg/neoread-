@@ -36,7 +36,7 @@ Codex 的 `item/started`、`item/completed` 和 `item/mcpToolCall/progress` 经 
 
 联网授权受保存的搜索设置控制，并保存在用户问题的 `webSearch` 字段中。请求省略此字段时采用当前设置；显式 false 可关闭本轮；显式 true 不能越过设置中已关闭的权限。不接受文档内容或模型输出修改权限。关闭时不注册 API 网页工具，并将 Codex 搜索设为 disabled；历史网页资料只作为历史快照。
 
-DeepSeek 只收到必要查询词或指定 URL，不发送整篇文档及聊天历史。Fetch 请求在本机检查协议、凭据、localhost、内网和链路本地 IP，包括 DNS 解析结果；实际网页抓取由 DeepSeek 执行，远端抓取和跳转策略仍由其安全策略负责。Search/Fetch API 目标由用户在设置中明确指定，不跟随 API HTTP 重定向。搜索服务要求 HTTPS，本机兼容服务可使用 HTTP。更改服务地址时必须重新填写 Key；同一地址留空才可保留原 Key，移除密钥同时关闭搜索 API。配置返回值仅含 hasKey，不回传 Key。错误展示不包含原始上游响应体。
+DeepSeek 只收到必要查询词或指定 URL，不发送整篇文档及聊天历史。Fetch 请求在本机检查协议、凭据、localhost、内网和链路本地 IP，包括 DNS 解析结果；实际网页抓取由 DeepSeek 执行，远端抓取和跳转策略仍由其安全策略负责。Search/Fetch API 目标由用户在设置中明确指定，不跟随 API HTTP 重定向。搜索服务地址支持 HTTP 和 HTTPS，与模型 API 地址校验一致；HTTP 不加密传输。更改服务地址时必须重新填写 Key；同一地址留空才可保留原 Key，移除密钥同时关闭搜索 API。配置返回值仅含 hasKey，不回传 Key。错误展示不包含原始上游响应体。
 
 Codex 原生搜索请求由 App Server/服务端执行，NeoRead 收到的是执行通知，无法在每次请求前审核或改写其底层 HTTP 请求。当前授权和只读配置不等于完整进程级网络/文件系统隔离。
 

@@ -255,11 +255,11 @@ func validateAPIProtocol(protocol string) error {
 }
 func validateAPIURL(raw string) error {
 	u, e := url.Parse(raw)
-	if e != nil || u.Host == "" || u.User != nil || u.RawQuery != "" || u.Fragment != "" {
+	if e != nil || u.Hostname() == "" || u.User != nil || u.RawQuery != "" || u.Fragment != "" {
 		return errors.New("API 地址无效")
 	}
-	if u.Scheme != "https" && !(u.Scheme == "http" && (u.Hostname() == "localhost" || u.Hostname() == "127.0.0.1" || u.Hostname() == "::1")) {
-		return errors.New("API 需要 HTTPS，本机服务可使用 HTTP")
+	if u.Scheme != "https" && u.Scheme != "http" {
+		return errors.New("API 地址需要使用 HTTP 或 HTTPS")
 	}
 	return nil
 }

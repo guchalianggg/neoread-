@@ -60,7 +60,7 @@ func TestSearchSettingsKeepSecretsSeparateAndPreserveOmittedChanges(t *testing.T
 func TestSearchSettingsValidationAndSavedPermissions(t *testing.T) {
 	for _, config := range []WebSearchConfig{
 		{Provider: "unsupported", Key: "key"},
-		{Provider: "deepseek", URL: "http://remote.example", Key: "key"},
+		{Provider: "deepseek", URL: "ftp://remote.example", Key: "key"},
 		{Provider: "deepseek", URL: "https://u:p@search.example", Key: "key"},
 		{Provider: "deepseek", URL: "https://search.example?token=x", Key: "key"},
 		{Provider: "deepseek", Key: "line1\nline2"},
