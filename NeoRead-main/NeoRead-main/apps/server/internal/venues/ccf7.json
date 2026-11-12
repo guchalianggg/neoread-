@@ -1,0 +1,6135 @@
+{
+ "_source": "中国计算机学会推荐国际学术会议和期刊目录（2026 年，第七版）",
+ "_fields": "kind=期刊|会议 tier=A|B|C area=领域 abbr=简称 full=全称 publisher=出版社 seq=域内序号",
+ "entries": [
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TOCS",
+   "full": "ACM Transactions on Computer Systems",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TOS",
+   "full": "ACM Transactions on Storage",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TCAD",
+   "full": "IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TC",
+   "full": "IEEE Transactions on Computers",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TPDS",
+   "full": "IEEE Transactions on Parallel and Distributed Systems",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TACO",
+   "full": "ACM Transactions on Architecture and Code Optimization",
+   "publisher": "ACM",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TAAS",
+   "full": "ACM Transactions on Autonomous and Adaptive Systems",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TODAES",
+   "full": "ACM Transactions on Design Automation of Electronic Systems",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TECS",
+   "full": "ACM Transactions on Embedded Computing Systems",
+   "publisher": "ACM",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TRETS",
+   "full": "ACM Transactions on Reconfigurable Technology and Systems",
+   "publisher": "ACM",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TVLSI",
+   "full": "IEEE Transactions on Very Large Scale Integration (VLSI) Systems",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "JPDC",
+   "full": "Journal of Parallel and Distributed Computing",
+   "publisher": "Elsevier",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "JSA",
+   "full": "Journal of Systems Architecture: Embedded Software Design",
+   "publisher": "Elsevier",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "",
+   "full": "Parallel Computing",
+   "publisher": "Elsevier",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "",
+   "full": "Performance Evaluation: An International Journal",
+   "publisher": "Elsevier",
+   "seq": 9
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TCC",
+   "full": "IEEE Transactions on Cloud Computing",
+   "publisher": "IEEE",
+   "seq": 10
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "JETC",
+   "full": "ACM Journal on Emerging Technologies in Computing Systems",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "",
+   "full": "Concurrency and Computation: Practice and Experience",
+   "publisher": "Wiley",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "DC",
+   "full": "Distributed Computing",
+   "publisher": "Springer",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "FGCS",
+   "full": "Future Generation Computer Systems",
+   "publisher": "Elsevier",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "Integration",
+   "full": "Integration, the VLSI Journal",
+   "publisher": "Elsevier",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "JETTA",
+   "full": "Journal of Electronic Testing-Theory and Applications",
+   "publisher": "Springer",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "JGC",
+   "full": "Journal of Grid computing",
+   "publisher": "Springer",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "RTS",
+   "full": "Real-Time Systems",
+   "publisher": "Springer",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TJSC",
+   "full": "The Journal of Supercomputing",
+   "publisher": "Springer",
+   "seq": 9
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TCASI",
+   "full": "IEEE Transactions on Circuits and Systems I: Regular Papers",
+   "publisher": "IEEE",
+   "seq": 10
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "CCF-THPC",
+   "full": "CCF Transactions on High Performance Computing",
+   "publisher": "CCF",
+   "seq": 11
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "TSUSC",
+   "full": "IEEE Transactions on Sustainable Computing",
+   "publisher": "IEEE",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "PPoPP",
+   "full": "ACM SIGPLAN Symposium on Principles & Practice of Parallel Programming",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "FAST",
+   "full": "USENIX Conference on File and Storage Technologies",
+   "publisher": "USENIX",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "DAC",
+   "full": "Design Automation Conference",
+   "publisher": "ACM",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "HPCA",
+   "full": "IEEE International Symposium on High Performance Computer Architecture",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "MICRO",
+   "full": "IEEE/ACM International Symposium on Microarchitecture",
+   "publisher": "IEEE/ACM",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "SC",
+   "full": "International Conference for High Performance Computing, Networking, Storage, and Analysis",
+   "publisher": "IEEE",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ASPLOS",
+   "full": "International Conference on Architectural Support for Programming Languages and Operating Systems",
+   "publisher": "ACM",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ISCA",
+   "full": "International Symposium on Computer Architecture",
+   "publisher": "IEEE/ACM",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ACM SIGOPS ATC",
+   "full": "ACM SIGOPS Annual Technical Conference",
+   "publisher": "ACM",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "EuroSys",
+   "full": "European Conference on Computer Systems",
+   "publisher": "ACM",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "HPDC",
+   "full": "The International ACM Symposium on High-Performance Parallel and Distributed Computing",
+   "publisher": "IEEE",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "SoCC",
+   "full": "ACM Symposium on Cloud Computing",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "SPAA",
+   "full": "ACM Symposium on Parallelism in Algorithms and Architectures",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "PODC",
+   "full": "ACM Symposium on Principles of Distributed Computing",
+   "publisher": "ACM",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "FPGA",
+   "full": "ACM/SIGDA International Symposium on Field-Programmable Gate Arrays",
+   "publisher": "ACM",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "CGO",
+   "full": "The International Symposium on Code Generation and Optimization",
+   "publisher": "IEEE/ACM",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "DATE",
+   "full": "Design, Automation & Test in Europe",
+   "publisher": "IEEE/ACM",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "HOTCHIPS",
+   "full": "Hot Chips: A Symposium on High Performance Chips",
+   "publisher": "IEEE",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "CLUSTER",
+   "full": "IEEE International Conference on Cluster Computing",
+   "publisher": "IEEE",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ICCD",
+   "full": "International Conference on Computer Design",
+   "publisher": "IEEE",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ICCAD",
+   "full": "International Conference on Computer-Aided Design",
+   "publisher": "IEEE/ACM",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ICDCS",
+   "full": "IEEE International Conference on Distributed Computing Systems",
+   "publisher": "IEEE",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "CODES+ISSS",
+   "full": "International Conference on Hardware/Software Co-design and System Synthesis",
+   "publisher": "IEEE/ACM",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "HiPEAC",
+   "full": "International Conference on High Performance and Embedded Architectures and Compilers",
+   "publisher": "ACM",
+   "seq": 13
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "SIG-METRICS",
+   "full": "International Conference on Measurement and Modeling of Computer Systems",
+   "publisher": "ACM",
+   "seq": 14
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "PACT",
+   "full": "International Conference on Parallel Architectures and Compilation Techniques",
+   "publisher": "IEEE/ACM",
+   "seq": 15
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ICPP",
+   "full": "International Conference on Parallel Processing",
+   "publisher": "ACM",
+   "seq": 16
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ICS",
+   "full": "International Conference on Supercomputing",
+   "publisher": "ACM",
+   "seq": 17
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "VEE",
+   "full": "International Conference on Virtual Execution Environments",
+   "publisher": "ACM",
+   "seq": 18
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "IPDPS",
+   "full": "IEEE International Parallel & Distributed Processing Symposium",
+   "publisher": "IEEE",
+   "seq": 19
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "Performance",
+   "full": "International Symposium on Computer Performance, Modeling, Measurements and Evaluation",
+   "publisher": "ACM",
+   "seq": 20
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ITC",
+   "full": "International Test Conference",
+   "publisher": "IEEE",
+   "seq": 21
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "LISA",
+   "full": "Large Installation System Administration Conference",
+   "publisher": "USENIX",
+   "seq": 22
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "MSST",
+   "full": "Mass Storage Systems and Technologies",
+   "publisher": "IEEE",
+   "seq": 23
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "RTAS",
+   "full": "IEEE Real-Time and Embedded Technology and Applications Symposium",
+   "publisher": "IEEE",
+   "seq": 24
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "Euro-Par",
+   "full": "European Conference on Parallel and Distributed Computing Springer",
+   "publisher": "Springer",
+   "seq": 25
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ISCAS",
+   "full": "IEEE International Symposium on Circuits and Systems",
+   "publisher": "IEEE",
+   "seq": 26
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "CF",
+   "full": "ACM International Conference on Computing Frontiers",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "SYSTOR",
+   "full": "ACM International Systems and Storage Conference",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "NOCS",
+   "full": "ACM/IEEE International Symposium on Networks-on-Chip",
+   "publisher": "IEEE/ACM",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ASAP",
+   "full": "IEEE International Conference on Application-Specific Systems, Architectures, and Processors",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ASP-DAC",
+   "full": "Asia and South Pacific Design Automation Conference",
+   "publisher": "IEEE/ACM",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ETS",
+   "full": "IEEE European Test Symposium",
+   "publisher": "IEEE",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "FPL",
+   "full": "International Conference on Field-Programmable Logic and Applications",
+   "publisher": "IEEE",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "FCCM",
+   "full": "IEEE Symposium on Field-Programmable Custom Computing Machines",
+   "publisher": "IEEE",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "GLSVLSI",
+   "full": "Great Lakes Symposium on VLSI",
+   "publisher": "IEEE/ACM",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ATS",
+   "full": "IEEE Asian Test Symposium",
+   "publisher": "IEEE",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "HPCC",
+   "full": "IEEE International Conference on High Performance Computing and Communications",
+   "publisher": "IEEE",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "HiPC",
+   "full": "IEEE International Conference on High Performance Computing, Data and Analytics",
+   "publisher": "IEEE/ACM",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "MASCOTS",
+   "full": "International Symposium on Modeling, Analysis, and Simulation of Computer and Telecommunication Systems",
+   "publisher": "IEEE",
+   "seq": 13
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ISPA",
+   "full": "IEEE International Symposium on Parallel and Distributed Processing with Applications",
+   "publisher": "IEEE",
+   "seq": 14
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "CCGRID",
+   "full": "IEEE/ACM International Symposium on Cluster, Cloud and Grid Computing",
+   "publisher": "IEEE/ACM",
+   "seq": 15
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "NPC",
+   "full": "IFIP International Conference on Network and Parallel Computing",
+   "publisher": "Springer",
+   "seq": 16
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ICA3PP",
+   "full": "International Conference on Algorithms and Architectures for Parallel Processing",
+   "publisher": "IEEE",
+   "seq": 17
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "CASES",
+   "full": "International Conference on Compilers, Architectures, and Synthesis for Embedded Systems",
+   "publisher": "ACM",
+   "seq": 18
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "FPT",
+   "full": "International Conference on Field-Programmable Technology",
+   "publisher": "IEEE",
+   "seq": 19
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ICPADS",
+   "full": "International Conference on Parallel and Distributed Systems",
+   "publisher": "IEEE",
+   "seq": 20
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ISLPED",
+   "full": "International Symposium on Low Power Electronics and Design",
+   "publisher": "IEEE/ACM",
+   "seq": 21
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ISPD",
+   "full": "International Symposium on Physical Design",
+   "publisher": "ACM",
+   "seq": 22
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "HOTI",
+   "full": "IEEE Symposium on High-Performance Interconnects",
+   "publisher": "IEEE",
+   "seq": 23
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "VTS",
+   "full": "IEEE VLSI Test Symposium",
+   "publisher": "IEEE",
+   "seq": 24
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "ITC-Asia",
+   "full": "International Test Conference in Asia",
+   "publisher": "IEEE",
+   "seq": 25
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "SEC",
+   "full": "ACM/IEEE Symposium on Edge Computing",
+   "publisher": "IEEE/ACM",
+   "seq": 26
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "NAS",
+   "full": "International Conference on Networking, Architecture and Storages",
+   "publisher": "IEEE",
+   "seq": 27
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "HotStorage",
+   "full": "HotStorage",
+   "publisher": "USENIX Association",
+   "seq": 28
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "APPT",
+   "full": "International Symposium on Advanced Parallel Processing Technology",
+   "publisher": "Springer",
+   "seq": 29
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机体系结构/并行与分布计算/存储系统",
+   "abbr": "JCC",
+   "full": "International Conference on JointCloud Computing",
+   "publisher": "CCF&IEEE +- 6** **** **** **** **** ***** **** **.- -+ .-*++",
+   "seq": 30
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机网络",
+   "abbr": "JSAC",
+   "full": "IEEE Journal on Selected Areas in Communications",
+   "publisher": "IEEE",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机网络",
+   "abbr": "TMC",
+   "full": "IEEE Transactions on Mobile Computing",
+   "publisher": "IEEE",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机网络",
+   "abbr": "TON",
+   "full": "IEEE Transactions on Networking",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "TOIT",
+   "full": "ACM Transactions on Internet Technology",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "TOMM",
+   "full": "ACM Transactions on Multimedia Computing, Communications and Applications",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "TOSN",
+   "full": "ACM Transactions on Sensor Networks",
+   "publisher": "ACM",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "CN",
+   "full": "Computer Networks",
+   "publisher": "Elsevier",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "TCOM",
+   "full": "IEEE Transactions on Communications",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "TWC",
+   "full": "IEEE Transactions on Wireless Communications",
+   "publisher": "IEEE",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "",
+   "full": "Ad Hoc Networks",
+   "publisher": "Elsevier",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "CC",
+   "full": "Computer Communications",
+   "publisher": "Elsevier",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "TNSM",
+   "full": "IEEE Transactions on Network and Service Management",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "",
+   "full": "IET Communications",
+   "publisher": "IET",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "JNCA",
+   "full": "Journal of Network and Computer Applications",
+   "publisher": "Elsevier",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "MONET",
+   "full": "Mobile Networks and Applications",
+   "publisher": "Springer",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "",
+   "full": "Networks",
+   "publisher": "Wiley",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "PPNA",
+   "full": "Peer-to-Peer Networking and Applications",
+   "publisher": "Springer",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "WCMC",
+   "full": "Wireless Communications and Mobile Computing",
+   "publisher": "Wiley",
+   "seq": 9
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "",
+   "full": "Wireless Networks",
+   "publisher": "Springer",
+   "seq": 10
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "IOT",
+   "full": "IEEE Internet of Things Journal",
+   "publisher": "IEEE",
+   "seq": 11
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "TIOT",
+   "full": "ACM Transactions on Internet of Things",
+   "publisher": "ACM",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机网络",
+   "abbr": "SIGCOMM",
+   "full": "ACM International Conference on Applications, Technologies, Architectures, and Protocols for Computer Communication",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机网络",
+   "abbr": "MobiCom",
+   "full": "ACM International Conference on Mobile Computing and Networking",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机网络",
+   "abbr": "INFOCOM",
+   "full": "IEEE International Conference on Computer Communications",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机网络",
+   "abbr": "NSDI",
+   "full": "Symposium on Network System Design and Implementation",
+   "publisher": "USENIX",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "SenSys",
+   "full": "ACM Conference on Embedded Networked Sensor Systems",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "CoNEXT",
+   "full": "ACM International Conference on Emerging Networking Experiments and Technologies",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "SECON",
+   "full": "IEEE International Conference on Sensing, Communication, and Networking",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "IPSN",
+   "full": "International Conference on Information Processing in Sensor Networks",
+   "publisher": "IEEE/ACM",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "MobiSys",
+   "full": "ACM International Conference on Mobile Systems, Applications, and Services",
+   "publisher": "ACM",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "ICNP",
+   "full": "IEEE International Conference on Network Protocols",
+   "publisher": "IEEE",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "MobiHoc",
+   "full": "International Symposium on Theory, Algorithmic Foundations, and Protocol Design for Mobile Networks and Mobile Computing",
+   "publisher": "IEEE/ACM",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "NOSSDAV",
+   "full": "International Workshop on Network and Operating System Support for Digital Audio and Video",
+   "publisher": "ACM",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "IWQoS",
+   "full": "IEEE/ACM International Workshop on Quality of Service",
+   "publisher": "IEEE",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机网络",
+   "abbr": "IMC",
+   "full": "ACM Internet Measurement Conference",
+   "publisher": "ACM/ USENIX",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "ANCS",
+   "full": "ACM/IEEE Symposium on Architectures for Networking and Communication Systems",
+   "publisher": "IEEE/ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "APNOMS",
+   "full": "Asia-Pacific Network Operations and Management Symposium",
+   "publisher": "IFIP/ IEEE",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "FORTE",
+   "full": "International Conference on Formal Techniques for Distributed Objects, Components, and Systems",
+   "publisher": "Springer",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "LCN",
+   "full": "IEEE Conference on Local Computer Networks",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "GLOBECOM",
+   "full": "IEEE Global Communications Conference",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "ICC",
+   "full": "IEEE International Conference on Communications",
+   "publisher": "IEEE",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "ICCCN",
+   "full": "IEEE International Conference on Computer Communications and Networks",
+   "publisher": "IEEE",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "MASS",
+   "full": "IEEE International Conference on Mobile Adhoc and Sensor Systems",
+   "publisher": "IEEE",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "P2P",
+   "full": "IEEE International Conference on Peer-to-Peer Computing",
+   "publisher": "IEEE",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "IPCCC",
+   "full": "IEEE International Performance Computing and Communications Conference",
+   "publisher": "IEEE",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "WoWMoM",
+   "full": "IEEE International Symposium on a World of Wireless, Mobile and Multimedia Networks",
+   "publisher": "IEEE",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "ISCC",
+   "full": "IEEE Symposium on Computers and Communications",
+   "publisher": "IEEE",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "WCNC",
+   "full": "IEEE Wireless Communications and Networking Conference",
+   "publisher": "IEEE",
+   "seq": 13
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "Networking",
+   "full": "IFIP International Conferences on Networking",
+   "publisher": "IFIP",
+   "seq": 14
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "IM",
+   "full": "IFIP/IEEE International Symposium on Integrated Network Management",
+   "publisher": "IFIP/ IEEE",
+   "seq": 15
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "MSN",
+   "full": "International Conference on Mobility, Sensing and Networking",
+   "publisher": "IEEE",
+   "seq": 16
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "MSWiM",
+   "full": "International Conference on Modeling, Analysis and Simulation of Wireless and Mobile Systems",
+   "publisher": "ACM",
+   "seq": 17
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "WASA",
+   "full": "The International Conference on Wireless Artificial Intelligent Computing Systems and Applications",
+   "publisher": "Springer",
+   "seq": 18
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "HotNets",
+   "full": "ACM The Workshop on Hot Topics in Networks",
+   "publisher": "ACM",
+   "seq": 19
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机网络",
+   "abbr": "APNet",
+   "full": "Asia-Pacific Workshop on Networking",
+   "publisher": "ACM",
+   "seq": 20
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "网络与信息安全",
+   "abbr": "TDSC",
+   "full": "IEEE Transactions on Dependable and Secure Computing",
+   "publisher": "IEEE",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "网络与信息安全",
+   "abbr": "TIFS",
+   "full": "IEEE Transactions on Information Forensics and Security",
+   "publisher": "IEEE",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "网络与信息安全",
+   "abbr": "",
+   "full": "Journal of Cryptology",
+   "publisher": "Springer",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "TOPS",
+   "full": "ACM Transactions on Privacy and Security",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "",
+   "full": "Computers & Security",
+   "publisher": "Elsevier",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "",
+   "full": "Designs, Codes and Cryptography",
+   "publisher": "Springer",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "JCS",
+   "full": "Journal of Computer Security",
+   "publisher": "IOS Press",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "Cybersecurity",
+   "full": "Cybersecurity",
+   "publisher": "Springer",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "CLSR",
+   "full": "Computer Law & Security Review",
+   "publisher": "Elsevier",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "",
+   "full": "EURASIP Journal on Information Security",
+   "publisher": "Springer",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "",
+   "full": "IET Information Security",
+   "publisher": "IET",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "IMCS",
+   "full": "Information and Computer Security",
+   "publisher": "Emerald",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "IJICS",
+   "full": "International Journal of Information and Computer Security",
+   "publisher": "Inderscience",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "IJISP",
+   "full": "International Journal of Information Security and Privacy",
+   "publisher": "IGI Global",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "JISA",
+   "full": "Journal of Information Security and Applications",
+   "publisher": "Elsevier",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "SCN",
+   "full": "Security and Communication Networks",
+   "publisher": "Wiley",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "HCC",
+   "full": "High-Confidence Computing",
+   "publisher": "Elsevier",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "网络与信息安全",
+   "abbr": "CCS",
+   "full": "ACM Conference on Computer and Communications Security",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "网络与信息安全",
+   "abbr": "EUROCRYPT",
+   "full": "International Conference on the Theory and Applications of Cryptographic Techniques",
+   "publisher": "Springer",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "网络与信息安全",
+   "abbr": "S&P",
+   "full": "IEEE Symposium on Security and Privacy",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "网络与信息安全",
+   "abbr": "CRYPTO",
+   "full": "International Cryptology Conference",
+   "publisher": "Springer",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "网络与信息安全",
+   "abbr": "USENIX Security",
+   "full": "USENIX Security Symposium",
+   "publisher": "USENIX Association",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "网络与信息安全",
+   "abbr": "NDSS",
+   "full": "Network and Distributed System Security Symposium",
+   "publisher": "ISOC",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "ACSAC",
+   "full": "Annual Computer Security Applications Conference",
+   "publisher": "IEEE",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "ASIACRYPT",
+   "full": "Annual International Conference on the Theory and Application of Cryptology and Information Security",
+   "publisher": "Springer",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "ESORICS",
+   "full": "European Symposium on Research in Computer Security",
+   "publisher": "Springer",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "FSE",
+   "full": "Fast Software Encryption",
+   "publisher": "Springer",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "CSFW",
+   "full": "IEEE Computer Security Foundations Workshop",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "SRDS",
+   "full": "IEEE International Symposium on Reliable Distributed Systems",
+   "publisher": "IEEE",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "CHES",
+   "full": "International Conference on Cryptographic Hardware and Embedded Systems",
+   "publisher": "Springer",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "DSN",
+   "full": "International Conference on Dependable Systems and Networks",
+   "publisher": "IEEE/ IFIP",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "RAID",
+   "full": "International Symposium on Recent Advances in Intrusion Detection",
+   "publisher": "Springer",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "PKC",
+   "full": "International Workshop on Practice and Theory in Public Key Cryptography",
+   "publisher": "Springer",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "网络与信息安全",
+   "abbr": "TCC",
+   "full": "Theory of Cryptography Conference",
+   "publisher": "Springer",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "WiSec",
+   "full": "ACM Conference on Security and Privacy in Wireless and Mobile Networks",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "SACMAT",
+   "full": "ACM Symposium on Access Control Models and Technologies",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "DRM",
+   "full": "ACM Workshop on Digital Rights Management",
+   "publisher": "ACM",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "IH&MMSec",
+   "full": "ACM Workshop on Information Hiding and Multimedia Security",
+   "publisher": "ACM",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "ACNS",
+   "full": "International Conference on Applied Cryptography and Network Security",
+   "publisher": "Springer",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "AsiaCCS",
+   "full": "ACM Asia Conference on Computer and Communications Security",
+   "publisher": "ACM",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "ACISP",
+   "full": "Australasia Conference on Information Security and Privacy",
+   "publisher": "Springer",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "CT-RSA",
+   "full": "The Cryptographer's Track at RSA Conference",
+   "publisher": "Springer",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "DIMVA",
+   "full": "Conference on Detection of Intrusions and Malware & Vulnerability Assessment",
+   "publisher": "Springer",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "DFRWS",
+   "full": "Digital Forensic Research Workshop",
+   "publisher": "Elsevier",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "FC",
+   "full": "Financial Cryptography and Data Security",
+   "publisher": "Springer",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "TrustCom",
+   "full": "IEEE International Conference on Trust, Security and Privacy in Computing and Communications",
+   "publisher": "IEEE",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "SEC",
+   "full": "IFIP International Information Security Conference",
+   "publisher": "Springer",
+   "seq": 13
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "IFIP WG 11.9",
+   "full": "IFIP Working Group 11.9 International Conference on Digital Forensics",
+   "publisher": "Springer",
+   "seq": 14
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "ISC",
+   "full": "Information Security Conference",
+   "publisher": "Springer",
+   "seq": 15
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "ICDF2C",
+   "full": "International Conference on Digital Forensics & Cyber Crime",
+   "publisher": "Springer",
+   "seq": 16
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "ICICS",
+   "full": "International Conference on Information and Communications Security",
+   "publisher": "Springer",
+   "seq": 17
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "SecureComm",
+   "full": "International Conference on Security and Privacy in Communication Networks",
+   "publisher": "ACM",
+   "seq": 18
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "NSPW",
+   "full": "New Security Paradigms Workshop",
+   "publisher": "ACM",
+   "seq": 19
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "PAM",
+   "full": "Passive and Active Measurement Conference",
+   "publisher": "Springer",
+   "seq": 20
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "PETS",
+   "full": "Privacy Enhancing Technologies Symposium",
+   "publisher": "Springer",
+   "seq": 21
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "SAC",
+   "full": "Selected Areas in Cryptography",
+   "publisher": "Springer",
+   "seq": 22
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "SOUPS",
+   "full": "Symposium On Usable Privacy and Security",
+   "publisher": "USENIX",
+   "seq": 23
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "HotSec",
+   "full": "USENIX Workshop on Hot Topics in Security",
+   "publisher": "USENIX",
+   "seq": 24
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "EuroS&P",
+   "full": "IEEE European Symposium on Security and Privacy",
+   "publisher": "IEEE",
+   "seq": 25
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "Inscrypt",
+   "full": "International Conference on Information Security and Cryptology",
+   "publisher": "Springer",
+   "seq": 26
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "CODASPY",
+   "full": "Conference on Data and Application Security and Privacy",
+   "publisher": "ACM",
+   "seq": 27
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "BlockSys",
+   "full": "International Conference on Blockchain, Artificial Intelligence, and Trustworthy Systems",
+   "publisher": "Springer",
+   "seq": 28
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "网络与信息安全",
+   "abbr": "CSCloud",
+   "full": "International Conference on Cyber Security and Cloud Computing",
+   "publisher": "IEEE CSCloud Steering Committee",
+   "seq": 29
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "TOPLAS",
+   "full": "ACM Transactions on Programming Languages and Systems",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "TOSEM",
+   "full": "ACM Transactions on Software Engineering and Methodology",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "TSE",
+   "full": "IEEE Transactions on Software Engineering",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "TSC",
+   "full": "IEEE Transactions on Services Computing",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ASE",
+   "full": "Automated Software Engineering",
+   "publisher": "Springer",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ESE",
+   "full": "Empirical Software Engineering",
+   "publisher": "Springer",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "IETS",
+   "full": "IET Software",
+   "publisher": "IET",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "IST",
+   "full": "Information and Software Technology",
+   "publisher": "Elsevier",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "JFP",
+   "full": "Journal of Functional Programming",
+   "publisher": "Cambridge University Press",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "",
+   "full": "Journal of Software: Evolution and Process",
+   "publisher": "Wiley",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "JSS",
+   "full": "Journal of Systems and Software",
+   "publisher": "Elsevier",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "RE",
+   "full": "Requirements Engineering",
+   "publisher": "Springer",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "SCP",
+   "full": "Science of Computer Programming",
+   "publisher": "Elsevier",
+   "seq": 9
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "SoSyM",
+   "full": "Software and Systems Modeling",
+   "publisher": "Springer",
+   "seq": 10
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "STVR",
+   "full": "Software Testing, Verification and Reliability",
+   "publisher": "Wiley",
+   "seq": 11
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "SPE",
+   "full": "Software: Practice and Experience",
+   "publisher": "Wiley",
+   "seq": 12
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "CL",
+   "full": "Computer Languages, Systems and Structures",
+   "publisher": "Elsevier",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "IJSEKE",
+   "full": "International Journal of Software Engineering and Knowledge Engineering",
+   "publisher": "World Scientific",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "STTT",
+   "full": "International Journal of Software Tools for Technology Transfer",
+   "publisher": "Springer",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "JLAMP",
+   "full": "Journal of Logical and Algebraic Methods in Programming",
+   "publisher": "Elsevier",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "JWE",
+   "full": "Journal of Web Engineering",
+   "publisher": "Rinton Press",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "SOCA",
+   "full": "Service Oriented Computing and Applications",
+   "publisher": "Springer",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "SQJ",
+   "full": "Software Quality Journal",
+   "publisher": "Springer",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "TPLP",
+   "full": "Theory and Practice of Logic Programming",
+   "publisher": "Cambridge University Press",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "PACMPL",
+   "full": "Proceedings of the ACM on Programming Languages",
+   "publisher": "ACM",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "PLDI",
+   "full": "ACM SIGPLAN Conference on Programming Language Design and Implementation",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "POPL",
+   "full": "ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "FSE",
+   "full": "ACM International Conference on the Foundations of Software Engineering",
+   "publisher": "ACM",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "SOSP",
+   "full": "ACM Symposium on Operating Systems Principles",
+   "publisher": "ACM",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "OOPSLA",
+   "full": "Conference on Object-Oriented Programming Systems, Languages, and Applications",
+   "publisher": "ACM",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ASE",
+   "full": "International Conference on Automated Software Engineering",
+   "publisher": "IEEE/ACM",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ICSE",
+   "full": "International Conference on Software Engineering",
+   "publisher": "IEEE/ACM",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ISSTA",
+   "full": "International Symposium on Software Testing and Analysis",
+   "publisher": "ACM",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "OSDI",
+   "full": "USENIX Symposium on Operating Systems Design and Implementation",
+   "publisher": "USENIX",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "FM",
+   "full": "International Symposium on Formal Methods",
+   "publisher": "FME",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ECOOP",
+   "full": "European Conference on Object-Oriented Programming",
+   "publisher": "AITO",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ETAPS",
+   "full": "European Joint Conferences on Theory and Practice of Software",
+   "publisher": "Springer",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ICPC",
+   "full": "IEEE International Conference on Program Comprehension",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "RE",
+   "full": "IEEE International Requirements Engineering Conference",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "CAiSE",
+   "full": "International Conference on Advanced Information Systems Engineering",
+   "publisher": "Springer",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ICFP",
+   "full": "ACM SIGPLAN International Conference on Function Programming",
+   "publisher": "ACM",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "LCTES",
+   "full": "ACM SIGPLAN/SIGBED International Conference on Languages, Compilers and Tools for Embedded Systems",
+   "publisher": "ACM",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "MoDELS",
+   "full": "ACM/IEEE International Conference on Model Driven EngineeringLanguages and Systems",
+   "publisher": "IEEE/ACM",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "CP",
+   "full": "International Conference on Principles and Practice of Constraint Programming",
+   "publisher": "Springer",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ICSOC",
+   "full": "International Conference on Service Oriented Computing",
+   "publisher": "Springer",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "SANER",
+   "full": "IEEE International Conference on Software Analysis, Evolution, and Reengineering",
+   "publisher": "IEEE",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ICSME",
+   "full": "International Conference on Software Maintenance and Evolution",
+   "publisher": "IEEE",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "VMCAI",
+   "full": "International Conference on Verification, Model Checking and Abstract Interpretation",
+   "publisher": "Springer",
+   "seq": 13
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ICWS",
+   "full": "IEEE International Conference on Web Services",
+   "publisher": "IEEE",
+   "seq": 14
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "Middleware",
+   "full": "International Middleware Conference",
+   "publisher": "ACM/IFIP/ USENIX",
+   "seq": 15
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "SAS",
+   "full": "International Static Analysis Symposium",
+   "publisher": "Springer",
+   "seq": 16
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ESEM",
+   "full": "International Symposium on Empirical Software Engineering and Measurement",
+   "publisher": "IEEE/ACM",
+   "seq": 17
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ISSRE",
+   "full": "IEEE International Symposium on Software Reliability Engineering",
+   "publisher": "IEEE",
+   "seq": 18
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "HotOS",
+   "full": "USENIX Workshop on Hot Topics in Operating Systems",
+   "publisher": "USENIX",
+   "seq": 19
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "CC",
+   "full": "International Conference on Compiler Construction",
+   "publisher": "ACM",
+   "seq": 20
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "PEPM",
+   "full": "ACM SIGPLAN Workshop on Partial Evaluation and Program Manipulation",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "PASTE",
+   "full": "ACMSIGPLAN-SIGSOFT Workshop on Program Analysis for Software Tools and Engineering",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "APLAS",
+   "full": "Asian Symposium on Programming Languages and Systems",
+   "publisher": "Springer",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "APSEC",
+   "full": "Asia-Pacific Software Engineering Conference",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "EASE",
+   "full": "International Conference on Evaluation and Assessment in Software Engineering",
+   "publisher": "ACM",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ICECCS",
+   "full": "International Conference on Engineering of Complex Computer Systems",
+   "publisher": "IEEE",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ICST",
+   "full": "IEEE International Conference on Software Testing, Verification and Validation",
+   "publisher": "IEEE",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ISPASS",
+   "full": "IEEE International Symposium on Performance Analysis of Systems and Software",
+   "publisher": "IEEE",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "SCAM",
+   "full": "IEEE International Working Conference on Source Code Analysis and Manipulation",
+   "publisher": "IEEE",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "COMPSAC",
+   "full": "International Computer Software and Applications Conference",
+   "publisher": "IEEE",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ICFEM",
+   "full": "International Conference on Formal Engineering Methods",
+   "publisher": "Springer",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "SSE",
+   "full": "IEEE International Conference on Software Services Engineering",
+   "publisher": "IEEE",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ICSSP",
+   "full": "International Conference on Software and System Process",
+   "publisher": "ACM",
+   "seq": 13
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "SEKE",
+   "full": "International Conference on Software Engineering and Knowledge Engineering",
+   "publisher": "KSI",
+   "seq": 14
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "QRS",
+   "full": "International Conference on Software Quality, Reliability and Security",
+   "publisher": "IEEE",
+   "seq": 15
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ICSR",
+   "full": "International Conference on Software Reuse",
+   "publisher": "Springer",
+   "seq": 16
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ICWE",
+   "full": "International Conference on Web Engineering",
+   "publisher": "Springer",
+   "seq": 17
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "SPIN",
+   "full": "International Symposium on Model Checking of Software",
+   "publisher": "Springer",
+   "seq": 18
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "ATVA",
+   "full": "International Symposium on Automated Technology for Verification and Analysis",
+   "publisher": "Springer",
+   "seq": 19
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "LOPSTR",
+   "full": "International Symposium on Logic-based Program Synthesis and Transformation",
+   "publisher": "Springer",
+   "seq": 20
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "TASE",
+   "full": "Theoretical Aspects of Software Engineering Conference",
+   "publisher": "IEEE",
+   "seq": 21
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "MSR",
+   "full": "Mining Software Repositories",
+   "publisher": "IEEE/ACM",
+   "seq": 22
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "REFSQ",
+   "full": "Requirements Engineering: Foundation for Software Quality",
+   "publisher": "Springer",
+   "seq": 23
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "WICSA",
+   "full": "Working IEEE/IFIP Conference on Software Architecture",
+   "publisher": "IEEE",
+   "seq": 24
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "Internetware",
+   "full": "Asia-Pacific Symposium on Internetware",
+   "publisher": "ACM",
+   "seq": 25
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "RV",
+   "full": "International Conference on Runtime Verification",
+   "publisher": "Springer",
+   "seq": 26
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "软件工程/系统软件/程序设计语言",
+   "abbr": "MEMOCODE",
+   "full": "International Conference on Formal Methods and Models for Co-Design",
+   "publisher": "IEEE/ACM",
+   "seq": 27
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "TODS",
+   "full": "ACM Transactions on Database Systems",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "TOIS",
+   "full": "ACM Transactions on Information Systems",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "TKDE",
+   "full": "IEEE Transactions on Knowledge and Data Engineering",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "VLDBJ",
+   "full": "The VLDB Journal",
+   "publisher": "Springer",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "TKDD",
+   "full": "ACM Transactions on Knowledge Discovery from Data",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "TWEB",
+   "full": "ACM Transactions on the Web",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "AEI",
+   "full": "Advanced Engineering Informatics",
+   "publisher": "Elsevier",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "DKE",
+   "full": "Data & Knowledge Engineering",
+   "publisher": "Elsevier",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "DMKD",
+   "full": "Data Mining and Knowledge Discovery",
+   "publisher": "Springer",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "EJIS",
+   "full": "European Journal of Information Systems",
+   "publisher": "Springer",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "",
+   "full": "GeoInformatica",
+   "publisher": "Springer",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "IPM",
+   "full": "Information Processing and Management",
+   "publisher": "Elsevier",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "",
+   "full": "Information Sciences",
+   "publisher": "Elsevier",
+   "seq": 9
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "IS",
+   "full": "Information Systems",
+   "publisher": "Elsevier",
+   "seq": 10
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "JASIST",
+   "full": "Journal of the Association for Information Science and Technology",
+   "publisher": "Wiley",
+   "seq": 11
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "JWS",
+   "full": "Journal of Web Semantics",
+   "publisher": "Elsevier",
+   "seq": 12
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "KAIS",
+   "full": "Knowledge and Information Systems",
+   "publisher": "Springer",
+   "seq": 13
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "DSE",
+   "full": "Data Science and Engineering",
+   "publisher": "CCF/ Springer Nature",
+   "seq": 14
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "DPD",
+   "full": "Distributed and Parallel Databases",
+   "publisher": "Springer",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "I&M",
+   "full": "Information & Management",
+   "publisher": "Elsevier",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "IPL",
+   "full": "Information Processing Letters",
+   "publisher": "Elsevier",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "",
+   "full": "Discover Computing",
+   "publisher": "Springer",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "IJCIS",
+   "full": "International Journal of Cooperative Information Systems",
+   "publisher": "World Scientific",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "IJGIS",
+   "full": "International Journal of Geographical Information Science",
+   "publisher": "Taylor & Francis",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "IJIS",
+   "full": "International Journal of Intelligent Systems",
+   "publisher": "Wiley",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "IJKM",
+   "full": "International Journal of Knowledge Management",
+   "publisher": "IGI",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "IJSWIS",
+   "full": "International Journal on Semantic Web and Information Systems",
+   "publisher": "IGI",
+   "seq": 9
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "JCIS",
+   "full": "Journal of Computer Information Systems",
+   "publisher": "IACIS",
+   "seq": 10
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "JDM",
+   "full": "Journal of Database Management",
+   "publisher": "IGI-Global",
+   "seq": 11
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "JGITM",
+   "full": "Journal of Global Information Technology Management",
+   "publisher": "Ivy League Publishing",
+   "seq": 12
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "JIIS",
+   "full": "Journal of Intelligent Information Systems",
+   "publisher": "Springer",
+   "seq": 13
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "JSIS",
+   "full": "The Journal of Strategic Information Systems",
+   "publisher": "Elsevier",
+   "seq": 14
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "TIST",
+   "full": "ACM Transactions on Intelligent Systems and Technology",
+   "publisher": "ACM",
+   "seq": 15
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "TORS",
+   "full": "ACM Transactions on Recommender Systems",
+   "publisher": "ACM",
+   "seq": 16
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "SIGMOD",
+   "full": "ACM SIGMOD Conference",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "SIGKDD",
+   "full": "ACM SIGKDD Conference on Knowledge Discovery and Data Mining",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "ICDE",
+   "full": "IEEE International Conference on Data Engineering",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "SIGIR",
+   "full": "International ACM SIGIR Conference on Research and Development in Information Retrieval",
+   "publisher": "ACM",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "VLDB",
+   "full": "International Conference on Very Large Data Bases",
+   "publisher": "Morgan Kaufmann/ ACM",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "CIKM",
+   "full": "ACM International Conference on Information and Knowledge Management",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "WSDM",
+   "full": "ACM International Conference on Web Search and Data Mining",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "PODS",
+   "full": "ACM SIGMOD-SIGACT-SIGAI Symposium on Principles of Database Systems",
+   "publisher": "ACM",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "DASFAA",
+   "full": "International Conference on Database Systems for Advanced Applications",
+   "publisher": "Springer",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "ECML-PKDD",
+   "full": "European Conference on Machine Learning and Principles and Practice of Knowledge Discovery in Databases",
+   "publisher": "Springer",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "ISWC",
+   "full": "IEEE International Semantic Web Conference",
+   "publisher": "IEEE",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "ICDM",
+   "full": "IEEE International Conference on Data Mining",
+   "publisher": "IEEE",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "ICDT",
+   "full": "International Conference on Database Theory",
+   "publisher": "Springer",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "EDBT",
+   "full": "International Conference on Extending Database Technology",
+   "publisher": "Springer",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "CIDR",
+   "full": "Conference on Innovative Data Systems Research",
+   "publisher": "Online Proceeding",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "SDM",
+   "full": "SIAM International Conference on Data Mining",
+   "publisher": "SIAM",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "RecSys",
+   "full": "ACM Conference on Recommender Systems",
+   "publisher": "ACM",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "数据库/数据挖掘/内容检索",
+   "abbr": "WISE",
+   "full": "Web Information Systems Engineering Conference",
+   "publisher": "Springer",
+   "seq": 13
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "APWeb",
+   "full": "Asia Pacific Web Conference",
+   "publisher": "Springer",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "DEXA",
+   "full": "International Conference on Database and Expert System Applications",
+   "publisher": "Springer",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "ECIR",
+   "full": "European Conference on Information Retrieval",
+   "publisher": "Springer",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "ESWC",
+   "full": "Extended Semantic Web Conference",
+   "publisher": "Springer",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "WebDB",
+   "full": "International Workshop on Web and Databases",
+   "publisher": "ACM",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "ER",
+   "full": "International Conference on Conceptual Modeling",
+   "publisher": "Springer",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "MDM",
+   "full": "International Conference on Mobile Data Management",
+   "publisher": "IEEE",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "SSDBM",
+   "full": "International Conference on Scientific and Statistical Database Management",
+   "publisher": "IEEE",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "WAIM",
+   "full": "International Conference on Web Age Information Management",
+   "publisher": "Springer",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "SSTD",
+   "full": "International Symposium on Spatial and Temporal Databases",
+   "publisher": "Springer",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "PAKDD",
+   "full": "Pacific-Asia Conference on Knowledge Discovery and Data Mining",
+   "publisher": "Springer",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "ADMA",
+   "full": "International Conference on Advanced Data Mining and Applications",
+   "publisher": "Springer",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "WISA",
+   "full": "Web Information Systems and Applications",
+   "publisher": "Springer",
+   "seq": 13
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机科学理论",
+   "abbr": "TIT",
+   "full": "IEEE Transactions on Information Theory",
+   "publisher": "IEEE",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机科学理论",
+   "abbr": "IANDC",
+   "full": "Information and Computation",
+   "publisher": "Elsevier",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机科学理论",
+   "abbr": "SICOMP",
+   "full": "SIAM Journal on Computing",
+   "publisher": "SIAM",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "TALG",
+   "full": "ACM Transactions on Algorithms",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "TOCL",
+   "full": "ACM Transactions on Computational Logic",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "TOMS",
+   "full": "ACM Transactions on Mathematical Software",
+   "publisher": "ACM",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "Algorithmica",
+   "full": "Algorithmica",
+   "publisher": "Springer",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "CC",
+   "full": "Computational Complexity",
+   "publisher": "Springer",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "FAC",
+   "full": "Formal Aspects of Computing",
+   "publisher": "Springer",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "FMSD",
+   "full": "Formal Methods in System Design",
+   "publisher": "Springer",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "INFORMS",
+   "full": "INFORMS Journal on Computing",
+   "publisher": "INFORMS",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "JCSS",
+   "full": "Journal of Computer and System Sciences",
+   "publisher": "Elsevier",
+   "seq": 9
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "JGO",
+   "full": "Journal of Global Optimization",
+   "publisher": "Springer",
+   "seq": 10
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "JSC",
+   "full": "Journal of Symbolic Computation",
+   "publisher": "Elsevier",
+   "seq": 11
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "MSCS",
+   "full": "Mathematical Structures in Computer Science",
+   "publisher": "Cambridge University Press",
+   "seq": 12
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "TCS",
+   "full": "Theoretical Computer Science",
+   "publisher": "Elsevier",
+   "seq": 13
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "ACTA",
+   "full": "Acta Informatica",
+   "publisher": "Springer",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "APAL",
+   "full": "Annals of Pure and Applied Logic",
+   "publisher": "Elsevier",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "DAM",
+   "full": "Discrete Applied Mathematics",
+   "publisher": "Elsevier",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "FUIN",
+   "full": "Fundamenta Informaticae",
+   "publisher": "IOS Press",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "IPL",
+   "full": "Information Processing Letters",
+   "publisher": "Elsevier",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "JCOMPLEXITY",
+   "full": "Journal of Complexity",
+   "publisher": "Elsevier",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "LOGCOM",
+   "full": "Journal of Logic and Computation",
+   "publisher": "Oxford University Press",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "JSL",
+   "full": "The Journal of Symbolic Logic",
+   "publisher": "Association for Symbolic Logic",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "LMCS",
+   "full": "Logical Methods in Computer Science",
+   "publisher": "LMCS",
+   "seq": 9
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "SIDMA",
+   "full": "SIAM Journal on Discrete Mathematics",
+   "publisher": "SIAM",
+   "seq": 10
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "",
+   "full": "Theory of Computing Systems",
+   "publisher": "Springer",
+   "seq": 11
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "TQC",
+   "full": "ACM Transactions in Quantum Computing",
+   "publisher": "ACM",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机科学理论",
+   "abbr": "STOC",
+   "full": "ACM Symposium on the Theory of Computing",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机科学理论",
+   "abbr": "SODA",
+   "full": "ACM-SIAM Symposium on Discrete Algorithms",
+   "publisher": "SIAM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机科学理论",
+   "abbr": "CAV",
+   "full": "International Conference on Computer Aided Verification",
+   "publisher": "Springer",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机科学理论",
+   "abbr": "FOCS",
+   "full": "IEEE Annual Symposium on Foundations of Computer Science",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机科学理论",
+   "abbr": "LICS",
+   "full": "ACM/IEEE Symposium on Logic in Computer Science",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "SoCG",
+   "full": "International Symposium on Computational Geometry",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "ESA",
+   "full": "European Symposium on Algorithms",
+   "publisher": "Springer",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "CCC",
+   "full": "Conference on Computational Complexity",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "ICALP",
+   "full": "International Colloquium on Automata, Languages and Programming",
+   "publisher": "Springer",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "CADE",
+   "full": "Conference on Automated Deduction",
+   "publisher": "Springer",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "CONCUR",
+   "full": "International Conference on Concurrency Theory",
+   "publisher": "Springer",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "HSCC",
+   "full": "International Conference on Hybrid Systems: Computation and Control",
+   "publisher": "Springer/ ACM",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "SAT",
+   "full": "International Conference on Theory and Applications of Satisfiability Testing",
+   "publisher": "Springer",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "COCOON",
+   "full": "International Computing and Combinatorics Conference",
+   "publisher": "Springer",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机科学理论",
+   "abbr": "FMCAD",
+   "full": "Formal Methods in Computer-Aided Design",
+   "publisher": "ACM",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "CSL",
+   "full": "Computer Science Logic",
+   "publisher": "Springer",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "FSTTCS",
+   "full": "Foundations of Software Technology and Theoretical Computer Science",
+   "publisher": "Indian Association for Research in Computing Science",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "DSAA",
+   "full": "IEEE International Conference on Data Science and Advanced Analytics",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "ICTAC",
+   "full": "International Colloquium on Theoretical Aspects of Computing",
+   "publisher": "Springer",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "IPCO",
+   "full": "International Conference on Integer Programming and Combinatorial Optimization",
+   "publisher": "Springer",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "FSCD",
+   "full": "International Conference on Formal Structures for Computation and Deduction",
+   "publisher": "Dagstuhl Leibniz LIPIcs",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "ISAAC",
+   "full": "International Symposium on Algorithms and Computation",
+   "publisher": "Springer",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "MFCS",
+   "full": "International Conference on Mathematical Foundations of Computer Science",
+   "publisher": "Springer",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "STACS",
+   "full": "Symposium on Theoretical Aspects of Computer Science",
+   "publisher": "Springer",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机科学理论",
+   "abbr": "SETTA",
+   "full": "International Symposium on Software Engineering: Theories, Tools, and Applications",
+   "publisher": "Springer",
+   "seq": 10
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机图形学与多媒体",
+   "abbr": "TOG",
+   "full": "ACM Transactions on Graphics",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机图形学与多媒体",
+   "abbr": "TIP",
+   "full": "IEEE Transactions on Image Processing",
+   "publisher": "IEEE",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机图形学与多媒体",
+   "abbr": "TVCG",
+   "full": "IEEE Transactions on Visualization and Computer Graphics",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "计算机图形学与多媒体",
+   "abbr": "TMM",
+   "full": "IEEE Transactions on Multimedia",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "TOMM",
+   "full": "ACM Transactions on Multimedia Computing, Communications and Applications",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "CAGD",
+   "full": "Computer Aided Geometric Design",
+   "publisher": "Elsevier",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "CGF",
+   "full": "Computer Graphics Forum",
+   "publisher": "Wiley",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "CAD",
+   "full": "Computer-Aided Design",
+   "publisher": "Elsevier",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "TCSVT",
+   "full": "IEEE Transactions on Circuits and Systems for Video Technology",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "JASA",
+   "full": "The Journal of the Acoustical Society of America",
+   "publisher": "AIP",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "SIIMS",
+   "full": "SIAM Journal on Imaging Sciences",
+   "publisher": "SIAM",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "SPECOM",
+   "full": "Speech Communication",
+   "publisher": "Elsevier",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "CVMJ",
+   "full": "Computational Visual Media",
+   "publisher": "清华大学出版社 /IEEE",
+   "seq": 9
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "CGTA",
+   "full": "Computational Geometry: Theory and Applications",
+   "publisher": "Elsevier",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "CAVW",
+   "full": "Computer animation & virtual worlds",
+   "publisher": "Wiley",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "C&G",
+   "full": "Computers & Graphics",
+   "publisher": "Elsevier",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "DCG",
+   "full": "Discrete & Computational Geometry",
+   "publisher": "Springer",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "SPL",
+   "full": "IEEE Signal Processing Letters",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "IET-IPR",
+   "full": "IET Image Processing",
+   "publisher": "IET",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "JVCIR",
+   "full": "Journal of Visual Communication and Image Representation",
+   "publisher": "Elsevier",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "MS",
+   "full": "Multimedia Systems",
+   "publisher": "Springer",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "MTA",
+   "full": "Multimedia Tools and Applications",
+   "publisher": "Springer",
+   "seq": 9
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "SIGPRO",
+   "full": "Signal Processing",
+   "publisher": "Elsevier",
+   "seq": 10
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "IMAGE",
+   "full": "Signal Processing: Image Communication",
+   "publisher": "Elsevier",
+   "seq": 11
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "TVC",
+   "full": "The Visual Computer",
+   "publisher": "Springer",
+   "seq": 12
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "VI",
+   "full": "Visual Informatics",
+   "publisher": "浙江大学出 版社",
+   "seq": 13
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "VRIH",
+   "full": "Virtual Reality & Intelligent Hardware",
+   "publisher": "中国科技出 版社 / 北京航 空航天大学",
+   "seq": 14
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "GMOD",
+   "full": "Graphical Models",
+   "publisher": "Elsevier",
+   "seq": 15
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机图形学与多媒体",
+   "abbr": "ACMMM",
+   "full": "ACM International Conference on Multimedia",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机图形学与多媒体",
+   "abbr": "SIGGRAPH",
+   "full": "ACM Special Interest Group on Computer Graphics",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机图形学与多媒体",
+   "abbr": "VR",
+   "full": "IEEE Conference on Virtual Reality and 3D User Interfaces",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "计算机图形学与多媒体",
+   "abbr": "IEEEVIS",
+   "full": "IEEE Visualization Conference",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "ICMR",
+   "full": "ACM SIGMM International Conference on Multimedia Retrieval",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "I3D",
+   "full": "ACM SIGGRAPH Symposium on Interactive 3D Graphics and Games",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "SCA",
+   "full": "ACM SIGGRAPH/Eurographics Symposium on Computer Animation",
+   "publisher": "ACM",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "DCC",
+   "full": "Data Compression Conference",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "Eurographics",
+   "full": "Annual Conference of the European Association for Computer Graphics Wiley/ Blackwell",
+   "publisher": "",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "EuroVis",
+   "full": "Eurographics Conference on Visualization",
+   "publisher": "ACM",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "SGP",
+   "full": "Eurographics Symposium on Geometry Processing",
+   "publisher": "Wiley/ Blackwell",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "EGSR",
+   "full": "Eurographics Symposium on Rendering",
+   "publisher": "Wiley/ Blackwell",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "ICASSP",
+   "full": "IEEE International Conference on Acoustics, Speech and Signal Processing",
+   "publisher": "IEEE",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "ICME",
+   "full": "IEEE International Conference on Multimedia & Expo",
+   "publisher": "IEEE",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "ISMAR",
+   "full": "International Symposium on Mixed and Augmented Reality",
+   "publisher": "IEEE/ACM",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "PG",
+   "full": "Pacific Conference onComputer Graphics and Applications",
+   "publisher": "Wiley/ Blackwell",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "SPM",
+   "full": "Symposium on Solid and Physical Modeling",
+   "publisher": "SMA/ Elsevier",
+   "seq": 13
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "计算机图形学与多媒体",
+   "abbr": "INTERSPEECH",
+   "full": "Conference of the International Speech Communication Association",
+   "publisher": "ISCA",
+   "seq": 14
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "VRST",
+   "full": "ACM Symposium on Virtual Reality Software and Technology",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "CASAXR",
+   "full": "International Conference on Computer Animation, Social Agents, and Extended Reality",
+   "publisher": "Wiley",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "CGI",
+   "full": "Computer Graphics International",
+   "publisher": "Springer",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "GMP",
+   "full": "Geometric Modeling and Processing",
+   "publisher": "Elsevier",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "PacificVis",
+   "full": "IEEE Pacific Visualization Symposium",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "3DV",
+   "full": "International Conference on 3D Vision",
+   "publisher": "IEEE",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "CAD/Graphics",
+   "full": "International Conference on Computer-Aided Design and Computer Graphics Processing",
+   "publisher": "IEEE",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "ICIP",
+   "full": "IEEE International Conference on Image Processing",
+   "publisher": "IEEE",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "MMM",
+   "full": "International Conference on Multimedia Modeling",
+   "publisher": "Springer",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "MMAsia",
+   "full": "ACM Multimedia Asia",
+   "publisher": "ACM",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "SMI",
+   "full": "Shape Modeling International",
+   "publisher": "IEEE",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "CVM",
+   "full": "Computational Visual Media",
+   "publisher": "Tsinghua University https://dblp.org/db/conf/cvm/index.htm l",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "PRCV",
+   "full": "Chinese Conference on Pattern Recognition and Computer Vision",
+   "publisher": "Springer",
+   "seq": 13
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "ICIG",
+   "full": "International Conference on Image and Graphics",
+   "publisher": "Springer",
+   "seq": 14
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "NCMMSC",
+   "full": "National Conference on Man-Machine Speech Communication",
+   "publisher": "CCF/ 中国中 文信息学会",
+   "seq": 15
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "ASRU",
+   "full": "Automatic Speech Recognition and Understanding Workshop",
+   "publisher": "IEEE SLTC",
+   "seq": 16
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "计算机图形学与多媒体",
+   "abbr": "SLT",
+   "full": "Spoken Language Technology",
+   "publisher": "IEEE SLTC",
+   "seq": 17
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "人工智能",
+   "abbr": "AI",
+   "full": "Artificial Intelligence",
+   "publisher": "Elsevier",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "人工智能",
+   "abbr": "TPAMI",
+   "full": "IEEE Transactions on Pattern Analysis and Machine Intelligence",
+   "publisher": "IEEE",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "人工智能",
+   "abbr": "IJCV",
+   "full": "International Journal of Computer Vision",
+   "publisher": "Springer",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "人工智能",
+   "abbr": "JMLR",
+   "full": "Journal of Machine Learning Research",
+   "publisher": "MIT Press",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "TAP",
+   "full": "ACM Transactions on Applied Perception",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "AAMAS",
+   "full": "Autonomous Agents and Multi-Agent Systems",
+   "publisher": "Springer",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Computational Linguistics",
+   "publisher": "MIT Press",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "CVIU",
+   "full": "Computer Vision and Image Understanding",
+   "publisher": "Elsevier",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "DKE",
+   "full": "Data & Knowledge Engineering",
+   "publisher": "Elsevier",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Evolutionary Computation",
+   "publisher": "MIT Press",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "TAC",
+   "full": "IEEE Transactions on Affective Computing",
+   "publisher": "IEEE",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "TASLP",
+   "full": "IEEE Transactions on Audio, Speech and Language Processing",
+   "publisher": "IEEE",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "IEEE Transactions on Cybernetics",
+   "publisher": "IEEE",
+   "seq": 9
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "TEC",
+   "full": "IEEE Transactions on Evolutionary Computation",
+   "publisher": "IEEE",
+   "seq": 10
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "TFS",
+   "full": "IEEE Transactions on Fuzzy Systems",
+   "publisher": "IEEE",
+   "seq": 11
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "TNNLS",
+   "full": "IEEE Transactions on Neural Networks and learning systems",
+   "publisher": "IEEE",
+   "seq": 12
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "IJAR",
+   "full": "International Journal of Approximate Reasoning",
+   "publisher": "Elsevier",
+   "seq": 13
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "JAIR",
+   "full": "Journal of Artificial Intelligence Research",
+   "publisher": "AAAI",
+   "seq": 14
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Journal of Automated Reasoning",
+   "publisher": "Springer",
+   "seq": 15
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "JSLHR",
+   "full": "Journal of Speech, Language, and Hearing Research",
+   "publisher": "American Speech-Language Hearing Association",
+   "seq": 16
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Machine Learning",
+   "publisher": "Springer",
+   "seq": 17
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Neural Computation",
+   "publisher": "MIT Press",
+   "seq": 18
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Neural Networks",
+   "publisher": "Elsevier",
+   "seq": 19
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "PR",
+   "full": "Pattern Recognition",
+   "publisher": "Elsevier",
+   "seq": 20
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "TACL",
+   "full": "Transactions of the Association for Computational Linguistics",
+   "publisher": "The Association for Computational Linguistics",
+   "seq": 21
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "TALLIP",
+   "full": "ACM Transactions on Asian and Low-Resource Language Information Processing",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Applied Intelligence",
+   "publisher": "Springer",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "AIM",
+   "full": "Artificial Intelligence in Medicine",
+   "publisher": "Elsevier",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Artificial Life",
+   "publisher": "MIT Press",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Computational Intelligence",
+   "publisher": "Wiley",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Computer Speech & Language",
+   "publisher": "Elsevier",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Connection Science",
+   "publisher": "Taylor & Francis",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "DSS",
+   "full": "Decision Support Systems",
+   "publisher": "Elsevier",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "EAAI",
+   "full": "Engineering Applications of Artificial Intelligence",
+   "publisher": "Elsevier",
+   "seq": 9
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "Expert Systems",
+   "full": "Blackwell/ Wiley",
+   "publisher": "",
+   "seq": 10
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "ESWA",
+   "full": "Expert Systems with Applications",
+   "publisher": "Elsevier",
+   "seq": 11
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Fuzzy Sets and Systems",
+   "publisher": "Elsevier",
+   "seq": 12
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "TG",
+   "full": "IEEE Transactions on Games",
+   "publisher": "IEEE",
+   "seq": 13
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "IET-CVI",
+   "full": "IET Computer Vision",
+   "publisher": "IET",
+   "seq": 14
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "IET Signal Processing",
+   "publisher": "IET",
+   "seq": 15
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "IVC",
+   "full": "Image and Vision Computing",
+   "publisher": "Elsevier",
+   "seq": 16
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "IDA",
+   "full": "Intelligent Data Analysis",
+   "publisher": "IOS Press",
+   "seq": 17
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "IJCIA",
+   "full": "International Journal of Computational Intelligence and Applications",
+   "publisher": "World Scientific",
+   "seq": 18
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "IJIS",
+   "full": "International Journal of Intelligent Systems",
+   "publisher": "Wiley",
+   "seq": 19
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "IJNS",
+   "full": "International Journal of Neural Systems",
+   "publisher": "World Scientific",
+   "seq": 20
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "IJPRAI",
+   "full": "International Journal of Pattern Recognition and Artificial Intelligence",
+   "publisher": "World Scientific",
+   "seq": 21
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "IJUFKS",
+   "full": "International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems",
+   "publisher": "World Scientific",
+   "seq": 22
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "IJDAR",
+   "full": "International Journal on Document Analysis and Recognition",
+   "publisher": "Springer",
+   "seq": 23
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "JETAI",
+   "full": "Journal of Experimental and Theoretical Artificial Intelligence",
+   "publisher": "Taylor & Francis",
+   "seq": 24
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "KBS",
+   "full": "Knowledge-Based Systems",
+   "publisher": "Elsevier",
+   "seq": 25
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Machine Translation",
+   "publisher": "Springer",
+   "seq": 26
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Machine Vision and Applications",
+   "publisher": "Springer",
+   "seq": 27
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Natural Computing",
+   "publisher": "Springer",
+   "seq": 28
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "NLE",
+   "full": "Natural Language Engineering",
+   "publisher": "Cambridge University Press",
+   "seq": 29
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "NCA",
+   "full": "Neural Computing and Applications",
+   "publisher": "Springer",
+   "seq": 30
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "NPL",
+   "full": "Neural Processing Letters",
+   "publisher": "Springer",
+   "seq": 31
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Neurocomputing",
+   "publisher": "Elsevier",
+   "seq": 32
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "PAA",
+   "full": "Pattern Analysis and Applications",
+   "publisher": "Springer",
+   "seq": 33
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "PRL",
+   "full": "Pattern Recognition Letters",
+   "publisher": "Elsevier",
+   "seq": 34
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "",
+   "full": "Soft Computing",
+   "publisher": "Springer",
+   "seq": 35
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "WI",
+   "full": "Web Intelligence",
+   "publisher": "IOS Press",
+   "seq": 36
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "TIIS",
+   "full": "ACM Transactions on Interactive Intelligent Systems",
+   "publisher": "ACM",
+   "seq": 37
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "TELO",
+   "full": "ACM Transactions on Evolutionary Learning and Optimization",
+   "publisher": "ACM",
+   "seq": 38
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "JATS",
+   "full": "ACM Journal on Autonomous Transportation Systems",
+   "publisher": "ACM",
+   "seq": 39
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "人工智能",
+   "abbr": "AAAI",
+   "full": "AAAI Conference on Artificial Intelligence",
+   "publisher": "AAAI",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "人工智能",
+   "abbr": "NeurIPS",
+   "full": "Conference on Neural Information Processing Systems",
+   "publisher": "MIT Press",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "人工智能",
+   "abbr": "ACL",
+   "full": "Annual Meeting of the Association for Computational Linguistics",
+   "publisher": "ACL",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "人工智能",
+   "abbr": "CVPR",
+   "full": "IEEE/CVF Computer Vision and Pattern Recognition Conference",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "人工智能",
+   "abbr": "ICCV",
+   "full": "International Conference on Computer Vision",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "人工智能",
+   "abbr": "ICML",
+   "full": "International Conference on Machine Learning",
+   "publisher": "ACM",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "人工智能",
+   "abbr": "ICLR",
+   "full": "International Conference on Learning Representations",
+   "publisher": "OpenReview",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "COLT",
+   "full": "Annual Conference on Computational Learning Theory",
+   "publisher": "Springer",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "EMNLP",
+   "full": "Conference on Empirical Methods in Natural Language Processing",
+   "publisher": "ACL",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "ECAI",
+   "full": "European Conference on Artificial Intelligence",
+   "publisher": "IOS Press",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "ECCV",
+   "full": "European Conference on Computer Vision",
+   "publisher": "Springer",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "ICRA",
+   "full": "IEEE International Conference on Robotics and Automation",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "ICAPS",
+   "full": "International Conference on Automated Planning and Scheduling",
+   "publisher": "AAAI",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "ICCBR",
+   "full": "International Conference on Case-Based Reasoning",
+   "publisher": "Springer",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "COLING",
+   "full": "International Conference on Computational Linguistics",
+   "publisher": "International Committee on Computational Linguistics",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "KR",
+   "full": "International Conference on Principles of Knowledge Representation and Reasoning",
+   "publisher": "Morgan Kaufmann",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "UAI",
+   "full": "Conference on Uncertainty in Artificial Intelligence",
+   "publisher": "AUAI",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "AAMAS",
+   "full": "International Joint Conference on Autonomous Agents and Multi-agent Systems",
+   "publisher": "Springer",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "PPSN",
+   "full": "Parallel Problem Solving from Nature",
+   "publisher": "Springer",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "NAACL",
+   "full": "North American Chapter of the Association for Computational Linguistics",
+   "publisher": "Association for Computational Linguistics",
+   "seq": 13
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人工智能",
+   "abbr": "IJCAI",
+   "full": "International Joint Conference on Artificial Intelligence",
+   "publisher": "Morgan Kaufmann",
+   "seq": 14
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "AISTATS",
+   "full": "International Conference on Artificial Intelligence and Statistics",
+   "publisher": "JMLR",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "ACCV",
+   "full": "Asian Conference on Computer Vision",
+   "publisher": "Springer",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "ACML",
+   "full": "Asian Conference on Machine Learning",
+   "publisher": "JMLR",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "BMVC",
+   "full": "British Machine Vision Conference",
+   "publisher": "British Machine Vision Association",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "NLPCC",
+   "full": "CCF International Conference on Natural Language Processing and Chinese Computing",
+   "publisher": "Springer",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "CoNLL",
+   "full": "Conference on Computational Natural Language Learning",
+   "publisher": "Association for Computational Linguistics",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "GECCO",
+   "full": "Genetic and Evolutionary Computation Conference",
+   "publisher": "ACM",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "ICTAI",
+   "full": "IEEE International Conference on Tools with Artificial Intelligence",
+   "publisher": "IEEE",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "IROS",
+   "full": "IEEE\\RSJ International Conference on Intelligent Robots and Systems",
+   "publisher": "IEEE",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "ALT",
+   "full": "International Conference on Algorithmic Learning Theory",
+   "publisher": "Springer",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "ICANN",
+   "full": "International Conference on Artificial Neural Networks",
+   "publisher": "Springer",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "FG",
+   "full": "IEEE International Conference on Automatic Face and Gesture Recognition",
+   "publisher": "IEEE",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "ICDAR",
+   "full": "International Conference on Document Analysis and Recognition",
+   "publisher": "IEEE",
+   "seq": 13
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "ILP",
+   "full": "International Conference on Inductive Logic Programming",
+   "publisher": "Springer",
+   "seq": 14
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "KSEM",
+   "full": "International conference on Knowledge Science, Engineering and Management",
+   "publisher": "Springer",
+   "seq": 15
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "ICONIP",
+   "full": "International Conference on Neural Information Processing",
+   "publisher": "Springer",
+   "seq": 16
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "ICPR",
+   "full": "International Conference on Pattern Recognition",
+   "publisher": "IEEE",
+   "seq": 17
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "IJCB",
+   "full": "International Joint Conference on Biometrics",
+   "publisher": "IEEE",
+   "seq": 18
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "IJCNN",
+   "full": "International Joint Conference on Neural Networks",
+   "publisher": "IEEE",
+   "seq": 19
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "PRICAI",
+   "full": "Pacific Rim International Conference on Artificial Intelligence",
+   "publisher": "Springer",
+   "seq": 20
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "IEEECEC",
+   "full": "Congress on Evolutionary Computation",
+   "publisher": "IEEE",
+   "seq": 21
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "人工智能",
+   "abbr": "DAI",
+   "full": "International Conference on Distributed Artificial Intelligence",
+   "publisher": "ACM/ Springer",
+   "seq": 22
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "人机交互与普适计算",
+   "abbr": "TOCHI",
+   "full": "ACM Transactions on Computer-Human Interaction",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "人机交互与普适计算",
+   "abbr": "IJHCS",
+   "full": "International Journal of Human-Computer Studies",
+   "publisher": "Elsevier",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "CSCW",
+   "full": "Computer Supported Cooperative Work",
+   "publisher": "Springer",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "HCI",
+   "full": "Human-Computer Interaction",
+   "publisher": "Taylor & Francis",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "",
+   "full": "IEEE Transactions on Human-Machine Systems",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "IWC",
+   "full": "Interacting with Computers",
+   "publisher": "Oxford University Press",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "IJHCI",
+   "full": "International Journal of Human-Computer Interaction",
+   "publisher": "Taylor & Francis",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "UMUAI",
+   "full": "User Modeling and User-Adapted Interaction",
+   "publisher": "Springer",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "TSMC",
+   "full": "IEEE Transactions on Systems, Man,and Cybernetics: Systems",
+   "publisher": "IEEE",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "CCFTPCI",
+   "full": "CCF Transactions on Pervasive Computing and Interaction",
+   "publisher": "CCF/ Springer",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人机交互与普适计算",
+   "abbr": "BIT",
+   "full": "Behaviour & Information Technology",
+   "publisher": "Taylor & Francis",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人机交互与普适计算",
+   "abbr": "PUC",
+   "full": "Personal and Ubiquitous Computing",
+   "publisher": "Springer",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人机交互与普适计算",
+   "abbr": "PMC",
+   "full": "Pervasive and Mobile Computing",
+   "publisher": "Elsevier",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人机交互与普适计算",
+   "abbr": "PACMHCI",
+   "full": "Proceedings of the ACM on Human-Computer Interaction",
+   "publisher": "ACM",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "人机交互与普适计算",
+   "abbr": "THRI",
+   "full": "ACM Transactions on Human-Robot Interaction",
+   "publisher": "ACM",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "人机交互与普适计算",
+   "abbr": "CSCW",
+   "full": "ACM Conference On Computer-Supported Cooperative Work And Social Computing",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "人机交互与普适计算",
+   "abbr": "CHI",
+   "full": "ACM Conference on Human Factors in Computing Systems",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "人机交互与普适计算",
+   "abbr": "UbiComp",
+   "full": "ACM international joint conference on Pervasive and Ubiquitous Computing",
+   "publisher": "ACM",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "人机交互与普适计算",
+   "abbr": "UIST",
+   "full": "ACM Symposium on User Interface Software and Technology",
+   "publisher": "ACM",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "GROUP",
+   "full": "ACM International Conference on Supporting Group Work",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "IUI",
+   "full": "ACM International Conference on Intelligent User Interfaces",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "ISS",
+   "full": "ACM International Conference on Interactive Surfaces and Spaces",
+   "publisher": "ACM",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "ECSCW",
+   "full": "European Conference on Computer Supported Cooperative Work",
+   "publisher": "Springer",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "PERCOM",
+   "full": "IEEE International Conference on Pervasive Computing and Communications",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "MobileHCI",
+   "full": "ACM International Conference on Mobile Human-Computer Interaction",
+   "publisher": "ACM",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "人机交互与普适计算",
+   "abbr": "ICWSM",
+   "full": "The International AAAI Conference on Web and Social Media",
+   "publisher": "AAAI",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "DIS",
+   "full": "ACM SIGCHI Conference on Designing Interactive Systems",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "ICMI",
+   "full": "ACM International Conference on Multimodal Interaction",
+   "publisher": "ACM",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "ASSETS",
+   "full": "International ACM SIGACCESS Conference on Computers and Accessibility",
+   "publisher": "ACM",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "GI",
+   "full": "Graphics Interface",
+   "publisher": "ACM",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "UIC",
+   "full": "IEEE International Conference on Ubiquitous Intelligence and Computing",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "",
+   "full": "IEEE World Haptics Conference",
+   "publisher": "IEEE",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "INTERACT",
+   "full": "International Conference on Human-Computer Interaction of International Federation for Information Processing",
+   "publisher": "IFIP",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "IDC",
+   "full": "ACM Interaction Design and Children",
+   "publisher": "ACM",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "CollaborateCom",
+   "full": "International Conference on Collaborative Computing: Networking, Applications and Worksharing",
+   "publisher": "Springer",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "CSCWD",
+   "full": "International Conference on Computer Supported Cooperative Work in Design",
+   "publisher": "Springer",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "CoopIS",
+   "full": "International Conference on Cooperative Information Systems",
+   "publisher": "Springer",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "MobiQuitous",
+   "full": "International Conference on Mobile and Ubiquitous Systems: Computing, Networking and Services",
+   "publisher": "Springer",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "AVI",
+   "full": "International Working Conference on Advanced Visual Interfaces",
+   "publisher": "ACM",
+   "seq": 13
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "GPC",
+   "full": "Conference on Green, Pervasive and Cloud Computing",
+   "publisher": "Springer",
+   "seq": 14
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "ICXR",
+   "full": "CCF International Conference on Extended Reality",
+   "publisher": "Springer",
+   "seq": 15
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "交叉/综合/新兴",
+   "abbr": "JACM",
+   "full": "Journal of the ACM",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "交叉/综合/新兴",
+   "abbr": "Proc. IEEE",
+   "full": "Proceedings of the IEEE",
+   "publisher": "IEEE",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "交叉/综合/新兴",
+   "abbr": "SCIS",
+   "full": "Science China Information Sciences",
+   "publisher": "Science in China Press/Springer",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "A",
+   "area": "交叉/综合/新兴",
+   "abbr": "Bioinformatics",
+   "full": "Bioinformatics",
+   "publisher": "Oxford University Press",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "",
+   "full": "Briefings in Bioinformatics",
+   "publisher": "Oxford University Press",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "Cognition",
+   "full": "Cognition",
+   "publisher": "Elsevier",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "TASAE",
+   "full": "IEEE Transactions on Automation Science and Engineering",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "TGARS",
+   "full": "IEEE Transactions on Geoscience and Remote Sensing",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "TITS",
+   "full": "IEEE Transactions on Intelligent Transportation Systems",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "TMI",
+   "full": "IEEE Transactions on Medical Imaging",
+   "publisher": "IEEE",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "TR",
+   "full": "IEEE Transactions on Robotics",
+   "publisher": "IEEE",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "TCBB",
+   "full": "IEEE/ACM Transactions on Computational Biology and Bioinformatics",
+   "publisher": "IEEE/ACM",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "JCST",
+   "full": "Journal of Computer Science and Technology",
+   "publisher": "SCIENCE PRESS/Springer",
+   "seq": 9
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "JAMIA",
+   "full": "Journal of the American Medical Informatics Association",
+   "publisher": "BMJ Journals",
+   "seq": 10
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "",
+   "full": "PLOS Computational Biology",
+   "publisher": "Public Library of Science",
+   "seq": 11
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "",
+   "full": "The Computer Journal",
+   "publisher": "Oxford University Press",
+   "seq": 12
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "WWW",
+   "full": "World Wide Web",
+   "publisher": "Springer",
+   "seq": 13
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "FCS",
+   "full": "Frontiers of Computer Science",
+   "publisher": "Higher Education Press",
+   "seq": 14
+  },
+  {
+   "kind": "期刊",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "BCRA",
+   "full": "Blockchain: Research and Applications",
+   "publisher": "浙江大学出版社 /Elsevier",
+   "seq": 15
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "",
+   "full": "BMC Bioinformatics",
+   "publisher": "BioMed Central",
+   "seq": 1
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "",
+   "full": "Cybernetics and Systems",
+   "publisher": "Taylor & Francis",
+   "seq": 2
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "",
+   "full": "IEEE Geoscience and Remote Sensing Letters",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "JBHI",
+   "full": "IEEE Journal of Biomedical and Health Informatics",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "TBD",
+   "full": "IEEE Transactions on Big Data",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "",
+   "full": "IET Intelligent Transport Systems",
+   "publisher": "IET",
+   "seq": 6
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "JBI",
+   "full": "Journal of Biomedical Informatics",
+   "publisher": "Elsevier",
+   "seq": 7
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "",
+   "full": "Medical Image Analysis",
+   "publisher": "Elsevier",
+   "seq": 8
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "TII",
+   "full": "IEEE Transactions on Industrial Informatics",
+   "publisher": "IEEE",
+   "seq": 9
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "TCPS",
+   "full": "ACM Transactions on Cyber-Physical Systems",
+   "publisher": "ACM",
+   "seq": 10
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "TOCE",
+   "full": "ACM Transactions on Computing Education",
+   "publisher": "ACM",
+   "seq": 11
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "EITEE",
+   "full": "ENGINEERING Information Technology & Electronic Engineering",
+   "publisher": "浙江大学出版社",
+   "seq": 12
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "TCSS",
+   "full": "IEEE Transactions on Computational Social Systems",
+   "publisher": "IEEE",
+   "seq": 13
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "",
+   "full": "IEEE Transactions on Reliability",
+   "publisher": "IEEE",
+   "seq": 14
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "HEALTH",
+   "full": "ACM Transactions on Computing for Healthcare",
+   "publisher": "ACM",
+   "seq": 15
+  },
+  {
+   "kind": "期刊",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "ACMDLT",
+   "full": "ACM Distributed Ledger Technologies: Research and Practice",
+   "publisher": "ACM",
+   "seq": 16
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "交叉/综合/新兴",
+   "abbr": "WWW",
+   "full": "The Web Conference",
+   "publisher": "ACM",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "A",
+   "area": "交叉/综合/新兴",
+   "abbr": "RTSS",
+   "full": "IEEE Real-Time Systems Symposium",
+   "publisher": "IEEE",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "CogSci",
+   "full": "Annual Meeting of the Cognitive Science Society",
+   "publisher": "Psychology Press",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "BIBM",
+   "full": "IEEE International Conference on Bioinformatics and Biomedicine",
+   "publisher": "IEEE",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "EMSOFT",
+   "full": "International Conference on Embedded Software",
+   "publisher": "IEEE/ACM /IFIP",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "ISMB",
+   "full": "International conference on Intelligent Systems for Molecular Biology",
+   "publisher": "Oxford Journals",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "RECOMB",
+   "full": "Annual International Conference on Research in Computational Molecular Biology",
+   "publisher": "Springer",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "MICCAI",
+   "full": "International Conference on Medical Image Computing and Computer-Assisted Intervention",
+   "publisher": "Springer",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "B",
+   "area": "交叉/综合/新兴",
+   "abbr": "WINE",
+   "full": "Conference on Web and Internet Economics",
+   "publisher": "Springer",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "AMIA",
+   "full": "American Medical Informatics Association Annual Symposium",
+   "publisher": "AMIA",
+   "seq": 1
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "APBC",
+   "full": "Asia Pacific Bioinformatics Conference",
+   "publisher": "BioMed Central",
+   "seq": 2
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "IEEE BigData",
+   "full": "IEEE International Conference on Big Data",
+   "publisher": "IEEE",
+   "seq": 3
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "IEEECLOUD",
+   "full": "IEEE International Conference on Cloud Computing",
+   "publisher": "IEEE",
+   "seq": 4
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "SMC",
+   "full": "IEEE International Conference on Systems, Man, and Cybernetics",
+   "publisher": "IEEE",
+   "seq": 5
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "COSIT",
+   "full": "International Conference on Spatial Information Theory",
+   "publisher": "ACM",
+   "seq": 6
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "ISBRA",
+   "full": "International Symposium on Bioinformatics Research and Applications",
+   "publisher": "Springer",
+   "seq": 7
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "SAGT",
+   "full": "International Symposium on Algorithmic Game Theory",
+   "publisher": "Springer",
+   "seq": 8
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "SIGSPATIAL",
+   "full": "ACM Special Interest Group on Spatial Information",
+   "publisher": "ACM",
+   "seq": 9
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "ICIC",
+   "full": "International Conference on Intelligent Computing",
+   "publisher": "Springer-Nature",
+   "seq": 10
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "ICSS",
+   "full": "International Conference on Service Science",
+   "publisher": "CCF/Springer",
+   "seq": 11
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "AFT",
+   "full": "Advances in Financial Technologies",
+   "publisher": "Springer",
+   "seq": 12
+  },
+  {
+   "kind": "会议",
+   "tier": "C",
+   "area": "交叉/综合/新兴",
+   "abbr": "IJTCS-FAW",
+   "full": "International Joint Conference on Theoretical Computer Science - Frontier of Algorithmic Wisdom",
+   "publisher": "Springer",
+   "seq": 13
+  }
+ ]
+}

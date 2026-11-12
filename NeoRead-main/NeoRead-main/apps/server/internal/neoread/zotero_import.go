@@ -19,6 +19,8 @@ import (
 
 	"modernc.org/sqlite"
 	sqlite3 "modernc.org/sqlite/lib"
+
+	"neoread.local/server/internal/venues"
 )
 
 type zoteroImportResult struct {
@@ -437,7 +439,7 @@ func zoteroMetadata(e *zoteroEntry) (PaperMetadata, []string) {
 	}
 	for _, field := range []string{"publicationTitle", "proceedingsTitle", "bookTitle"} {
 		if v := e.fields[field]; v != "" {
-			values["venue"] = v
+			values["venue"] = venues.Normalize(v)
 			break
 		}
 	}

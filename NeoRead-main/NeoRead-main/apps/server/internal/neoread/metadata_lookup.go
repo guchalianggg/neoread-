@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"neoread.local/server/internal/scholar"
+	"neoread.local/server/internal/venues"
 )
 
 func (s *Server) scholarClient() *scholar.Client {
@@ -102,7 +103,7 @@ func (s *Server) lookupScholarCandidates(ctx context.Context, id string, candida
 }
 
 func fromScholar(m scholar.Metadata) PaperMetadata {
-	out := PaperMetadata{ItemType: m.ItemType, Date: m.Date, Venue: m.Venue, Volume: m.Volume, Issue: m.Issue, Pages: m.Pages, Publisher: m.Publisher, DOI: m.DOI, ArXiv: m.ArXiv, ISBN: m.ISBN, URL: m.URL, Abstract: m.Abstract}
+	out := PaperMetadata{ItemType: m.ItemType, Date: m.Date, Venue: venues.Normalize(m.Venue), Volume: m.Volume, Issue: m.Issue, Pages: m.Pages, Publisher: m.Publisher, DOI: m.DOI, ArXiv: m.ArXiv, ISBN: m.ISBN, URL: m.URL, Abstract: m.Abstract}
 	for _, c := range m.Creators {
 		out.Creators = append(out.Creators, Creator{Given: c.Given, Family: c.Family, Name: c.Name})
 	}
