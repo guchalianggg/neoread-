@@ -26,7 +26,8 @@ export async function prepareModel(
     } else {
       console.log(`Preparing ${expected.name} (${expected.bytes} bytes)`);
       const response = await fetch(
-        `https://huggingface.co/${expected.repository}/resolve/${expected.revision}/${expected.file}`,
+        expected.url ??
+          `https://huggingface.co/${expected.repository}/resolve/${expected.revision}/${expected.file}`,
         { signal: AbortSignal.timeout(300_000) },
       );
       if (!response.ok || !response.body)

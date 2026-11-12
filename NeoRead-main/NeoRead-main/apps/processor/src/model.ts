@@ -4,7 +4,20 @@ import { stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import specification from "../model.json";
 
-export const model = specification;
+export interface LayoutModel {
+  name: string;
+  revision: string;
+  /** Direct download URL for the pinned weights. */
+  url?: string;
+  /** Hugging Face repository used to build the URL when `url` is absent. */
+  repository?: string;
+  file: string;
+  sha256: string;
+  bytes: number;
+  output: string;
+}
+
+export const model: LayoutModel = specification;
 export const modelFilename = `${model.name}-${model.revision}.onnx`;
 export const bundledModelPath = fileURLToPath(
   new URL(`./models/${modelFilename}`, import.meta.url),

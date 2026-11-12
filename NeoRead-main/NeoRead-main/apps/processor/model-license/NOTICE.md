@@ -1,17 +1,22 @@
-# PP-DocLayoutV3 FP16 ONNX weights
+# PP-DocLayoutV3 FP32 ONNX weights
 
-NeoRead distributes the unmodified `PP-DocLayoutV3-fp16.onnx` weights under
-Apache-2.0. The license text is included in `LICENSE` beside this notice.
+NeoRead distributes a locally converted FP32 copy of the PP-DocLayoutV3 layout
+detection weights under Apache-2.0. The license text is included in `LICENSE`
+beside this notice.
 
 - Upstream weights: https://huggingface.co/PaddlePaddle/PP-DocLayoutV3_safetensors
 - FP16 ONNX export: https://huggingface.co/stefanj0/PP-DocLayoutV3-FP16-ONNX
   at revision `ca5155572513b7832d297255a1f5cab0ff4b0202`.
-- Unmodified mirror: https://huggingface.co/bu44er/PP-DocLayoutV3-FP16-ONNX
-  at revision `58dfa00ba1135e027817cbd5802f1f0df62aa5c0`.
-- File size: 67,372,587 bytes.
-- SHA256: `8bb693ed3b5dcc1cf926b15d89dfe6abf62bc11cdd0afd33c8ffe039db6f8209`.
+- Conversion input (byte-identical FP16 mirror):
+  https://huggingface.co/bu44er/PP-DocLayoutV3-FP16-ONNX at revision
+  `58dfa00ba1135e027817cbd5802f1f0df62aa5c0`; the revision is kept in the
+  bundled filename as the provenance marker.
+- Conversion: every FP16 tensor initializer was widened to FP32 and the
+  intermediate `Cast` operators were retargeted to FP32. Graph structure, box
+  decoding and the omitted mask/polygon head are unchanged; the ONNX Runtime
+  CPU execution provider no longer converts FP16 weights on every inference.
+- Distribution: https://github.com/guchalianggg/neoread-/releases/tag/model-v1
+- File size: 134,138,654 bytes.
+- SHA256: `7bba2a4c5dbd13d4727be96759977fb2b06fbc3a1114feb306231c95e8d839e4`.
 
-The export uses FP16 for the backbone, encoder and decoder, retains FP32 box
-decoding and reading-order postprocessing, and omits the mask/polygon head.
-NeoRead does not modify the exported weights and is not affiliated with or
-endorsed by PaddlePaddle.
+NeoRead is not affiliated with or endorsed by PaddlePaddle.

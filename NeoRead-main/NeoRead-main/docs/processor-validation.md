@@ -4,11 +4,11 @@ The processor is now connected to the desktop two-stage import UI, with separate
 
 ## Distribution decision
 
-The default installer includes PDF.js, the native Canvas runtime, ONNX Runtime, the processor code and the pinned PP-DocLayoutV3 FP16 weights. The processor build downloads and verifies the weights once into an ignored build cache, then copies the current model into application resources alongside its Apache-2.0 license and provenance notice. Runtime inference verifies and reads that bundled copy, including on first use without network access or a library model cache. Users do not install Python or PaddlePaddle. See [releasing.md](releasing.md) for build caching and offline build inputs.
+The default installer includes PDF.js, the native Canvas runtime, ONNX Runtime, the processor code and the pinned PP-DocLayoutV3 FP32 weights. The processor build downloads and verifies the weights once into an ignored build cache, then copies the current model into application resources alongside its Apache-2.0 license and provenance notice. Runtime inference verifies and reads that bundled copy, including on first use without network access or a library model cache. Users do not install Python or PaddlePaddle. See [releasing.md](releasing.md) for build caching and offline build inputs.
 
 The desktop import flow now starts the worker automatically for PDFs. The UI exposes per-page learning progress, translation progress, connection waits and retries; model downloads occur only during builds. Per-asset image consolidation has since been removed; the consolidation results below are a historical record. Desktop installers are built with electron-builder.
 
-Weights: `bu44er/PP-DocLayoutV3-FP16-ONNX`, revision `58dfa00ba1135e027817cbd5802f1f0df62aa5c0`, file `PP-DocLayoutV3-fp16.onnx`, 67,372,587 bytes (about 67 MB / 64.3 MiB). SHA256: `8bb693ed3b5dcc1cf926b15d89dfe6abf62bc11cdd0afd33c8ffe039db6f8209`. It is a byte-identical mirror of [`stefanj0/PP-DocLayoutV3-FP16-ONNX`](https://huggingface.co/stefanj0/PP-DocLayoutV3-FP16-ONNX) at `ca5155572513b7832d297255a1f5cab0ff4b0202`, an FP16 export of [`PaddlePaddle/PP-DocLayoutV3_safetensors`](https://huggingface.co/PaddlePaddle/PP-DocLayoutV3_safetensors) without the mask head; box decoding and reading-order postprocessing stay in FP32. The mirror keeps the file available if the source repository disappears. Weights and generated user documents are not committed. Build downloads are checked before publication; partial downloads never become usable models. Runtime verifies the bundled file and fails locally if it is missing or corrupt, without downloading a replacement. Old per-library caches are left untouched.
+Weights: `PP-DocLayoutV3-FP32.onnx`, 134,138,654 bytes (about 134 MB / 128 MiB). SHA256: `7bba2a4c5dbd13d4727be96759977fb2b06fbc3a1114feb306231c95e8d839e4`. NeoRead converted it locally from the FP16 ONNX export ([`stefanj0/PP-DocLayoutV3-FP16-ONNX`](https://huggingface.co/stefanj0/PP-DocLayoutV3-FP16-ONNX), mirrored byte-identically at [`bu44er/PP-DocLayoutV3-FP16-ONNX`](https://huggingface.co/bu44er/PP-DocLayoutV3-FP16-ONNX) revision `58dfa00ba1135e027817cbd5802f1f0df62aa5c0` — kept as the filename provenance marker) of [`PaddlePaddle/PP-DocLayoutV3_safetensors`](https://huggingface.co/PaddlePaddle/PP-DocLayoutV3_safetensors). The conversion widened every FP16 initializer to FP32 and retargeted the intermediate `Cast` operators; graph structure, the `det` I/O contract and the omitted mask head are unchanged. `model.json` pins the direct download URL (this project's `model-v1` release), size and hash, with a Hugging Face repository fallback for locally edited specifications. Weights and generated user documents are not committed. Build downloads are checked before publication; partial downloads never become usable models. Runtime verifies the bundled file and fails locally if it is missing or corrupt, without downloading a replacement. Old per-library caches are left untouched.
 
 I/O differs from the official paddle2onnx export: the output is `det` (`[300,7]`), boxes are in the 800×800 input space, and `scale_factor` is passed as `[1,1]`. `detectRegions` owns this contract. Set `NEOREAD_TEST_LAYOUT_MODEL` to a downloaded copy to run the real-model coordinate test.
 
@@ -36,6 +36,22 @@ NEOREAD_TEST_CODEX=1 go test ./internal/neoread -run '^TestLiveCodex$' -v -count
 ```
 
 The default automated test suite skips this call. To additionally test a paper image, set `NEOREAD_TEST_IMAGE` to its absolute PNG path and optionally `NEOREAD_TEST_OUTPUT` to a Markdown destination. The test runs in a fresh temporary working directory, disables shell tools and avoids user/project instruction configuration. It uses the CLI's authentication; NeoRead does not inspect credentials.
+
+## FP32 weights switch on 2026-11-12
+
+Windows CPU parsing was dominated by per-inference FP16→FP32 weight conversion: the CPU execution provider has no FP16 kernels for this graph, so ONNX Runtime widened the weights on every run. The bundled weights are now a locally converted FP32 copy of the same export (identical graph and `det` I/O contract; see Distribution decision), and the worker sizes its inference thread pool from the machine instead of a fixed two threads. `NEOREAD_LAYOUT_THREADS` overrides the pool size with an integer from 1 to 16; invalid values fall back to `clamp(floor(availableParallelism() / 2) − 1, 2, 8)`.
+
+Measured on an 11-page English paper (R02, one Windows machine, model startup excluded; `elapsedMilliseconds` and `peakRSSBytes` from `manifest.json`):
+
+| weights | threads | elapsed | peak RSS |
+| --- | --- | --- | --- |
+| FP16 (previous bundle) | 2 (previous default) | 33.2 s | 806 MiB |
+| FP16 | 8 | 18.4 s | 806 MiB |
+| FP32 | 2 | 35.0 s | 764 MiB |
+| FP32 | 4 | 20.3 s | 779 MiB |
+| FP32 | 8 (new default on this machine) | 13.8 s | 774 MiB |
+
+Correctness: every run produced the same 162 blocks and the same warnings. Comparing FP16 and FP32 manifests block by block (matched by id), labels, text and normalized bounds were identical (max bounds delta 0.000000), the maximum confidence delta was 0.0047, and the normalized `paper.md` output was the same. The FP32 file is twice as large but did not raise measured peak RSS. At two threads FP32 alone is slightly slower than FP16; the 2.4× end-to-end speedup (33.2 s → 13.8 s) comes from removing the per-run casts combined with the machine-sized thread pool. Scanned, CJK and vertical-text documents were not re-measured.
 
 ## Bundled-model validation on 2026-10-12
 

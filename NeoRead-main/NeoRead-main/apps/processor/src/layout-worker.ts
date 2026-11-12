@@ -4,6 +4,7 @@ import * as ort from "onnxruntime-node";
 import { readFile, writeFile, mkdir, rename, readdir } from "node:fs/promises";
 import { resolve, join, dirname } from "node:path";
 import { createRequire } from "node:module";
+import { availableParallelism } from "node:os";
 import { parseArgs } from "node:util";
 import { detectRegions } from "./detect";
 import { assignText, readingRegions, isAsset, type Region } from "./layout";
@@ -57,9 +58,19 @@ const modelPath = await resolveModel(values.model && resolve(values.model));
 // Native initialization logs are classified by the parent into fixed diagnostic
 // codes. Raw ONNX messages (which may contain paths) are never persisted.
 ort.env.logLevel = "verbose";
+// The CPU execution provider used to convert FP16 weights to FP32 on every
+// inference; the bundled FP32 weights removed that cost, so scaling intra-op
+// threads with the machine now pays off. Stay bounded and leave cores for the
+// Electron/Go host processes. NEOREAD_LAYOUT_THREADS overrides the default.
+function inferenceThreads() {
+  const override = Number(process.env.NEOREAD_LAYOUT_THREADS);
+  if (Number.isInteger(override) && override >= 1 && override <= 16)
+    return override;
+  return Math.max(2, Math.min(8, Math.floor(availableParallelism() / 2) - 1));
+}
 stage("session_create", 0, ort.env.versions.node ?? "");
 const session = await ort.InferenceSession.create(modelPath, {
-  intraOpNumThreads: 2,
+  intraOpNumThreads: inferenceThreads(),
   interOpNumThreads: 1,
   executionProviders: ["cpu"],
   logSeverityLevel: 0,

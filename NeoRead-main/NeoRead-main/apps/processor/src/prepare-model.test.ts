@@ -35,7 +35,23 @@ it("downloads the pinned revision and publishes only a verified model", async ()
   expect(await readFile(path, "utf8")).toBe(contents);
   expect(await readdir(root)).toEqual([filename]);
   expect(fetch).toHaveBeenCalledWith(
-    `https://huggingface.co/${model.repository}/resolve/${model.revision}/${model.file}`,
+    model.url,
+    expect.objectContaining({ signal: expect.any(AbortSignal) }),
+  );
+});
+
+it("falls back to the pinned repository URL when no direct url is set", async () => {
+  const root = await temporary();
+  const fetch = vi.fn(async () => new Response(contents));
+  vi.stubGlobal("fetch", fetch);
+  const path = await prepareModel(
+    root,
+    undefined,
+    { ...specification, repository: "owner/repo", url: undefined },
+  );
+  expect(path).toBe(join(root, filename));
+  expect(fetch).toHaveBeenCalledWith(
+    `https://huggingface.co/owner/repo/resolve/${specification.revision}/${specification.file}`,
     expect.objectContaining({ signal: expect.any(AbortSignal) }),
   );
 });
