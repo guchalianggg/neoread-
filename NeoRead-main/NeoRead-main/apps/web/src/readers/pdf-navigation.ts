@@ -1,6 +1,7 @@
 import { reducedMotion } from "../motion";
 import { animatePDFScroll } from "./pdf-scroll";
 import { sentenceTextRanges } from "./pdf-sentence-matching";
+import { pageColumns, type ColumnSide } from "./pdf-columns";
 import * as pdfjs from "pdfjs-dist";
 import type { PDFViewer } from "pdfjs-dist/web/pdf_viewer.mjs";
 import { isPDFPageDecoration, sentenceAnchor } from "@neoread/core";
@@ -23,6 +24,8 @@ export class PDFReadingNavigation {
   private settleFocus?: () => void;
   private focus: PDFPassage[] = [];
   private linkedRanges: Range[] = [];
+  // The column the reader is currently inside, for two-column pages.
+  private readingSide: { page: number; side: ColumnSide } | undefined;
   get isNavigating() {
     return this.moving;
   }
@@ -91,9 +94,11 @@ export class PDFReadingNavigation {
     const viewport = this.host.getBoundingClientRect(),
       y = viewport.top + viewport.height * 0.5,
       x = viewport.left + viewport.width / 2;
+    const layouts = pageColumns(this.blocks());
     let best: PDFBlock | undefined,
       distance = Infinity,
-      fraction = 0;
+      fraction = 0,
+      side: ColumnSide = "span";
     for (const b of this.readableBlocks()) {
       const node = this.pageNode(b.page);
       if (!node) continue;
@@ -103,15 +108,35 @@ export class PDFReadingNavigation {
         by = r.top + b.bounds.y * r.height,
         bw = b.bounds.width * r.width,
         bh = b.bounds.height * r.height;
-      const d =
+      let d =
         Math.max(bx - x, x - bx - bw, 0) * 2 + Math.max(by - y, y - by - bh, 0);
+      const bSide = layouts.get(b.page)?.side.get(b.id);
+      // On two-column pages the viewport center sits between columns; keep
+      // following the column being read instead of flipping to its neighbor.
+      if (
+        this.readingSide &&
+        this.readingSide.page === b.page &&
+        this.readingSide.side !== "span" &&
+        bSide !== undefined &&
+        bSide !== "span" &&
+        bSide !== this.readingSide.side
+      )
+        d += viewport.height * 0.5;
       if (d < distance) {
         distance = d;
         best = b;
         fraction = Math.max(0, Math.min(1, (y - by) / (bh || 1)));
+        side = bSide ?? "span";
       }
     }
-    return best ? { blockId: best.id, fraction } : undefined;
+    if (!best) return undefined;
+    if (side !== "span") this.readingSide = { page: best.page, side };
+    return { blockId: best.id, fraction };
+  }
+  private rememberSide(block: PDFBlock) {
+    const side = pageColumns(this.blocks()).get(block.page)?.side.get(block.id);
+    if (side && side !== "span")
+      this.readingSide = { page: block.page, side };
   }
   stop() {
     this.interrupt();
@@ -152,6 +177,7 @@ export class PDFReadingNavigation {
   async focusBlock(id: string, layout: "source" | "parallel" = "source") {
     const block = this.readableBlocks().find((b) => b.id === id);
     if (!block || this.disposed) return false;
+    this.rememberSide(block);
     this.interrupt();
     const operation = ++this.operation;
     this.moving = true;
@@ -273,6 +299,7 @@ export class PDFReadingNavigation {
   async follow(anchor: PDFReadingAnchor) {
     const block = this.blocks().find((b) => b.id === anchor.blockId);
     if (!block || isPDFPageDecoration(block)) return;
+    this.rememberSide(block);
     this.interrupt();
     const operation = ++this.operation;
     const node = this.pageNode(block.page);
