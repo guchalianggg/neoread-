@@ -6,6 +6,10 @@
 
 <p align="center"><b>简体中文</b> | <a href="README.en.md">English</a> | <a href="https://cynicalight.github.io/NeoRead/">官网</a></p>
 
+> **项目来源与版本说明**：本项目来源于开源项目 [NeoRead](https://github.com/cynicalight/NeoRead)，是基于该开源项目自制的二次开发版本，**非 NeoRead 官方版本**。感谢原作者 [cynicalight](https://github.com/cynicalight) 及社区贡献者；原作者署名及相关声明予以保留。
+>
+> 下方保留上游项目的使用文档，其中原项目官网、Releases 和克隆链接均指向上游项目，不代表本二次开发版本的发布渠道。本版本仓库：[guchalianggg/neoread-](https://github.com/guchalianggg/neoread-)。
+
 一个本地优先的 EPUB / PDF AI 阅读器，也支持在应用内编辑 Markdown、Excel 和 Word 研究资料，用于阅读电子书与论文、整理对比文档、记录批注，以及结合原文向 AI 提问。
 
 <p align="center">

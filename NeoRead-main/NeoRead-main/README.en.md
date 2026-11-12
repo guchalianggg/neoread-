@@ -6,6 +6,10 @@
 
 <p align="center"><a href="README.md">简体中文</a> | <b>English</b> | <a href="https://cynicalight.github.io/NeoRead/">Website</a></p>
 
+> **Project origin and version notice:** This project is a self-made derivative of the open-source [NeoRead](https://github.com/cynicalight/NeoRead) project. **It is not an official NeoRead release.** Thanks to the original author, [cynicalight](https://github.com/cynicalight), and the community contributors. Original author credits and related notices are retained.
+>
+> The upstream documentation is preserved below. Links to the original website, Releases, and clone URL refer to the upstream project, not to releases of this derivative. Repository for this version: [guchalianggg/neoread-](https://github.com/guchalianggg/neoread-).
+
 A local-first EPUB / PDF reader for books and papers, with side-by-side translations, annotations, and AI assistance grounded in the text you are reading.
 
 <p align="center">
