@@ -1,62 +1,50 @@
-# Windows 安装升级与卸载的数据保护
+# Windows 安装检查与精确卸载
 
-## 构建约束与 hook 顺序
+## 0.10.8 起的行为
 
-`builder.config.cjs` 的 `afterPack` 调用 `prepare-upgrade-protection.cjs`，扫描**本次打包产物**生成 `build/program-files-<arch>.json`。另外按已审查的 26.17.0 NSIS 规则，包含在 afterPack 之后追加到安装负载的精确路径 `resources\elevate.exe`（遵循 `packElevateHelper` / `perMachine` 配置），避免卸载残留和后续安装误报未知文件。白名单不含 glob；拒绝路径穿越、驱动器/UNC/ADS、设备名、NSIS 特殊字符及链接。JSON 作为不经 NSIS 插值的文件嵌入安装器和卸载器，不把文件名拼成 NSIS 指令。
+按本机用户要求，安装器不再执行强制书库预检与自动快照：
 
-已审查 electron-builder/app-builder-lib **26.17.0** 的以下顺序，并在 afterPack 校验四份模板的 SHA-256；模板变化会阻止打包，必须先重新审查，不能直接更新 hash 绕过检查：
+- 不扫描新旧安装目录的文件集合，不再用本次程序清单拒绝旧版哈希资源、退役运行库或未知文件。
+- 不读取书库位置配置，不查询旧安装目录来做数据校验，不创建升级快照，也不要求先迁移书库才能安装。
+- 安装、卸载前只运行 `CheckStopped`，要求正常退出 NeoRead、本地服务及程序目录内进程；不强杀进程。失败输出受控事件、模式、阶段及原因码，不输出目录或配置内容。
+- `customRemoveFiles` 仍只删除本次构建的精确程序文件清单及已知卸载器，再非递归删除空目录。未知文件、未知目录和后来放入的书库不会被递归清除。
+- 继续禁止 `--delete-app-data`，不启用 electron-builder 的用户数据递归删除分支。
 
-1. `.onInit` → `initMultiUser` → `customInit`。
-2. 最终目录选择后，`installSection.nsh` → `CHECK_APP_RUNNING` → `customCheckAppRunning` 完成预检和快照（仅外层实例到达此处；内层路径见第 4 条）。
-3. 只有保护脚本退出码为 0，才进入 `uninstallOldVersion` → `installApplicationFiles` → `customInstall`。
-4. 上游 UAC 内层会跳过 `CHECK_APP_RUNNING`，因此预检在所有内层可达的钩子补齐：GUI 内层在 `customPageAfterChangeDir`（目录页后、instfiles 前的隐藏页）执行；静默内层在 `customInit`（先强制 per-machine 模式定稿 `$INSTDIR`）执行。外层仍走 `customCheckAppRunning`，每个实例恰好命中一个钩子，每次安装只做一次快照。快照始终用原用户上下文（`SetShellVarContext current` 包裹调用，之后按 `$installMode` 恢复），跨用户提升时管理员蜂巢缺数据则 fail-safe 跳过。`--delete-app-data` 一律拒绝。单架构安装限制不变。
-5. 新卸载器的 `customRemoveFiles` 替代上游 `un.atomicRMDir` / `RMDir /r $INSTDIR`，只删除嵌入白名单文件及已知卸载器文件名，再尝试**非递归**删除已空的程序目录。未知文件、未知目录、后来放入的书库均保留；先校验全部待删路径，遇到 reparse 点则中止。
-6. 安装和卸载均拒绝 `--delete-app-data`，避免激活上游额外的 AppData 递归删除分支。
+本次问题来自安装目录中的旧版 Vite 哈希文件及退役 Agent 运行库；它们不在新版文件清单中，不代表存在书库数据。取消的是安装阻断和强制快照，不是将卸载改为删除整个目录。
 
-**旧的 `0.10.1-local.1` 安装包/卸载器自身仍危险。** 新安装包在调用它之前保护，但无法阻止用户绕开新安装包直接运行旧程序。不要重新分发或运行旧安装包；不要让用户直接运行旧卸载器来“修复”保护拒绝。
+## NSIS 调用与构建约束
 
-## 安装前行为
+`builder.config.cjs` 的 `afterPack` 仍调用 `prepare-upgrade-protection.cjs`，从本次打包产物生成 `build/program-files-<arch>.json`，用于卸载清理，**不再作为安装预检白名单**。按已审查的 app-builder-lib 26.17.0 规则补充后追加的 `resources\elevate.exe`。清单不含 glob，拒绝穿越、驱动器/UNC/ADS、设备名、特殊字符、链接和大小写冲突。
 
-- 读取实际 HKCU/HKLM、32/64 位的安装注册表键、卸载命令父目录和最终 `$INSTDIR`。仅读取 `NeoRead/library-location.json` 决定书库路径，不修改它；缺配置沿用应用的 `userData/library` 默认位置。
-- 书库与新旧程序目录存在祖先/后代或相等关系时，**中止并要求先迁移**，不执行“备份后继续删除活跃库”。新旧目录内出现不属于本次程序白名单的文件，也保守中止，保护尚未被配置引用的旧数据。旧版退役的程序文件也可能触发此中止，应核实并移出，不要放宽为递归清理。
-- 路径按 Windows 分段边界、大小写不敏感比较，并展开现有 8.3 别名。拒绝 UNC、路径遍历/歧义、reparse、权限/枚举错误、位置配置损坏、已配置书库缺失及有内容却无数据库的目录；不创建空书库。
-- 枚举 NeoRead、本地服务及程序目录内进程；要求用户先**正常退出**以完成阅读/后台保存。不发送 Stop-Process/taskkill，不强杀。无法查询进程也拒绝。
-- 选定外部库和 NeoRead 用户数据目录中的文件全部本机复制，包括数据库、存在的 WAL/SHM、原件、编辑副本、附件、翻译和 AI/代理等配置。配置只当不透明字节复制，不输出内容。
+保留四份 NSIS 模板的 SHA-256 校验，不修改上游模板或改用自定义 `nsis.script`。当前仅构建单架构安装器。
 
-## 快照位置与验证
+进程检查覆盖已有钩子路径：
 
-实际安装使用 `%LOCALAPPDATA%\NeoRead Upgrade Backups`，不使用 TEMP 或程序目录。其路径与书库、用户数据、新旧程序目录重叠或落 TEMP/TMP 时拒绝。备份根目录 ACL 仅允许当前用户及 SYSTEM。
+1. 外层安装／卸载实例：`customCheckAppRunning`。
+2. UAC 内层 GUI：目录页后的隐藏钩子，仅检查进程，不增加用户操作页面。
+3. UAC 内层静默安装：`customInit` 在最终安装模式确定后检查。
+4. 通过检查后沿用 builder 原有旧版本卸载和新程序写入流程。
 
-每次生成新的时间戳 + UUID 快照；不会覆盖、自动删除或滚动淘汰历史快照。失败文件保留在 `.incomplete-*`，不能当成完成的备份。空间不足则中止升级；用户需自行管理旧快照空间。
+`customRemoveFiles` 仍使用独立插件工作目录，PowerShell 的 `Add-Type` 显式引用运行时程序集，保留 0.10.6 对 NSIS `System.dll` 同名冲突的修复。清理前验证精确路径，不跟随 reparse 点。
 
-复制期间为所有源文件持有禁止写入/删除的只读句柄；锁冲突即失败。逐文件落盘、核验长度和 SHA-256，复查源文件集合、位置配置与进程状态，最后写入本机 `manifest.json` 并将临时目录改名为完成快照。输出只有受控事件/原因、文件数和快照 ID，不输出路径、文件内容或配置。该机制不是硬盘损坏或对抗性并发修改的绝对保证。
+## 脚本入口
 
-恢复时先正常退出应用，选择一个无 `.incomplete-` 前缀且核验通过的快照，将 `library` 复制到**新的独立外部目录**，然后由应用“打开已有书库”选择；不要直接覆盖现用库。`configuration` 仅供人工核对恢复，不自动覆盖现用配置，也不要将其内容放入日志或报告。
+- `-Mode CheckStopped -Destination <程序目录>`：安装器实际使用的轻量进程检查，不读取 Manifest、UserData 或 BackupRoot。
+- `-Mode Clean -Destination <程序目录> -Manifest <程序文件清单> -UninstallerName "Uninstall NeoRead.exe"`：卸载器实际使用的精确清理；不要对真实目录运行合成测试。
+- `UninstallCheck` 是兼容旧测试／调用的进程检查别名。
+- 旧 `Install` 快照入口与相关函数暂留用于历史排查及合成回归；**NSIS 安装流程不再调用它**。
+- 成功返回 0，进程未退出或精确清理失败返回 73。
 
-## CLI 与验证（只用于合成临时数据）
+关闭自动快照后，安装器不会替用户创建升级备份。已有备份不删除，用户书库与配置不由新卸载器主动清除。历史安装器／卸载器不会因本次改动而被自动修补；特别旧的递归删除型卸载器仍不应单独运行来修复安装问题。
 
-`upgrade-protection.ps1` 的模式：
-
-- `-Mode Install -Destination <最终程序目录> -UserData <合成NeoRead配置目录> -BackupRoot <本机持久快照目录> -Manifest <打包文件白名单JSON> -InstallRegistryKey <键> -UninstallRegistryKey <键> [-UninstallRegistryKey2 <键>] -UninstallerName "Uninstall NeoRead.exe"`
-- `-Mode UninstallCheck -Destination <程序目录>`：只检查进程已退出。
-- `-Mode Clean -Destination <合成程序目录> -Manifest <白名单JSON> -UninstallerName "Uninstall NeoRead.exe"`：精确清理。切勿用于真实目录测试。
-- 成功退出 0；保护拒绝退出 **73**。无特殊参数能够关闭保护后继续安装。
-
-0.10.6 修复了 `customRemoveFiles` 使用插件目录作为工作目录时的程序集冲突：NSIS 插件的原生 `System.dll` 会遮蔽 `Add-Type` 默认的同名 .NET 引用。脚本显式引用当前运行时的 `[Uri].Assembly.Location`，不再从工作目录查找引用；32 位和 64 位 PowerShell CLI 均以带同名无效 DLL 的独立工作目录回归验证。
-
-失败状态沿用受控 `event` / `reason`，增加 `mode`、白名单 `phase` 和归一化 `exceptionType`，用于区分进程检查、互操作初始化、清单、路径、文件及空目录清理。安装与卸载分别显示对应提示；不输出原始异常消息、路径、配置或清单正文。
+## 验证
 
 ```powershell
-pnpm exec vitest run apps/desktop/main/library-location.test.ts apps/desktop/build/upgrade-protection.test.ts --pool=threads --maxWorkers=1 --no-file-parallelism
+pnpm exec vitest run apps/desktop/build/installer-process-check.test.ts apps/desktop/build/upgrade-protection.test.ts --maxWorkers=1
 pnpm typecheck
-# 直接运行真实 PowerShell 合成套件（Root 必须在会话 scratch 中）：
-powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File apps/desktop/build/upgrade-protection.test.ps1 -Root "$env:PI_SCRATCH_DIR\upgrade-test-unique-id"
+pnpm package
 ```
 
-测试从不运行实际安装器/卸载器；旧卸载器仅以保护成功后递增的计数器模拟。覆盖实际文件复制、SHA/字节、SQLite/WAL/SHM、分类和假 API 字节、库/数据库锁、ACL 目录拒绝、junction、备份损坏、源集合变化、目标/旧路径边界、中文与前缀相似目录、损坏配置、空的新旧安装、合成注册表发现与未知文件保留。
+新增回归使用临时合成目录，包含旧版前端资源、退役原生依赖、未知文件与模拟书库，确认进程检查不会扫描或迁移这些文件、不会读取损坏位置配置、不会创建快照；精确卸载仍保留它们。原有清单、路径、同名 DLL 和历史快照函数回归继续保留。
 
-## 发包验收
-
-主流程正常打包即会自动生成本架构白名单，无需手写生成物。保留 `include: "installer.nsh"`、afterPack 与上述模板校验；不要设置自定义 `nsis.script`，它会改变 builder 的卸载器生成流程。当前拒绝多架构合并安装器，x64/arm64 应分别出包。
-
-发包前必须完成 NSIS 编译，并在隔离测试目录/虚拟机检查普通安装、静默目标选择、正常退出后卸载；不能以原始卸载启动进程 exit=0 代替实际卸载结果。需要等待实际执行副本，核验程序文件、注册表与快捷方式均已移除；测试普通用户与全用户 UAC 路径。对安装目录内库、权限错误或损坏位置配置仍应看到中止，不应看到旧卸载器运行。应用已将实际 `dirname(process.execPath)` 传入目录验证；开发模式不启用程序目录限制，现有违规库启动时明确提示先迁移，而不是换成空库。
+打包会验证 NSIS 编译和隔离包内运行时。进程检查与合成清理测试不等同于真实 GUI、静默、UAC 安装／升级／卸载验收；未执行的路径须在交付说明中明确列出。

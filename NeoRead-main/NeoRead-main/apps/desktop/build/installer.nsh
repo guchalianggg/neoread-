@@ -3,7 +3,7 @@
 ; after uninstall, so only ProgIDs and OpenWithProgids are written here; users
 ; choose the default app in Windows.
 
-; The upgrade-protection preflight must run on every path that reaches
+; The stopped-process check runs on every path that reaches
 ; uninstallOldVersion with a usable $INSTDIR, because builder 26.17.0 skips
 ; CHECK_APP_RUNNING inside elevated (inner UAC) instances:
 ;   - outer instance: customCheckAppRunning, unchanged (per-user GUI,
@@ -12,14 +12,14 @@
 ;     customPageAfterChangeDir right after the directory page;
 ;   - inner silent instance (the install section elevated a per-machine
 ;     upgrade): customInit after forcing the per-machine mode.
-; Each instance reaches exactly one of those hooks, so the snapshot preflight
-; runs exactly once per install.
+; Each instance reaches exactly one hook. No library scan, unknown-file
+; gate or mandatory snapshot is performed during installation.
 
 !macro customInit
   ; A silent inner instance only exists when installer.nsi's install section
   ; elevated a per-machine upgrade, so re-forcing the mode here is safe. The
   ; section repeats setInstallModePerAllUsers later (idempotent) and resets
-  ; $INSTDIR, so do NOT sanitize $INSTDIR in this branch; the preflight and
+  ; $INSTDIR, so do NOT sanitize it here; the process check and
   ; the real install share the variable either way.
   ${If} ${UAC_IsInnerInstance}
     ${AndIf} ${Silent}
@@ -61,7 +61,7 @@
     !ifdef BUILD_UNINSTALLER
       MessageBox MB_OK|MB_ICONSTOP "卸载未完成。请正常退出 NeoRead 后重试；若仍失败，请记录下方错误信息。错误：$1" /SD IDOK
     !else
-      MessageBox MB_OK|MB_ICONSTOP "安装检查未通过。请正常退出 NeoRead 和后台任务后重试；若书库或未知文件位于程序目录内，请先迁移到外部目录。错误：$1" /SD IDOK
+      MessageBox MB_OK|MB_ICONSTOP "安装未完成。请正常退出 NeoRead 和后台任务后重试；若仍失败，请记录下方错误信息。错误：$1" /SD IDOK
     !endif
     SetErrorLevel 73
     Quit
@@ -70,7 +70,7 @@
 
 ; Mirror assistedInstaller.nsh instFilesPre (same !ifdef guard, same
 ; APP_FILENAME subfolder rule). Our hidden page runs BEFORE that MUI PRE
-; callback fixes $INSTDIR, and the preflight must see the final directory.
+; callback fixes $INSTDIR, and the process check must see the final directory.
 !macro neoreadSanitizeInstallDir
   !ifdef allowToChangeInstallationDirectory
     ${StrContains} $0 "${APP_FILENAME}" $INSTDIR
@@ -80,30 +80,15 @@
   !endif
 !macroend
 
-; Full install preflight. The snapshot must always describe the ORIGINAL
-; user's data, so SetShellVarContext current keeps $APPDATA/$LOCALAPPDATA on
-; the elevating user during the call; afterwards restore the context chosen
-; by $installMode so later SHELL_CONTEXT writes hit the intended registry
-; hive (HKLM for all-users installs, HKCU otherwise).
+; Only require the application to be stopped. Do not inspect the old program
+; tree, read library settings or create mandatory upgrade snapshots.
 !macro neoreadRunInstallProtection
   ${If} ${isDeleteAppData}
     MessageBox MB_OK|MB_ICONSTOP "NeoRead 数据保护禁止 --delete-app-data。" /SD IDOK
     SetErrorLevel 73
     Quit
   ${EndIf}
-  SetShellVarContext current
-  !ifdef UNINSTALL_REGISTRY_KEY_2
-    !define NEOREAD_SECOND_UNINSTALL_KEY "${UNINSTALL_REGISTRY_KEY_2}"
-  !else
-    !define NEOREAD_SECOND_UNINSTALL_KEY ""
-  !endif
-  nsExec::ExecToStack '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\neoread-upgrade-protection.ps1" -Mode Install -Destination "$INSTDIR" -UserData "$APPDATA\NeoRead" -BackupRoot "$LOCALAPPDATA\NeoRead Upgrade Backups" -Manifest "$PLUGINSDIR\neoread-program-files.json" -InstallRegistryKey "${INSTALL_REGISTRY_KEY}" -UninstallRegistryKey "${UNINSTALL_REGISTRY_KEY}" -UninstallRegistryKey2 "${NEOREAD_SECOND_UNINSTALL_KEY}" -UninstallerName "${UNINSTALL_FILENAME}"'
-  !undef NEOREAD_SECOND_UNINSTALL_KEY
-  ${If} $installMode == "all"
-    SetShellVarContext all
-  ${Else}
-    SetShellVarContext current
-  ${EndIf}
+  nsExec::ExecToStack '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\neoread-upgrade-protection.ps1" -Mode CheckStopped -Destination "$INSTDIR"'
   !insertmacro neoreadRequireProtectionSuccess
 !macroend
 
@@ -113,7 +98,7 @@
 !macro customCheckAppRunning
   !insertmacro neoreadExtractProtection
   !ifdef BUILD_UNINSTALLER
-    nsExec::ExecToStack '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\neoread-upgrade-protection.ps1" -Mode UninstallCheck -Destination "$INSTDIR"'
+    nsExec::ExecToStack '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\neoread-upgrade-protection.ps1" -Mode CheckStopped -Destination "$INSTDIR"'
     !insertmacro neoreadRequireProtectionSuccess
   !else
     !insertmacro neoreadRunInstallProtection
@@ -122,7 +107,7 @@
 
 ; Hidden custom page between the directory page and instfiles: the only point
 ; where an elevated inner GUI instance has a final $INSTDIR before files are
-; touched. Silent runs skip page callbacks entirely (they preflight in
+; touched. Silent runs skip page callbacks entirely (they check processes in
 ; customInit) and outer instances keep using customCheckAppRunning.
 !macro customPageAfterChangeDir
   PageEx custom
@@ -143,7 +128,7 @@
         !insertmacro neoreadExtractProtection
         !insertmacro neoreadRunInstallProtection
       ${EndIf}
-      Abort ; preflight hook only, the page itself is never shown
+      Abort ; process-check hook only, the page itself is never shown
     FunctionEnd
   !endif
 !macroend

@@ -58,9 +58,9 @@ module.exports = {
   nsis: {
     oneClick: false,
     perMachine: false,
-    // "All users" elevates an inner UAC instance; build/installer.nsh runs the
-    // snapshot preflight inside that inner instance too, so the radio stays
-    // available without weakening protection.
+    // "All users" elevates an inner UAC instance; build/installer.nsh also
+    // checks that NeoRead is stopped there, without scanning libraries or
+    // requiring upgrade snapshots.
     allowElevation: true,
     allowToChangeInstallationDirectory: true,
     deleteAppDataOnUninstall: false,

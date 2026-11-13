@@ -1,7 +1,7 @@
 # Windows PowerShell 5.1. Never invoke an uninstaller or terminate a process here.
 [CmdletBinding()]
 param(
-    [ValidateSet('Install', 'UninstallCheck', 'Clean')][string]$Mode = 'Install',
+    [ValidateSet('Install', 'CheckStopped', 'UninstallCheck', 'Clean')][string]$Mode = 'Install',
     [string]$Destination,
     [string]$UserData,
     [string]$BackupRoot,
@@ -303,10 +303,11 @@ if ($MyInvocation.InvocationName -ne '.') {
             $script:protectionPhase = 'install_preflight'
             $old = @(Get-RegisteredInstallDirs $InstallRegistryKey @($UninstallRegistryKey, $UninstallRegistryKey2))
             $result = Invoke-NeoReadUpgradeProtection -Destination $Destination -UserData $UserData -BackupRoot $BackupRoot -OldInstallDirs $old -Manifest $Manifest -UninstallerName $UninstallerName
-        } elseif ($Mode -eq 'UninstallCheck') {
+        } elseif ($Mode -in @('CheckStopped', 'UninstallCheck')) {
             $script:protectionPhase = 'process_check'
             Assert-NeoReadStopped @((Assert-PlainPath $Destination))
-            $result = @{ event = 'uninstall.protection.stopped' }
+            $event = if ($Mode -eq 'CheckStopped') { 'process.check.complete' } else { 'uninstall.protection.stopped' }
+            $result = @{ event = $event }
         } else {
             Remove-NeoReadProgramFiles $Destination $Manifest $UninstallerName
             $result = @{ event = 'uninstall.protection.complete' }
