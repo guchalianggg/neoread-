@@ -104,6 +104,9 @@ func (s *Server) lookupScholarCandidates(ctx context.Context, id string, candida
 
 func fromScholar(m scholar.Metadata) PaperMetadata {
 	out := PaperMetadata{ItemType: m.ItemType, Date: m.Date, Venue: venues.Normalize(m.Venue), Volume: m.Volume, Issue: m.Issue, Pages: m.Pages, Publisher: m.Publisher, DOI: m.DOI, ArXiv: m.ArXiv, ISBN: m.ISBN, URL: m.URL, Abstract: m.Abstract}
+	if m.UnstructuredVenue {
+		out.Venue = m.Venue
+	}
 	for _, c := range m.Creators {
 		out.Creators = append(out.Creators, Creator{Given: c.Given, Family: c.Family, Name: c.Name})
 	}
@@ -208,6 +211,11 @@ func (s *Server) lookupDocument(ctx context.Context, id string, byTitle bool, fo
 		return d, err
 	}
 	ids := scholar.Identifiers{DOI: d.Metadata.DOI, ArXiv: d.Metadata.ArXiv}
+	if ids.DOI == "" && ids.ArXiv == "" {
+		if candidate := NormalizeArXiv(d.Metadata.URL); arxivPattern.MatchString(candidate) {
+			ids.ArXiv = candidate
+		}
+	}
 	text, layout := s.firstPagesText(id)
 	if ids.DOI == "" && ids.ArXiv == "" {
 		ids = scholar.Detect(text)

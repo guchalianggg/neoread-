@@ -29,18 +29,20 @@ var (
 func bareArXiv(id string) string { return arxivVersion.ReplaceAllString(id, "") }
 
 func (c *Client) arxivMetadata(ctx context.Context, id string) (Metadata, error) {
-	data, _, _, err := c.get(ctx, c.ArXivAPI+"?id_list="+url.QueryEscape(id), "application/atom+xml", 2<<20)
+	// Publication details may have been added after the imported PDF version.
+	data, _, _, err := c.get(ctx, c.ArXivAPI+"?id_list="+url.QueryEscape(bareArXiv(id)), "application/atom+xml", 2<<20)
 	if err != nil {
 		return Metadata{}, err
 	}
 	var feed struct {
 		Entries []struct {
-			ID        string `xml:"id"`
-			Title     string `xml:"title"`
-			Summary   string `xml:"summary"`
-			Published string `xml:"published"`
-			DOI       string `xml:"http://arxiv.org/schemas/atom doi"`
-			Authors   []struct {
+			ID         string `xml:"id"`
+			Title      string `xml:"title"`
+			Summary    string `xml:"summary"`
+			Published  string `xml:"published"`
+			DOI        string `xml:"http://arxiv.org/schemas/atom doi"`
+			JournalRef string `xml:"http://arxiv.org/schemas/atom journal_ref"`
+			Authors    []struct {
 				Name string `xml:"name"`
 			} `xml:"author"`
 		} `xml:"entry"`
@@ -52,7 +54,13 @@ func (c *Client) arxivMetadata(ctx context.Context, id string) (Metadata, error)
 		return Metadata{}, ErrNotFound
 	}
 	e := feed.Entries[0]
-	m := Metadata{Title: clean(e.Title), ItemType: "preprint", Abstract: clean(e.Summary), ArXiv: id, DOI: clean(e.DOI), URL: "https://arxiv.org/abs/" + bareArXiv(id)}
+	m := Metadata{Title: clean(e.Title), ItemType: "preprint", Venue: "arXiv (preprint)", Abstract: clean(e.Summary), ArXiv: id, DOI: clean(e.DOI), URL: "https://arxiv.org/abs/" + bareArXiv(id)}
+	if ref := clean(e.JournalRef); publicationVenue(ref) {
+		// This is free-form and can describe a conference, not just a journal.
+		// Preserve it verbatim until a structured source identifies the venue/type.
+		m.Venue, m.ItemType = ref, "other"
+		m.UnstructuredVenue = true
+	}
 	if len(e.Published) >= 10 {
 		m.Date = e.Published[:10]
 	}
@@ -73,20 +81,16 @@ func (c *Client) arxivPDF(ctx context.Context, id string) ([]byte, error) {
 	return data, err
 }
 
-// arxivFull adds published-version details from Crossref when arXiv lists a DOI.
-func (c *Client) arxivFull(ctx context.Context, id string) (Metadata, error) {
+// arxivFull enriches the latest arXiv record using exact publication identifiers.
+func (c *Client) arxivFull(ctx context.Context, id string, knownDOI ...string) (Metadata, error) {
 	m, err := c.arxivMetadata(ctx, id)
 	if err != nil {
 		return m, err
 	}
-	if m.DOI != "" {
-		if pub, e := c.crossref(ctx, m.DOI); e == nil {
-			abstract := m.Abstract
-			m = overlay(m, pub)
-			m.Abstract, m.ArXiv = abstract, id
-		}
+	if len(knownDOI) > 0 && strings.TrimSpace(knownDOI[0]) != "" && arxivFromDOI(knownDOI[0]) == "" && (m.DOI == "" || arxivFromDOI(m.DOI) != "") {
+		m.DOI = knownDOI[0]
 	}
-	return m, nil
+	return c.arxivPublication(ctx, m), nil
 }
 
 func (c *Client) arxivResult(ctx context.Context, id string) (Result, error) {
@@ -222,6 +226,11 @@ type s2Paper struct {
 		DOI   string `json:"DOI"`
 		ArXiv string `json:"ArXiv"`
 	} `json:"externalIds"`
+	Journal *struct {
+		Name   string `json:"name"`
+		Volume string `json:"volume"`
+		Pages  string `json:"pages"`
+	} `json:"journal"`
 	OpenAccessPDF *struct {
 		URL string `json:"url"`
 	} `json:"openAccessPdf"`
@@ -231,7 +240,7 @@ type s2Paper struct {
 	PublicationTypes []string `json:"publicationTypes"`
 }
 
-const s2Fields = "title,authors,year,venue,publicationDate,externalIds,openAccessPdf,abstract,url,publicationTypes"
+const s2Fields = "title,authors,year,venue,journal,publicationDate,externalIds,openAccessPdf,abstract,url,publicationTypes"
 
 func (c *Client) s2(ctx context.Context, key string) (s2Paper, error) {
 	var p s2Paper
@@ -261,6 +270,12 @@ func (c *Client) s2Search(ctx context.Context, title string) (s2Paper, error) {
 
 func (p s2Paper) metadata() Metadata {
 	m := Metadata{Title: clean(p.Title), Abstract: clean(p.Abstract), Venue: clean(p.Venue), DOI: p.ExternalIDs.DOI, ArXiv: p.ExternalIDs.ArXiv, Date: p.PublicationDate}
+	if p.Journal != nil {
+		if m.Venue == "" {
+			m.Venue = clean(p.Journal.Name)
+		}
+		m.Volume, m.Pages = clean(p.Journal.Volume), clean(p.Journal.Pages)
+	}
 	if m.Date == "" && p.Year > 0 {
 		m.Date = fmt.Sprint(p.Year)
 	}
@@ -611,9 +626,12 @@ func (c *Client) Resolve(ctx context.Context, ref string) (Result, error) {
 
 // Lookup finds metadata without downloading a PDF. A title match must be close.
 func (c *Client) Lookup(ctx context.Context, ids Identifiers) (Metadata, error) {
+	if ids.ArXiv == "" {
+		ids.ArXiv = arxivFromDOI(ids.DOI)
+	}
 	switch {
 	case ids.ArXiv != "":
-		return c.arxivFull(ctx, ids.ArXiv)
+		return c.arxivFull(ctx, ids.ArXiv, ids.DOI)
 	case ids.DOI != "":
 		m, _, err := c.doiMetadata(ctx, ids.DOI)
 		return m, err

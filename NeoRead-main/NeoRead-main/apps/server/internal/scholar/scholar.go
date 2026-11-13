@@ -40,6 +40,8 @@ type Metadata struct {
 	ISBN      string
 	URL       string
 	Abstract  string
+	// UnstructuredVenue marks an arXiv journal_ref, not a canonical venue name.
+	UnstructuredVenue bool
 }
 
 type Identifiers struct {

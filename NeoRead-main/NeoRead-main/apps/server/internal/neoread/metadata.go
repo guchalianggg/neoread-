@@ -261,9 +261,21 @@ func (m PaperMetadata) has(key string) bool {
 // file only fill empty fields; an online lookup refreshes any automatic value.
 func (m *PaperMetadata) Merge(found PaperMetadata, source string) []string {
 	changed := []string{}
+	// Missing publication data during a best-effort arXiv refresh is not
+	// evidence that a previously identified journal/conference disappeared.
+	preservePublication := source == "lookup" && found.ArXiv != "" &&
+		(found.ItemType == "preprint" || found.ItemType == "other") &&
+		(m.ItemType == "journal" || m.ItemType == "conference") &&
+		strings.TrimSpace(m.Venue) != "" && !strings.Contains(strings.ToLower(m.Venue), "arxiv")
 	for key := range metadataLabels {
 		if !found.has(key) || m.Sources[key] == "manual" {
 			continue
+		}
+		if preservePublication && m.has(key) {
+			switch key {
+			case "itemType", "venue", "date", "volume", "issue", "pages", "publisher", "doi":
+				continue
+			}
 		}
 		if m.has(key) && source != "lookup" {
 			continue
