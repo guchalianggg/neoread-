@@ -9,6 +9,7 @@ import { Button } from "@neoread/ui/components/button";
 import { Textarea } from "@neoread/ui/components/textarea";
 import { reportDiagnostic } from "./diagnostics";
 import { diagnosticError } from "../../../packages/neoread-core/src/diagnostics";
+import { SourceDocumentOutline } from "./SourceDocumentOutline";
 import "./chat/markdown.css";
 
 export function PaperNoteRichEditor({
@@ -17,6 +18,7 @@ export function PaperNoteRichEditor({
   onChange,
   onBlur,
   actions,
+  outline = false,
   ariaLabel = "编辑论文笔记",
   placeholder = "使用 Markdown 记录要点、疑问和启发…",
 }: {
@@ -25,6 +27,7 @@ export function PaperNoteRichEditor({
   onChange: (body: string) => void;
   onBlur: () => void;
   actions?: ReactNode;
+  outline?: boolean;
   ariaLabel?: string;
   placeholder?: string;
 }) {
@@ -32,6 +35,7 @@ export function PaperNoteRichEditor({
   const [loading, setLoading] = useState(true);
   const [reason, setReason] = useState("");
   const container = useRef<HTMLDivElement>(null);
+  const sourceField = useRef<HTMLTextAreaElement>(null);
   const editorRef = useRef<{ setMarkdown: (body: string) => void } | null>(
     null,
   );
@@ -143,6 +147,13 @@ export function PaperNoteRichEditor({
           </Button>
         </div>
         {actions && <div className="paper-note-actions">{actions}</div>}
+        {outline && (
+          <SourceDocumentOutline
+            rich={container}
+            source={sourceField}
+            disabled={disabled || (loading && !source)}
+          />
+        )}
       </div>
       {(reason || (!source && loading && !disabled)) && (
         <p className="paper-note-editor-message" role="status">
@@ -151,6 +162,7 @@ export function PaperNoteRichEditor({
       )}
       {showSource && (
         <Textarea
+          ref={sourceField}
           aria-label={ariaLabel}
           placeholder={placeholder}
           disabled={disabled}

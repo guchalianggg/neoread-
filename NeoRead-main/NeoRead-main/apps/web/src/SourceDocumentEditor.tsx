@@ -235,6 +235,7 @@ function SourceDocumentEditorSession({
           ) : (
             <PaperNoteRichEditor
               body={snapshot.content ?? ""}
+              outline={active}
               ariaLabel={word ? "编辑 Word 文档" : "编辑 Markdown 文档"}
               placeholder="编辑正文、标题、列表和表格…"
               disabled={disabled}
