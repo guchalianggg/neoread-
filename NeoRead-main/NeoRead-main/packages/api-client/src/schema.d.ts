@@ -3974,7 +3974,8 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    key: "library" | "guide" | "shortcuts" | "fonts";
+                    /** @description A global preference key or source-reading-<document ID> for an active Markdown or Word source (md, markdown, doc, docx). */
+                    key: ("library" | "guide" | "shortcuts" | "fonts") | string;
                 };
                 cookie?: never;
             };
@@ -3989,6 +3990,15 @@ export interface paths {
                         "application/json": {
                             [key: string]: unknown;
                         };
+                    };
+                };
+                /** @description Unknown preference key, or missing, trashed or unsupported source document */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
                     };
                 };
                 /** @description Error */
@@ -4007,10 +4017,12 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    key: "library" | "guide" | "shortcuts" | "fonts";
+                    /** @description A global preference key or source-reading-<document ID> for an active Markdown or Word source (md, markdown, doc, docx). */
+                    key: ("library" | "guide" | "shortcuts" | "fonts") | string;
                 };
                 cookie?: never;
             };
+            /** @description For a source-reading key, the JSON body must be at most 4096 bytes and contain width (narrow, standard, or wide), pinned (boolean), and optionally position (an opaque versioned anchor object or null). Send no document content. */
             requestBody: {
                 content: {
                     "application/json": {
@@ -4028,6 +4040,24 @@ export interface paths {
                         "application/json": {
                             [key: string]: unknown;
                         };
+                    };
+                };
+                /** @description Unknown preference key, or missing, trashed or unsupported source document */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Source reading preference exceeds 4096 bytes */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
                     };
                 };
                 /** @description Error */

@@ -4,9 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"net/mail"
 	"os"
+	"regexp"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -131,7 +133,7 @@ var preferenceKeys = map[string]bool{"library": true, "guide": true, "shortcuts"
 func (s *Server) preferences(w http.ResponseWriter, r *http.Request) {
 	key := r.PathValue("key")
 	if !preferenceKeys[key] {
-		fail(w, 404, "未知偏好")
+		s.sourceReadingPreferences(w, r, key)
 		return
 	}
 	var value string
@@ -149,7 +151,7 @@ func (s *Server) preferences(w http.ResponseWriter, r *http.Request) {
 func (s *Server) savePreferences(w http.ResponseWriter, r *http.Request) {
 	key := r.PathValue("key")
 	if !preferenceKeys[key] {
-		fail(w, 404, "未知偏好")
+		s.sourceReadingPreferences(w, r, key)
 		return
 	}
 	var v map[string]any
@@ -192,6 +194,102 @@ func (s *Server) savePreferences(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respond(w, 200, json.RawMessage(b))
+}
+
+const (
+	sourceReadingPreferencePrefix = "source-reading-"
+	sourceReadingPreferenceLimit  = 4 << 10
+)
+
+var sourceReadingPreferenceKey = regexp.MustCompile(`^` + sourceReadingPreferencePrefix + `[0-9a-f]{32}$`)
+
+func (s *Server) sourceReadingPreferences(w http.ResponseWriter, r *http.Request, key string) {
+	if !sourceReadingPreferenceKey.MatchString(key) {
+		fail(w, 404, "未知偏好")
+		return
+	}
+	var body json.RawMessage
+	if r.Method == http.MethodPut {
+		body = decodeSourceReadingPreferences(w, r)
+		if body == nil {
+			return
+		}
+	}
+
+	// Check the original attachment and access settings in one transaction,
+	// so a concurrent trash or purge cannot invalidate the check before a save.
+	ctx := r.Context()
+	tx, err := s.Store.DB.BeginTx(ctx, nil)
+	if err != nil {
+		fail(w, 500, "无法访问阅读偏好")
+		return
+	}
+	defer tx.Rollback()
+	var filename, value string
+	settingsKey := "preferences:" + key
+	err = tx.QueryRowContext(ctx, `SELECT COALESCE((SELECT filename FROM paper_attachments
+		WHERE document_id=documents.id AND kind='file' AND substr(sha256,1,32)=documents.id LIMIT 1),''),
+		COALESCE((SELECT value FROM settings WHERE key=?),'{}')
+		FROM documents WHERE id=? AND type='epub' AND deleted_at=''`, settingsKey, key[len(sourceReadingPreferencePrefix):]).Scan(&filename, &value)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		fail(w, 500, "无法读取阅读偏好")
+		return
+	}
+	switch sourceFilenameKind(filename) {
+	case "md", "markdown", "doc", "docx":
+	default:
+		fail(w, 404, "文档不存在或不支持原文阅读偏好")
+		return
+	}
+	if body == nil {
+		respond(w, 200, json.RawMessage(value))
+		return
+	}
+	if _, err = tx.ExecContext(ctx, "INSERT INTO settings VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", settingsKey, string(body)); err == nil {
+		err = tx.Commit()
+	}
+	if err != nil {
+		fail(w, 500, "阅读偏好保存失败")
+		return
+	}
+	respond(w, 200, body)
+}
+
+func decodeSourceReadingPreferences(w http.ResponseWriter, r *http.Request) json.RawMessage {
+	var state struct {
+		Width    string          `json:"width"`
+		Pinned   *bool           `json:"pinned"`
+		Position json.RawMessage `json:"position,omitempty"`
+	}
+	d := json.NewDecoder(http.MaxBytesReader(w, r.Body, sourceReadingPreferenceLimit))
+	d.DisallowUnknownFields()
+	err := d.Decode(&state)
+	if err == nil {
+		// Check for trailing JSON and enforce the byte limit even after the object.
+		if err = d.Decode(new(json.RawMessage)); err == io.EOF {
+			err = nil
+		} else if err == nil {
+			fail(w, 400, "无效的阅读偏好")
+			return nil
+		}
+	}
+	var tooLarge *http.MaxBytesError
+	if errors.As(err, &tooLarge) {
+		fail(w, 413, "阅读偏好内容过大")
+		return nil
+	}
+	// Position is an opaque versioned anchor; the renderer validates its shape.
+	if err != nil || (state.Width != "narrow" && state.Width != "standard" && state.Width != "wide") || state.Pinned == nil ||
+		(len(state.Position) != 0 && state.Position[0] != '{' && string(state.Position) != "null") {
+		fail(w, 400, "无效的阅读偏好")
+		return nil
+	}
+	body, _ := json.Marshal(state)
+	if len(body) > sourceReadingPreferenceLimit {
+		fail(w, 413, "阅读偏好内容过大")
+		return nil
+	}
+	return body
 }
 
 func validFontPreferences(v map[string]any) string {

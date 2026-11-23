@@ -16,12 +16,16 @@ const fake = vi.hoisted(() => ({
   download: vi.fn(),
   blob: vi.fn(),
   diagnostic: vi.fn(),
+  getReading: vi.fn(),
+  saveReading: vi.fn(),
 }));
 vi.mock("@neoread/api", () => ({
   api: {
     getSourceEdit: fake.get,
     saveSourceEdit: fake.save,
     downloadSourceEdit: fake.download,
+    sourceReadingPreferences: fake.getReading,
+    saveSourceReadingPreferences: fake.saveReading,
   },
 }));
 vi.mock("./diagnostics", () => ({ reportDiagnostic: fake.diagnostic }));
@@ -91,6 +95,8 @@ beforeEach(() => {
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
   vi.stubGlobal("PointerEvent", MouseEvent);
   fake.get.mockImplementation(async () => source());
+  fake.getReading.mockResolvedValue({});
+  fake.saveReading.mockResolvedValue({});
   fake.save.mockImplementation(async (_id, payload) => ({
     ...source(),
     ...payload,
@@ -121,6 +127,9 @@ it("loads, edits, saves and reopens a document without normalizing Markdown", as
   );
   await act(async () => root.render(<StrictMode>{render()}</StrictMode>));
   expect(fake.get).toHaveBeenCalledTimes(1);
+  expect(host.querySelector("article h2")?.textContent).toBe("Original");
+  expect(field()).toBeNull();
+  await act(async () => button("编辑").click());
   expect(field().value).toBe(source().content);
   const exact = "##  中文\n\n-  item\n\n<tag>data</tag>\n";
   await act(async () => type(exact));
@@ -133,6 +142,7 @@ it("loads, edits, saves and reopens a document without normalizing Markdown", as
   expect(host.querySelector('[role="status"]')?.textContent).toBe("已保存");
   await act(async () => root.render(null));
   await act(async () => root.render(render()));
+  await act(async () => button("编辑").click());
   expect(field().value).toBe(exact);
   await act(async () => {
     button("返回书库").click();
@@ -155,6 +165,7 @@ it("exposes read errors and retry without enabling an empty editor", async () =>
   expect(event.defaultPrevented).toBe(true);
   expect(fake.save).not.toHaveBeenCalled();
   await act(async () => button("重试").click());
+  await act(async () => button("编辑").click());
   expect(field().disabled).toBe(false);
 });
 
@@ -163,6 +174,7 @@ it("retains failed drafts and advertises dirty close warnings", async () => {
   await act(async () =>
     root.render(<SourceDocumentEditor document={document} onBack={() => {}} />),
   );
+  await act(async () => button("编辑").click());
   await act(async () => type("draft"));
   fake.save.mockRejectedValueOnce(new Error("offline"));
   await act(async () => button("保存").click());
@@ -180,6 +192,7 @@ it("requires confirmation before replacing a conflicting draft with a newer serv
   await act(async () =>
     root.render(<SourceDocumentEditor document={document} onBack={() => {}} />),
   );
+  await act(async () => button("编辑").click());
   await act(async () => type("local draft"));
   fake.save.mockRejectedValueOnce({ status: 409 });
   await act(async () => button("保存").click());
@@ -210,6 +223,7 @@ it("keeps input enabled during save, blocks close and flushes later typing", asy
   await act(async () =>
     root.render(<SourceDocumentEditor document={document} onBack={() => {}} />),
   );
+  await act(async () => button("编辑").click());
   await act(async () => type("first"));
   await act(async () => button("保存").click());
   expect(field().disabled).toBe(false);
@@ -250,6 +264,10 @@ it("isolates multiple tab drafts and only handles shortcuts for the active docum
   await act(async () => root.render(render(a.id)));
   const sections = host.querySelectorAll("section");
   await act(async () => {
+    button("编辑", sections[0]).click();
+    button("编辑", sections[1]).click();
+  });
+  await act(async () => {
     type("A draft", sections[0]);
     type("B draft", sections[1]);
   });
@@ -271,6 +289,7 @@ it("consumes repeated/composition saves without issuing writes", async () => {
   await act(async () =>
     root.render(<SourceDocumentEditor document={document} onBack={() => {}} />),
   );
+  await act(async () => button("编辑").click());
   await act(async () => type("draft"));
   expect(shortcut({ repeat: true }).defaultPrevented).toBe(true);
   expect(shortcut({ isComposing: true }).defaultPrevented).toBe(true);
@@ -313,10 +332,27 @@ it("does not download stale server contents after a failed save", async () => {
   await act(async () =>
     root.render(<SourceDocumentEditor document={doc()} onBack={() => {}} />),
   );
+  await act(async () => button("编辑").click());
   await act(async () => type("unsaved"));
   fake.save.mockRejectedValueOnce(new Error("offline"));
   await act(async () => button("下载").click());
   expect(fake.download).not.toHaveBeenCalled();
   expect(fake.blob).not.toHaveBeenCalled();
   expect(field().value).toBe("unsaved");
+});
+
+it("returns to reading without saving or discarding the draft", async () => {
+  const document = doc();
+  await act(async () =>
+    root.render(<SourceDocumentEditor document={document} onBack={() => {}} />),
+  );
+  await act(async () => button("编辑").click());
+  await act(async () => type("# Draft heading"));
+  await act(async () => button("返回阅读").click());
+  expect(host.querySelector("article h1")?.textContent).toBe("Draft heading");
+  expect(field()).toBeNull();
+  expect(fake.save).not.toHaveBeenCalled();
+  expect(tabCloseWarning(document.id)?.message).toContain("未保存");
+  await act(async () => button("编辑").click());
+  expect(field().value).toBe("# Draft heading");
 });

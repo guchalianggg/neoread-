@@ -2,8 +2,16 @@ import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { api } from "@neoread/api";
 import type { Document } from "@neoread/core";
 import { Button } from "@neoread/ui/components/button";
-import { ArrowLeft, Download, Save, Settings } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  Download,
+  Pencil,
+  Save,
+  Settings,
+} from "lucide-react";
 import { PaperNoteRichEditor } from "./PaperNoteRichEditor";
+import { SourceDocumentReader } from "./SourceDocumentReader";
 import { EditableSpreadsheet } from "./EditableSpreadsheet";
 import { getSourceEditStore } from "./source-edit-state";
 import { downloadBlob } from "./download";
@@ -40,6 +48,8 @@ function SourceDocumentEditorSession({
   );
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [readingBody, setReadingBody] = useState("");
   const snapshot = state.snapshot;
   const disabled = !snapshot || state.loading || downloading;
   useEffect(() => {
@@ -157,6 +167,20 @@ function SourceDocumentEditorSession({
           <Save />
           保存
         </Button>
+        {!spreadsheet && (
+          <Button
+            variant="ghost"
+            size="sm"
+            disabled={disabled}
+            onClick={() => {
+              if (!editing) setReadingBody(snapshot?.content ?? "");
+              setEditing(!editing);
+            }}
+          >
+            {editing ? <BookOpen /> : <Pencil />}
+            {editing ? "返回阅读" : "编辑"}
+          </Button>
+        )}
         <Button
           variant="ghost"
           size="sm"
@@ -224,7 +248,11 @@ function SourceDocumentEditorSession({
           )}
         </div>
       )}
-      <div className="source-edit-content" aria-busy={state.loading}>
+      <div
+        className="source-edit-content"
+        data-reading={!!snapshot && !spreadsheet && !editing}
+        aria-busy={state.loading}
+      >
         {snapshot ? (
           spreadsheet ? (
             <EditableSpreadsheet
@@ -233,15 +261,25 @@ function SourceDocumentEditorSession({
               onChange={store.editSheets}
             />
           ) : (
-            <PaperNoteRichEditor
-              body={snapshot.content ?? ""}
-              outline={active}
-              ariaLabel={word ? "编辑 Word 文档" : "编辑 Markdown 文档"}
-              placeholder="编辑正文、标题、列表和表格…"
-              disabled={disabled}
-              onChange={store.editContent}
-              onBlur={() => {}}
-            />
+            <>
+              <SourceDocumentReader
+                documentId={doc.id}
+                body={editing ? readingBody : (snapshot.content ?? "")}
+                active={active && !editing}
+                hidden={editing}
+              />
+              {editing && (
+                <PaperNoteRichEditor
+                  body={snapshot.content ?? ""}
+                  outline={active}
+                  ariaLabel={word ? "编辑 Word 文档" : "编辑 Markdown 文档"}
+                  placeholder="编辑正文、标题、列表和表格…"
+                  disabled={disabled}
+                  onChange={store.editContent}
+                  onBlur={() => {}}
+                />
+              )}
+            </>
           )
         ) : (
           <p className="source-edit-placeholder">

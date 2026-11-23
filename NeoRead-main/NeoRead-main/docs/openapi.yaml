@@ -4443,9 +4443,22 @@
                   {
                     "in": "path",
                     "name": "key",
+                    "description": "A global preference key or source-reading-<document ID> for an active Markdown or Word source (md, markdown, doc, docx).",
                     "required": true,
                     "schema":
-                      { "enum": ["library", "guide", "shortcuts", "fonts"] },
+                      {
+                        "oneOf":
+                          [
+                            {
+                              "enum":
+                                ["library", "guide", "shortcuts", "fonts"],
+                            },
+                            {
+                              "type": "string",
+                              "pattern": "^source-reading-[0-9a-f]{32}$",
+                            },
+                          ],
+                      },
                   },
                 ],
               "responses":
@@ -4462,6 +4475,18 @@
                                   "type": "object",
                                   "additionalProperties": true,
                                 },
+                            },
+                        },
+                    },
+                  "404":
+                    {
+                      "description": "Unknown preference key, or missing, trashed or unsupported source document",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                { "$ref": "#/components/schemas/Error" },
                             },
                         },
                     },
@@ -4486,13 +4511,27 @@
                   {
                     "in": "path",
                     "name": "key",
+                    "description": "A global preference key or source-reading-<document ID> for an active Markdown or Word source (md, markdown, doc, docx).",
                     "required": true,
                     "schema":
-                      { "enum": ["library", "guide", "shortcuts", "fonts"] },
+                      {
+                        "oneOf":
+                          [
+                            {
+                              "enum":
+                                ["library", "guide", "shortcuts", "fonts"],
+                            },
+                            {
+                              "type": "string",
+                              "pattern": "^source-reading-[0-9a-f]{32}$",
+                            },
+                          ],
+                      },
                   },
                 ],
               "requestBody":
                 {
+                  "description": "For a source-reading key, the JSON body must be at most 4096 bytes and contain width (narrow, standard, or wide), pinned (boolean), and optionally position (an opaque versioned anchor object or null). Send no document content.",
                   "required": true,
                   "content":
                     {
@@ -4517,6 +4556,30 @@
                                   "type": "object",
                                   "additionalProperties": true,
                                 },
+                            },
+                        },
+                    },
+                  "404":
+                    {
+                      "description": "Unknown preference key, or missing, trashed or unsupported source document",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                { "$ref": "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                  "413":
+                    {
+                      "description": "Source reading preference exceeds 4096 bytes",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                { "$ref": "#/components/schemas/Error" },
                             },
                         },
                     },

@@ -68,7 +68,11 @@
   padding: 8px 16px 16px;
 }
 .source-document-editor[data-layout="prose"]
-  > :is(.source-edit-notice, .source-edit-error, .source-edit-content) {
+  > :is(
+    .source-edit-notice,
+    .source-edit-error,
+    .source-edit-content:not([data-reading="true"])
+  ) {
   inline-size: 100%;
   max-inline-size: 54rem;
   margin-inline: auto;
@@ -100,6 +104,143 @@
 }
 .source-edit-placeholder {
   color: var(--muted-foreground);
+}
+.source-read-workspace {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 0;
+  container-type: inline-size;
+}
+.source-read-workspace[hidden] {
+  display: none;
+}
+.source-read-toolbar,
+.source-read-find,
+.source-read-outline-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.source-read-toolbar {
+  padding-block-end: 8px;
+}
+.source-read-layout {
+  display: flex;
+  flex: 1;
+  min-block-size: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.source-read-sidebar {
+  display: flex;
+  flex: 0 0 15rem;
+  flex-direction: column;
+  min-block-size: 0;
+  border-inline-end: 1px solid var(--border);
+  padding: 8px;
+}
+.source-read-outline-header {
+  justify-content: space-between;
+}
+.source-read-outline-list {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.source-read-width {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.source-read-outline-list button {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding-block: 6px;
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.source-read-viewport {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+}
+.source-read-article {
+  --source-prose-width: 54rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(
+      0,
+      var(--source-prose-width)
+    ) minmax(0, 1fr);
+  padding: 1rem clamp(10px, 3vw, 24px) 2rem;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.source-read-article[data-width="narrow"] {
+  --source-prose-width: 40rem;
+}
+.source-read-article[data-width="wide"] {
+  --source-prose-width: 70rem;
+}
+.source-read-article > * {
+  grid-column: 2;
+  min-inline-size: 0;
+}
+.source-read-article > .source-read-table[data-expanded="true"] {
+  grid-column: 1 / -1;
+}
+.source-read-article :is(h1, h2, h3, h4, h5, h6, p, pre, li, td, th) {
+  scroll-margin-block-start: 12px;
+}
+.source-read-article pre {
+  background: var(--muted);
+  border-radius: 6px;
+}
+.source-read-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.source-read-table {
+  min-inline-size: 0;
+  margin-block: 8px;
+}
+.source-read-table-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.source-read-table-scroll {
+  overflow-x: auto;
+}
+.source-read-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.source-read-table :is(th, td) {
+  min-inline-size: 5rem;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+}
+.source-read-table th {
+  background: var(--muted);
+}
+.source-read-find input {
+  width: min(11rem, 56vw);
+}
+.source-read-find output {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+::highlight(neoread-source-find) {
+  background-color: #facc6680;
+}
+::highlight(neoread-source-find-current) {
+  background-color: #f59e0b;
+  color: #17120a;
 }
 .source-spreadsheet {
   display: flex;

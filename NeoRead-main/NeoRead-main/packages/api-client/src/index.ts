@@ -896,6 +896,23 @@ export const api = {
       method: "PUT",
       body: JSON.stringify(preferences),
     }),
+  sourceReadingPreferences: (id: string, signal?: AbortSignal) =>
+    request<{ width?: unknown; pinned?: unknown; position?: unknown }>(
+      `/api/preferences/source-reading-${encodeURIComponent(id)}`,
+      { signal },
+    ),
+  saveSourceReadingPreferences: (
+    id: string,
+    state: {
+      width: "narrow" | "standard" | "wide";
+      pinned: boolean;
+      position: unknown;
+    },
+  ) =>
+    request<{ width?: unknown; pinned?: unknown; position?: unknown }>(
+      `/api/preferences/source-reading-${encodeURIComponent(id)}`,
+      { method: "PUT", body: JSON.stringify(state), keepalive: true },
+    ),
   shortcutPreferences: () =>
     request<Record<string, { key: string; shift: boolean }>>(
       "/api/preferences/shortcuts",
