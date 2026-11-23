@@ -213,6 +213,17 @@ export async function createPaperNoteEditor(
           "aria-multiline": "true",
           spellcheck: "false",
         },
+        nodeViews: {
+          table() {
+            // Keep the table editable inside a scrollable presentation wrapper.
+            const dom = host.ownerDocument.createElement("div");
+            dom.className = "paper-note-table-scroll";
+            const table = dom.appendChild(
+              host.ownerDocument.createElement("table"),
+            );
+            return { dom, contentDOM: table.createTBody() };
+          },
+        },
         handleDOMEvents: {
           click(view, event) {
             if (

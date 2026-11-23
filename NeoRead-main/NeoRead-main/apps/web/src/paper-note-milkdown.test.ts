@@ -76,6 +76,21 @@ $$
   expect(host.querySelector('[data-checked="true"]')).not.toBeNull();
 });
 
+it("wraps each table without changing how its cells are edited and saved", async () => {
+  const { editor, view, change } = await create(
+    "| A | B |\n| - | - |\n| one | two |",
+  );
+  const cell = view.dom.querySelector(".paper-note-table-scroll > table td p")!;
+  expect(cell.textContent).toBe("one");
+  view.dispatch(view.state.tr.insertText("new ", view.posAtDOM(cell, 0)));
+  expect(cell.textContent).toBe("new one");
+  const saved = change.mock.lastCall![0];
+  expect(saved).toContain("new one");
+  expect(editor.ctx.get(parserCtx)(saved).toJSON()).toEqual(
+    view.state.doc.toJSON(),
+  );
+});
+
 it("updates the shared draft synchronously, ignores selection changes, and never loads images or activates links", async () => {
   const { view, change, host } = await create(
     "Original [unsafe](javascript:alert%281%29) ![private](https://example.com/tracker.png)",

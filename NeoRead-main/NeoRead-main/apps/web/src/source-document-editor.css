@@ -67,6 +67,21 @@
   overflow: hidden;
   padding: 8px 16px 16px;
 }
+.source-document-editor[data-layout="prose"]
+  > :is(.source-edit-notice, .source-edit-error, .source-edit-content) {
+  inline-size: 100%;
+  max-inline-size: 54rem;
+  margin-inline: auto;
+}
+.source-edit-content .paper-note-rich .ProseMirror {
+  padding-inline: clamp(12px, 3vw, 24px);
+}
+.source-edit-content .paper-note-table-scroll {
+  overflow-x: auto;
+}
+.source-edit-content .paper-note-table-scroll :is(th, td) {
+  min-inline-size: 5rem;
+}
 .source-edit-content > .paper-note-workspace {
   flex: 1;
   min-width: 0;

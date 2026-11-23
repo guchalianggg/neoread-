@@ -111,8 +111,9 @@ function SourceDocumentEditorSession({
       return;
     void store.reloadConfirmed();
   };
-  const spreadsheet = snapshot?.kind === "xls" || snapshot?.kind === "xlsx";
-  const word = snapshot?.kind === "doc" || snapshot?.kind === "docx";
+  const kind = snapshot?.kind ?? doc.sourceFormat;
+  const spreadsheet = kind === "xls" || kind === "xlsx";
+  const word = kind === "doc" || kind === "docx";
   const status = state.loading
     ? "读取中"
     : state.saving
@@ -125,6 +126,7 @@ function SourceDocumentEditorSession({
   return (
     <section
       className="source-document-editor"
+      data-layout={spreadsheet ? "spreadsheet" : "prose"}
       aria-label="源文档编辑器"
       aria-hidden={!active}
     >
@@ -181,13 +183,13 @@ function SourceDocumentEditorSession({
         <span>编辑副本，原件保留。</span>
         {word && (
           <span>
-            {snapshot.kind === "doc" ? "DOC 将保存为 DOCX。" : "保存为 DOCX。"}
+            {kind === "doc" ? "DOC 将保存为 DOCX。" : "保存为 DOCX。"}
             仅支持基础标题、列表、表格；不保留复杂版式或宏。
           </span>
         )}
         {spreadsheet && (
           <span>
-            {snapshot.kind === "xls" ? "XLS 将保存为 XLSX。" : "保存为 XLSX。"}
+            {kind === "xls" ? "XLS 将保存为 XLSX。" : "保存为 XLSX。"}
             按文本编辑，不计算公式、不加载外链；不保证保留公式、图表、复杂格式或宏。
           </span>
         )}
