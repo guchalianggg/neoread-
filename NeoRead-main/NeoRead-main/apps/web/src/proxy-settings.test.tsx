@@ -122,8 +122,8 @@ it("shows a restart reminder after successful persistence without restarting", a
     host: "127.0.0.1",
     port: 7897,
   });
-  expect(host.textContent).toContain("代理配置已变化，重启 NeoRead 后生效。");
-  expect(button("重启 NeoRead")).toBeUndefined();
+  expect(host.textContent).toContain("代理配置已变化，重启 Reader 后生效。");
+  expect(button("重启 Reader")).toBeUndefined();
   expect(restart).not.toHaveBeenCalled();
 });
 
@@ -152,17 +152,17 @@ it("reloads a completed save after closing and reopening settings", async () => 
   expect(button("检测").disabled).toBe(true);
   await act(async () => finish());
   expect(input("代理端口").value).toBe("7897");
-  expect(host.textContent).toContain("代理配置已变化，重启 NeoRead 后生效。");
+  expect(host.textContent).toContain("代理配置已变化，重启 Reader 后生效。");
 });
 
 it("shows the system restart reminder and tests the active configuration", async () => {
   state = { settings: { mode: "system" }, restartRequired: false };
   await render();
-  expect(host.textContent).toContain("切换系统代理后，请重启 NeoRead 再检测。");
+  expect(host.textContent).toContain("切换系统代理后，请重启 Reader 再检测。");
   await click("检测");
   expect(check).toHaveBeenCalledWith({ mode: "system" });
   expect(save).not.toHaveBeenCalled();
-  expect(button("重启 NeoRead")).toBeUndefined();
+  expect(button("重启 Reader")).toBeUndefined();
   expect(restart).not.toHaveBeenCalled();
 });
 
@@ -200,9 +200,9 @@ it("keeps unsaved fields and allows retry when saving fails", async () => {
   );
   expect(input("代理端口").value).toBe("7897");
   expect(button("保存").disabled).toBe(false);
-  expect(button("重启 NeoRead")).toBeUndefined();
+  expect(button("重启 Reader")).toBeUndefined();
   await click("保存");
-  expect(host.textContent).toContain("代理配置已变化，重启 NeoRead 后生效。");
+  expect(host.textContent).toContain("代理配置已变化，重启 Reader 后生效。");
 });
 
 it("rejects a nonnumeric port before calling the desktop", async () => {

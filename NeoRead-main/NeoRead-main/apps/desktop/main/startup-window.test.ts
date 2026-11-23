@@ -131,7 +131,8 @@ it("loads local feedback without a server or preload and preserves close cancell
     sandbox: true,
   });
   const html = decodeURIComponent(state.window.loadURL.mock.calls[0][0]);
-  expect(html).toContain("正在启动 NeoRead");
+  expect(html).toContain("<title>Reader</title>");
+  expect(html).toContain("正在启动 Reader");
   const hash = createHash("sha256")
     .update(startupAnimationScript)
     .digest("base64");

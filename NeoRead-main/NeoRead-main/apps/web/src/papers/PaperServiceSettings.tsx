@@ -72,7 +72,7 @@ export function PaperServiceSettings({ open }: { open: boolean }) {
         >
           可选。Crossref 用于查询 DOI
           和补全论文信息。填写可联系到你的邮箱后，可使用服务商提供的更高请求额度，无需注册。
-          请求额度由 Crossref 限制，NeoRead 不额外设置此项额度。邮箱仅随
+          请求额度由 Crossref 限制，Reader 不额外设置此项额度。邮箱仅随
           Crossref 查询发送给该服务商；填写后仍可能触发限流。留空并保存可清除。
         </p>
       </form>

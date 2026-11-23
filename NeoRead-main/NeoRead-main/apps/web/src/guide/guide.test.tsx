@@ -391,12 +391,12 @@ describe("guide host", () => {
     await render(false);
     await flush();
     expect(document.querySelector(".tour-card")?.textContent).toContain(
-      "欢迎使用 NeoRead",
+      "欢迎使用 Reader",
     );
     await act(async () => button("开始").click());
     await flush();
     expect(document.querySelector(".tour-card")?.textContent).not.toContain(
-      "欢迎使用 NeoRead",
+      "欢迎使用 Reader",
     );
     expect(api.saveGuidePreferences).not.toHaveBeenCalled();
     await act(async () => button("跳过引导").click());
@@ -417,14 +417,14 @@ describe("guide host", () => {
     const [version, items] = Object.entries(releaseNotes)[0];
     vi.mocked(api.guidePreferences).mockResolvedValue({});
     await render(true, version);
-    expect(document.body.textContent).toContain(`NeoRead ${version} 更新内容`);
+    expect(document.body.textContent).toContain(`Reader ${version} 更新内容`);
     expect(document.body.textContent).toContain(items[0].title);
     const open = vi
       .spyOn(window, "open")
       .mockReturnValue({ opener: null } as Window);
-    await act(async () => button("去 GitHub 点 Star").click());
+    await act(async () => button("提交反馈").click());
     expect(open).toHaveBeenCalledWith(
-      "https://github.com/cynicalight/NeoRead",
+      "https://github.com/guchalianggg/neoread-/issues/new/choose",
       "_blank",
     );
     expect(api.saveGuidePreferences).toHaveBeenCalledWith({
@@ -446,9 +446,9 @@ describe("guide host", () => {
     try {
       await render(true);
       expect(document.querySelector('[data-slot="dialog-close"]')).toBeNull();
-      await act(async () => button("已点 Star，去提 Issue").click());
+      await act(async () => button("提交反馈").click());
       expect(openExternal).toHaveBeenCalledWith(
-        "https://github.com/cynicalight/NeoRead/issues/new/choose",
+        "https://github.com/guchalianggg/neoread-/issues/new/choose",
       );
       expect(api.saveGuidePreferences).toHaveBeenCalledWith({
         onboarded: true,
@@ -469,11 +469,11 @@ describe("guide host", () => {
     });
     vi.spyOn(window, "open").mockReturnValue(null);
     await render(true);
-    await act(async () => button("去 GitHub 点 Star").click());
+    await act(async () => button("提交反馈").click());
     expect(toast.error).toHaveBeenCalled();
     expect(api.saveGuidePreferences).not.toHaveBeenCalled();
     expect(document.querySelector('[role="dialog"]')).not.toBeNull();
-    expect(button("去 GitHub 点 Star").disabled).toBe(false);
+    expect(button("提交反馈").disabled).toBe(false);
   });
 
   it("remembers an update dismissed with Escape", async () => {
@@ -483,7 +483,7 @@ describe("guide host", () => {
     });
     await render(true);
     await act(async () =>
-      button("去 GitHub 点 Star").dispatchEvent(
+      button("知道了").dispatchEvent(
         new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
       ),
     );

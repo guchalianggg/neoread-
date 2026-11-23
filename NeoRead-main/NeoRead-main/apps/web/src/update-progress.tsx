@@ -13,7 +13,7 @@ export function useUpdateProgress() {
           return;
         }
         if (progress.phase === "prepare") {
-          toast.loading(`正在准备安装 NeoRead ${progress.version}`, {
+          toast.loading(`正在准备安装 Reader ${progress.version}`, {
             id: "neoread-update",
             description: undefined,
             duration: Infinity,
@@ -21,7 +21,7 @@ export function useUpdateProgress() {
           return;
         }
         const { received, total } = progress;
-        toast.loading(`正在下载 NeoRead ${progress.version}`, {
+        toast.loading(`正在下载 Reader ${progress.version}`, {
           id: "neoread-update",
           duration: Infinity,
           description: (

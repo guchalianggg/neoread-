@@ -183,13 +183,13 @@ export function ProxySettings({ open }: { open: boolean }) {
 
         <p className="mt-2 text-xs text-muted-foreground">
           {state?.restartRequired ? (
-            "代理配置已变化，重启 NeoRead 后生效。"
+            "代理配置已变化，重启 Reader 后生效。"
           ) : mode === "system" ? (
             <strong className="font-semibold">
-              切换系统代理后，请重启 NeoRead 再检测。
+              切换系统代理后，请重启 Reader 再检测。
             </strong>
           ) : (
-            "修改后需保存并重启 NeoRead。"
+            "修改后需保存并重启 Reader。"
           )}
         </p>
         {state?.warning && (

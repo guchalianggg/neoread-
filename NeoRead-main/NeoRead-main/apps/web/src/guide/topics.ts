@@ -40,19 +40,19 @@ export const guideTopics: GuideTopic[] = [
       {
         id: "detect",
         title: "自动检测本机 Agent",
-        body: "打开「设置 → Agent」，NeoRead 会自动检测已安装的 Codex、Claude Code 和 Kimi CLI，并测试文本推理与图片理解。检测通过后，在「Agent SDK」中选择要使用的一个。",
+        body: "打开「设置 → Agent」，Reader 会自动检测已安装的 Codex、Claude Code 和 Kimi CLI，并测试文本推理与图片理解。检测通过后，在「Agent SDK」中选择要使用的一个。",
         scene: "detect",
       },
       {
         id: "login",
         title: "在终端登录 CLI",
-        body: "NeoRead 直接调用 CLI，使用它当前的登录账户与计费方式，不读取账号凭据。检测未通过时，先在终端完成登录：Codex 运行 codex login，Claude Code 运行 claude auth login，Kimi 启动后按提示登录。登录后回到设置点击重新检测。",
+        body: "Reader 直接调用 CLI，使用它当前的登录账户与计费方式，不读取账号凭据。检测未通过时，先在终端完成登录：Codex 运行 codex login，Claude Code 运行 claude auth login，Kimi 启动后按提示登录。登录后回到设置点击重新检测。",
         scene: "login",
       },
       {
         id: "api",
         title: "或者填入 API Key",
-        body: "没有安装 CLI 时，点击 API 卡片，填写 OpenAI 兼容接口的地址和 Key 并保存。NeoRead 会拉取模型列表并逐个检测，Key 只保存在本机。",
+        body: "没有安装 CLI 时，点击 API 卡片，填写 OpenAI 兼容接口的地址和 Key 并保存。Reader 会拉取模型列表并逐个检测，Key 只保存在本机。",
         scene: "api",
       },
       {
@@ -72,7 +72,7 @@ export const guideTopics: GuideTopic[] = [
       {
         id: "link",
         title: "从链接导入",
-        body: "在论文库点击「导入论文」，粘贴论文页面或 PDF 链接，也可以输入 arXiv 编号、DOI 或完整标题。NeoRead 会下载 PDF 并补全论文信息。",
+        body: "在论文库点击「导入论文」，粘贴论文页面或 PDF 链接，也可以输入 arXiv 编号、DOI 或完整标题。Reader 会下载 PDF 并补全论文信息。",
         scene: "link",
       },
       {
@@ -90,7 +90,7 @@ export const guideTopics: GuideTopic[] = [
       {
         id: "connector",
         title: "从浏览器收录",
-        body: "从 Chrome 网上应用店安装 NeoRead Connector。在论文页面点击插件图标，选择分类和标签后即可把 PDF 收录到论文库。收录时需要保持 NeoRead 打开。",
+        body: "从 Chrome 网上应用店安装 NeoRead Connector。在论文页面点击插件图标，选择分类和标签后即可把 PDF 收录到论文库。收录时需要保持 Reader 打开。",
         scene: "connector",
       },
     ],
@@ -185,7 +185,7 @@ export const guideTopics: GuideTopic[] = [
       {
         id: "export-pdf",
         title: "导出带批注的 PDF",
-        body: "在书库中右键 PDF 并选择「导出带批注的 PDF」，或在笔记栏的导出中选择该项。NeoRead 会将高亮、下划线、笔记以及问题和回答写入 PDF 副本，原文件保持不变。",
+        body: "在书库中右键 PDF 并选择「导出带批注的 PDF」，或在笔记栏的导出中选择该项。Reader 会将高亮、下划线、笔记以及问题和回答写入 PDF 副本，原文件保持不变。",
         scene: "exportPdf",
       },
     ],
@@ -219,7 +219,7 @@ export const guideTopics: GuideTopic[] = [
       {
         id: "cli",
         title: "安装 neoread 命令",
-        body: "在「设置 → Agent → 命令行工具」中安装 neoread 命令后，可以在终端检索、阅读和导入书库中的文档，也可以让 Claude Code、Codex 等 Agent 直接调用。使用时需要保持 NeoRead 打开。",
+        body: "在「设置 → Agent → 命令行工具」中安装 neoread 命令后，可以在终端检索、阅读和导入书库中的文档，也可以让 Claude Code、Codex 等 Agent 直接调用。使用时需要保持 Reader 打开。",
         scene: "cli",
       },
     ],

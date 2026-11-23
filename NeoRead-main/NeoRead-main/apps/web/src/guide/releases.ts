@@ -12,7 +12,22 @@ export interface ReleaseItem {
  * Notes keyed by the desktop package version. Versions without notes still
  * show the update confirmation and GitHub feedback actions.
  */
-export const releaseNotes: Record<string, ReleaseItem[]> = bundledReleaseNotes;
+export const releaseNotes: Record<string, ReleaseItem[]> = Object.fromEntries(
+  Object.entries<ReleaseItem[]>(bundledReleaseNotes).map(([version, items]) => [
+    version,
+    items.map((item) => {
+      // Keep the historical rename and the Chrome Web Store listing name literal.
+      if (item.title === "Reader 更名为 NeoRead") return item;
+      const display = (text: string) =>
+        text.replace(/\bNeoRead\b(?! Connector)/g, "Reader");
+      return {
+        ...item,
+        title: display(item.title),
+        ...(item.body && { body: display(item.body) }),
+      };
+    }),
+  ]),
+);
 
 export type GuideLaunch =
   | { kind: "onboarding" }

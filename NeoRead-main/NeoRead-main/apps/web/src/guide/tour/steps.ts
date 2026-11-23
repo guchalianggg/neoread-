@@ -205,7 +205,7 @@ function agentView(s: TourState): TourView {
       title: `选择 ${agentNames[first]}`,
       body: api
         ? "API 已有模型通过检测，点击 API 卡片选择它，问答和翻译会使用这个 Key。"
-        : `${names} 的 CLI 已在${s.shell}中登录，NeoRead 用的是 CLI，不是 Codex App。点击卡片选择要使用的 Agent，问答和翻译会使用它当前的登录账户与计费方式。`,
+        : `${names} 的 CLI 已在${s.shell}中登录，Reader 用的是 CLI，不是 Codex App。点击卡片选择要使用的 Agent，问答和翻译会使用它当前的登录账户与计费方式。`,
       focus: [card(first)],
       click: [deck],
       revealAgent: first,
@@ -217,7 +217,7 @@ function agentView(s: TourState): TourView {
     return mine.some((a) => a.status === "pending")
       ? {
           title: "正在检测 API 模型",
-          body: "NeoRead 正在拉取模型并逐个测试文本推理和图片理解。",
+          body: "Reader 正在拉取模型并逐个测试文本推理和图片理解。",
           focus: [card("api")],
           click: [deck],
           revealAgent: "api",
@@ -236,7 +236,7 @@ function agentView(s: TourState): TourView {
   if (s.detecting || mine.some((a) => a.status === "pending"))
     return {
       title: "正在检测本机 Agent",
-      body: `NeoRead 调用的是命令行里的 Codex、Claude Code 和 Kimi CLI，不是 Codex App 或 Claude 桌面版。请在${s.shell}中确认 CLI 已登录，例如运行 \`codex login\` 或 \`claude auth login\`。`,
+      body: `Reader 调用的是命令行里的 Codex、Claude Code 和 Kimi CLI，不是 Codex App 或 Claude 桌面版。请在${s.shell}中确认 CLI 已登录，例如运行 \`codex login\` 或 \`claude auth login\`。`,
       focus: [deck],
       click: [deck],
       ...choice,
@@ -271,7 +271,7 @@ export const tourSteps: TourStep[] = [
   {
     id: "welcome",
     view: () => ({
-      title: "欢迎使用 NeoRead",
+      title: "欢迎使用 Reader",
       body: "跟着光标完成三件事：连接 Agent、导入论文、开始阅读。大约一分钟。",
       next: "开始",
     }),
@@ -372,7 +372,7 @@ export const tourSteps: TourStep[] = [
     done: (s) => !s.importDialog,
     view: () => ({
       title: "粘贴链接或选择 PDF",
-      body: "NeoRead 支持导入本地 pdf、粘贴论文链接、arXiv 编号，也可以选择直接从 Zotero 中迁移完整的论文库。\n**可以在新手引导结束后，导入自己的论文，接下来直接用示例论文演示。**",
+      body: "Reader 支持导入本地 pdf、粘贴论文链接、arXiv 编号，也可以选择直接从 Zotero 中迁移完整的论文库。\n**可以在新手引导结束后，导入自己的论文，接下来直接用示例论文演示。**",
       focus: [tour("import-dialog")],
       click: [closeImport],
       pointer: { gesture: "click", target: closeImport },

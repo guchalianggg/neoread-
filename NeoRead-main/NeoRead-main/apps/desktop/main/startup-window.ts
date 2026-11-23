@@ -33,7 +33,7 @@ export function createStartupWindow(
     height: 940,
     minWidth: 1000,
     minHeight: 660,
-    title: "NeoRead",
+    title: "Reader",
     backgroundColor: dark ? "#211e21" : "#ffffff",
     skipTaskbar: false,
     ...(process.platform === "darwin"

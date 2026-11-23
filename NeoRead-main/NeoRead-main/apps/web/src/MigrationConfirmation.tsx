@@ -60,10 +60,9 @@ export function MigrationConfirmation() {
             <AlertDialogDescription>
               {resume
                 ? "上次迁移尚未完成。确认后将继续迁移，并校验已复制的数据。"
-                : "检测到旧 Reader 的书库或配置。确认后将复制到 NeoRead，并校验迁移结果。"}
+                : "检测到旧版 Reader 的书库或配置。确认后将复制到当前版本，并校验迁移结果。"}
               <br />
-              迁移是可选的，旧数据会保留。可以跳过并继续使用
-              NeoRead，之后在设置中自行导入或迁移书库。迁移前请先退出旧 Reader。
+              迁移是可选的，旧数据会保留。可以跳过并继续启动 Reader，之后在设置中自行导入或迁移书库。迁移前请先退出旧版 Reader。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

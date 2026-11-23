@@ -31,7 +31,8 @@ function setup(reduced = false) {
 it("embeds local branding and leaves readable feedback without JavaScript", () => {
   const html = createStartupHTML(assets);
   const page = new DOMParser().parseFromString(html, "text/html");
-  expect(page.body.textContent).toContain("NeoRead");
+  expect(page.title).toBe("Reader");
+  expect(page.querySelector(".word")?.textContent).toBe("Reader");
   expect(page.querySelector('[role="status"]')?.textContent).toContain("正在启动");
   expect(html).toContain(assets.fontDataURL);
   expect(html).toContain(assets.logoLightDataURL);

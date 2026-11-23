@@ -25,7 +25,7 @@ export async function confirmReaderMigration(
       height: 420,
       show: false,
       resizable: false,
-      title: "NeoRead",
+      title: "Reader",
       backgroundColor: nativeTheme.shouldUseDarkColors ? "#211e21" : "#ffffff",
       autoHideMenuBar: true,
       webPreferences: {

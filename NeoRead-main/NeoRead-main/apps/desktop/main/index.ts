@@ -728,7 +728,7 @@ app
         height: 940,
         minWidth: 1000,
         minHeight: 660,
-        title: "NeoRead",
+        title: "Reader",
         ...(process.platform === "darwin"
           ? {
               titleBarStyle: "hidden" as const,

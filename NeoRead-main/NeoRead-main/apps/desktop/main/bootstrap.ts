@@ -65,7 +65,7 @@ export async function bootstrapDesktop(loadDesktop: () => DesktopModule) {
   } catch {
     if (!cancelled) {
       dialog.showErrorBox(
-        "NeoRead 无法启动",
+        "Reader 无法启动",
         "请重新打开应用；若仍无法启动，请重新安装。",
       );
       app.quit();

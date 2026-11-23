@@ -44,7 +44,12 @@ export function LibraryLocationSettings({
       if (existing) await desktop.importLibrary!();
       else await desktop.moveLibrary!();
     } catch (error) {
-      setError((error as Error).message);
+      setError(
+        (error as Error).message.replace(
+          "不是有效的 NeoRead 书库",
+          "不是有效的 Reader 书库",
+        ),
+      );
     } finally {
       setBusy(false);
     }
@@ -101,7 +106,7 @@ export function LibraryLocationSettings({
             {importing ? "正在导入书库" : "正在更改书库位置"}
           </DialogTitle>
           <DialogDescription>
-            请完成目录选择和确认。处理过程中请保持 NeoRead
+            请完成目录选择和确认。处理过程中请保持 Reader
             打开，完成后会自动重启。
           </DialogDescription>
           <LoaderCircle

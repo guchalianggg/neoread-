@@ -189,7 +189,7 @@ export function CiteHost({ standalone = false }: { standalone?: boolean }) {
       let error = "";
       try {
         if (!commands.includes(event.command as CiteCommand))
-          throw new Error("NeoRead 版本过旧，不支持这个命令");
+          throw new Error("Reader 版本过旧，不支持这个命令");
         if (standalone)
           useReaderStore.getState().setDocuments(await api.documents());
         // citeproc loads with the first command, not with the app.

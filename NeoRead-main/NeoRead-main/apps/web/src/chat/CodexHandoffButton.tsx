@@ -31,7 +31,7 @@ export function CodexHandoffButton({
         } else {
           window.location.assign(url);
         }
-        toast.success("已准备独立阅读对话，后续消息不会同步回 NeoRead");
+        toast.success("已准备独立阅读对话，后续消息不会同步回 Reader");
       } catch {
         toast.error("接续对话已保存，请确认已安装 Codex App 后重试打开");
       }

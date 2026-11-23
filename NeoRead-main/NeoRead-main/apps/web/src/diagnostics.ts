@@ -72,7 +72,7 @@ export async function exportDiagnostics(): Promise<boolean> {
   const url = URL.createObjectURL(await response.blob());
   const link = document.createElement("a");
   link.href = url;
-  link.download = `NeoRead-diagnostics-${new Date().toISOString().replace(/[:.]/g, "-")}.zip`;
+  link.download = `Reader-diagnostics-${new Date().toISOString().replace(/[:.]/g, "-")}.zip`;
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
   return true;

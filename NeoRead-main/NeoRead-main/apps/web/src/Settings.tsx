@@ -1403,7 +1403,7 @@ export function Settings({
               )}
               <p className="mt-4 flex gap-2 text-xs leading-5 text-muted-foreground">
                 <CircleHelp className="mt-0.5 size-4 shrink-0" />
-                NeoRead 调用已安装的 CLI，不读取账号凭据，保护您的隐私。
+                Reader 调用已安装的 CLI，不读取账号凭据。
               </p>
             </section>
             {config && (

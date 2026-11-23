@@ -20,7 +20,7 @@ export default function WebSearchPreview() {
       kind: "search",
       tool: "web_search",
       title: "搜索网页",
-      target: "NeoRead document tools official documentation",
+      target: "Reader document tools official documentation",
       status: "completed",
       startedAt: "2026-10-23T00:00:00Z",
     },
@@ -107,7 +107,7 @@ export default function WebSearchPreview() {
           <MessageMarkdown content="根据当前文档原文和[公开网页资料](https://example.com/docs)，可以分别核对两类依据。" />
         )}
         <p className="mt-5 text-xs text-muted-foreground">
-          设置表单仅供预览，不会写入 NeoRead。实际设置请在桌面「设置 →
+          设置表单仅供预览，不会写入 Reader。实际设置请在桌面「设置 →
           Agent」中修改。
         </p>
         <WebSearchSettings

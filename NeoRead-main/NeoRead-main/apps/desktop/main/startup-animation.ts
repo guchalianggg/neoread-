@@ -65,7 +65,7 @@ export function createStartupHTML(assets: StartupAssets): string {
   const logo = (url: string, theme: string) =>
     url ? `<img class="${theme}" src="${url}" alt="" width="52" height="52" draggable="false">` : "";
   return `<!doctype html><html lang="zh-CN"><head>
-<meta charset="utf-8"><meta name="color-scheme" content="light dark"><title>NeoRead</title>
+<meta charset="utf-8"><meta name="color-scheme" content="light dark"><title>Reader</title>
 <style>
 ${font}
 :root { color-scheme: light dark; --bg: #ffffff; --ink: #1f1e1d; --muted: #8a8580; --line: rgba(31, 30, 29, .08); background: var(--bg); color: var(--ink) }
@@ -77,10 +77,10 @@ main { display: grid; justify-items: center; margin-top: -4vh }
 .mark img { display: block; width: 52px; height: 52px }
 .mark .dark { display: none }
 @media (prefers-color-scheme: dark) { .mark .light { display: none } .mark .dark { display: block } }
-.word { position: relative; overflow: hidden; padding: 4px 6px 6px 2px; font: 600 46px/1 "NeoRead Caveat", "Segoe Print", "Bradley Hand", cursive; transform: translateY(2px) }
+.word { position: relative; overflow: hidden; padding: 4px 6px 6px 2px; font: 600 46px/1 system-ui, sans-serif; letter-spacing: -.045em; transform: translateY(2px) }
 .wipe { position: absolute; inset: 0 0 0 -24px; background: linear-gradient(to right, transparent, var(--bg) 24px); transform: translateX(100%) }
 .track { width: 64px; height: 2px; margin-top: 22px; border-radius: 1px; overflow: hidden; background: var(--line); opacity: 0 }
-.bead { width: 16px; height: 2px; border-radius: 1px; background: #c2643f; transform: translateX(-100%); will-change: transform }
+.bead { width: 16px; height: 2px; border-radius: 1px; background: #278267; transform: translateX(-100%); will-change: transform }
 .caption { margin: 12px 0 0; color: var(--muted) }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap }
 :root[data-startup-theme="light"] { color-scheme: light; --bg: #ffffff; --ink: #1f1e1d; --muted: #8a8580; --line: rgba(31, 30, 29, .08) }
@@ -88,8 +88,8 @@ main { display: grid; justify-items: center; margin-top: -4vh }
 :root[data-startup-theme="light"] .mark .light, :root[data-startup-theme="dark"] .mark .dark { display: block }
 :root[data-startup-theme="light"] .mark .dark, :root[data-startup-theme="dark"] .mark .light { display: none }
 </style></head><body><main>
-<div class="lockup" aria-hidden="true"><span class="mark">${logo(assets.logoLightDataURL, "light")}${logo(assets.logoDarkDataURL, "dark")}</span><span class="word">NeoRead<span class="wipe"></span></span></div>
+<div class="lockup" aria-hidden="true"><span class="mark">${logo(assets.logoLightDataURL, "light")}${logo(assets.logoDarkDataURL, "dark")}</span><span class="word">Reader<span class="wipe"></span></span></div>
 <div class="track" aria-hidden="true"><div class="bead"></div></div>
-<p class="caption" role="status"><span class="sr">正在启动 NeoRead</span><span aria-hidden="true">正在启动…</span></p>
+<p class="caption" role="status"><span class="sr">正在启动 Reader</span><span aria-hidden="true">正在启动…</span></p>
 </main><script>${startupAnimationScript}</script></body></html>`;
 }

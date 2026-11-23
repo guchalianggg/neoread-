@@ -208,7 +208,7 @@ export function ZoteroImportDialog({
           <DialogTitle>从 {sourceName} 导入</DialogTitle>
           <DialogDescription>
             {endnote
-              ? "复制本机 PDF、论文信息、标签和笔记，将支持的 PDF 标记转换为 NeoRead 批注并清除副本中的对应标记。EndNote 源数据保持不变。"
+              ? "复制本机 PDF、论文信息、标签和笔记，将支持的 PDF 标记转换为 Reader 批注并清除副本中的对应标记。EndNote 源数据保持不变。"
               : "复制本机 PDF、论文信息、分类、标签、笔记和可转换的批注。Zotero 原数据保持不变。"}
           </DialogDescription>
           {!endnote && (

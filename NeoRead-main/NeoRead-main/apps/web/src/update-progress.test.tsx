@@ -34,7 +34,7 @@ it("shows download progress in one toast and dismisses it when cleared", async (
     total: 200 * mb,
   });
   expect(toast.loading).toHaveBeenLastCalledWith(
-    "正在下载 NeoRead 0.6.2",
+    "正在下载 Reader 0.6.2",
     expect.objectContaining({ id: "neoread-update" }),
   );
   const description = renderToStaticMarkup(
@@ -44,7 +44,7 @@ it("shows download progress in one toast and dismisses it when cleared", async (
   expect(description).toContain("开启代理");
   emit({ version: "0.6.2", phase: "prepare", received: 0 });
   expect(toast.loading).toHaveBeenLastCalledWith(
-    "正在准备安装 NeoRead 0.6.2",
+    "正在准备安装 Reader 0.6.2",
     expect.objectContaining({ id: "neoread-update" }),
   );
   emit(null);

@@ -308,7 +308,7 @@ const login = scene({
     chrome(f);
     terminal(f, term, terminalLines(f), f.after("focus"));
 
-    p.text("NeoRead", loginPanel.x, 36, {
+    p.text("Reader", loginPanel.x, 36, {
       size: 11,
       weight: 600,
       color: c.mutedForeground,
@@ -1814,7 +1814,7 @@ const connector = scene({
     if (!f.after("open")) return;
     p.alpha(f.progress("open", 180), () => {
       p.box(P, { fill: c.popover, radius: 10, shadow: 18, stroke: c.border });
-      p.text("NeoRead Connector", P.x + 14, P.y + 24, {
+      p.text("浏览器连接器", P.x + 14, P.y + 24, {
         size: 13,
         weight: 600,
       });
@@ -1861,7 +1861,7 @@ const connector = scene({
       button(
         f,
         collectButton,
-        f.between("save", "saved") ? "正在处理…" : "收录 1 篇到 NeoRead",
+        f.between("save", "saved") ? "正在处理…" : "收录 1 篇",
         "primary",
       );
     });
@@ -2367,7 +2367,7 @@ const cli = scene({
   draw(f) {
     const { p, c } = f;
     chrome(f);
-    p.text("NeoRead 设置 · Agent", cliPanel.x, 36, {
+    p.text("Reader 设置 · Agent", cliPanel.x, 36, {
       size: 11,
       weight: 600,
       color: c.mutedForeground,
@@ -2379,7 +2379,7 @@ const cli = scene({
     });
     paragraph(
       f,
-      "在终端运行 reader，让 Claude Code、Codex 等工具检索、阅读和导入书库中的文档。使用时 NeoRead 需要保持打开。",
+      "在终端运行 reader，让 Claude Code、Codex 等工具检索、阅读和导入书库中的文档。使用时 Reader 需要保持打开。",
       cliPanel.x + 16,
       cliPanel.y + 50,
       cliPanel.w - 32,

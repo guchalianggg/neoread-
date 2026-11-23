@@ -83,7 +83,7 @@ it("lets recovery import a library while migration stays disabled, and reports i
   await act(async () => importButton.click());
   expect(importLibrary).toHaveBeenCalledOnce();
   expect(host.querySelector('[role="alert"]')?.textContent).toContain(
-    "不是有效的 NeoRead 书库",
+    "不是有效的 Reader 书库",
   );
   expect(importButton.disabled).toBe(false);
 });

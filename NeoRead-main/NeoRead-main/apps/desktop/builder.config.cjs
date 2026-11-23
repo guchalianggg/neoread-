@@ -12,7 +12,7 @@ module.exports = {
   npmRebuild: false,
   afterPack: (context) => require("./build/prepare-upgrade-protection.cjs")(context),
   publish: null,
-  protocols: [{ name: "NeoRead", schemes: ["neoread"] }],
+  protocols: [{ name: "Reader", schemes: ["neoread"] }],
   mac: {
     compression: "normal",
     // The zip is the Squirrel.Mac in-place update payload.
@@ -20,6 +20,7 @@ module.exports = {
     category: "public.app-category.books",
     // Lists NeoRead under Open With without claiming PDF or EPUB by default.
     extendInfo: {
+      CFBundleDisplayName: "Reader",
       CFBundleDocumentTypes: [
         ["PDF Document", "com.adobe.pdf"],
         ["EPUB Book", "org.idpf.epub-container"],
@@ -30,7 +31,7 @@ module.exports = {
         LSItemContentTypes: [type],
       })),
     },
-    icon: "../../assets/icons/macos/icon.icns",
+    icon: "../web/public/reader-icon.svg",
     identity: "-",
     // Replaces the ad-hoc identity with the fixed release certificate when available.
     sign: (options) => require("./mac-sign.cjs")(options),
@@ -50,7 +51,7 @@ module.exports = {
   },
   win: {
     target: ["nsis"],
-    icon: "../../assets/icons/windows/icon.ico",
+    icon: "../web/public/reader-icon.svg",
     // Skip only code signing; resource editing still embeds the icon and version info.
     signExecutable: false,
     artifactName: "NeoRead-${version}-win-${arch}.${ext}",

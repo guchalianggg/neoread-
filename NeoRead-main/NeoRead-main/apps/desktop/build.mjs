@@ -4,19 +4,12 @@ import { readFile, copyFile } from "node:fs/promises";
 
 const asset = async (path, mime) =>
   `data:${mime};base64,${(await readFile(new URL(path, import.meta.url))).toString("base64")}`;
+const readerIcon = await asset("../web/public/reader-icon.svg", "image/svg+xml");
 const startupAssets = {
-  fontDataURL: await asset(
-    "../../assets/fonts/caveat/Caveat-NeoRead-600.ttf",
-    "font/ttf",
-  ),
-  logoLightDataURL: await asset(
-    "../../assets/logo/neoread-logo.svg",
-    "image/svg+xml",
-  ),
-  logoDarkDataURL: await asset(
-    "../../assets/logo/neoread-logo-dark.svg",
-    "image/svg+xml",
-  ),
+  // The historical font subset does not contain the full Reader wordmark.
+  fontDataURL: "",
+  logoLightDataURL: readerIcon,
+  logoDarkDataURL: readerIcon,
 };
 let commit = "unknown";
 try {

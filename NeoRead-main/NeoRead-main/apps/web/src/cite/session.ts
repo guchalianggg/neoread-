@@ -171,7 +171,7 @@ export class CiteSession {
         if (
           edited &&
           (await this.ui.confirm(
-            `引注“${field.text.trim()}”已被手动修改。保留修改后，NeoRead 不再更新这条引注。`,
+            `引注“${field.text.trim()}”已被手动修改。保留修改后，Reader 不再更新这条引注。`,
             "保留修改",
           ))
         )
@@ -340,7 +340,7 @@ export class CiteSession {
   private async refresh() {
     const doc = await load(this.port);
     if (!doc.data && !doc.fields.length) {
-      await this.ui.alert("文档中还没有 NeoRead 引注。");
+      await this.ui.alert("文档中还没有 Reader 引注。");
       return;
     }
     const data = await this.prefs(doc, false);
@@ -352,11 +352,11 @@ export class CiteSession {
   private async removeCodes() {
     const doc = await load(this.port);
     if (!doc.fields.length) {
-      await this.ui.alert("文档中没有 NeoRead 引注。");
+      await this.ui.alert("文档中没有 Reader 引注。");
       return;
     }
     const confirmed = await this.ui.confirm(
-      "取消链接后，引注和参考文献表会变成普通文字，NeoRead 不能再更新它们。此操作不能撤销，建议先保存一份副本。",
+      "取消链接后，引注和参考文献表会变成普通文字，Reader 不能再更新它们。此操作不能撤销，建议先保存一份副本。",
       "取消链接",
     );
     if (!confirmed) return;

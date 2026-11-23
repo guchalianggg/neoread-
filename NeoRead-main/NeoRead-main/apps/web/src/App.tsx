@@ -990,13 +990,9 @@ export function App() {
         <Dialog open={about} onOpenChange={setAbout}>
           <DialogContent className="sm:max-w-sm">
             <DialogHeader>
-              <DialogTitle>关于 NeoRead</DialogTitle>
-              <DialogDescription>一千万以内最好的阅读器</DialogDescription>
+              <DialogTitle>关于 Reader</DialogTitle>
+              <DialogDescription>版本 {version}</DialogDescription>
             </DialogHeader>
-            <dl className="flex items-center justify-between text-sm">
-              <dt className="text-muted-foreground">版本</dt>
-              <dd>{version}</dd>
-            </dl>
             {window.neoreadDesktop?.checkForUpdates && (
               <Button
                 variant="outline"

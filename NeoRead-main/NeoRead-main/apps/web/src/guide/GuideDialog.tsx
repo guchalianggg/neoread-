@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import {
   ChevronLeft,
   ChevronRight,
-  Star,
   MessageSquare,
   Keyboard,
   MousePointerClick,
@@ -225,8 +224,8 @@ export function ReleaseNotesDialog({
   onShowTopic: (topic: string) => void;
 }) {
   const [opening, setOpening] = useState(false);
-  const visitGitHub = async (issues: boolean) => {
-    const url = `https://github.com/cynicalight/NeoRead${issues ? "/issues/new/choose" : ""}`;
+  const openIssues = async () => {
+    const url = "https://github.com/guchalianggg/neoread-/issues/new/choose";
     setOpening(true);
     try {
       if (window.neoreadDesktop?.openExternal) {
@@ -252,7 +251,7 @@ export function ReleaseNotesDialog({
         className="guide-dialog sm:max-w-md"
       >
         <DialogHeader>
-          <DialogTitle>NeoRead {version} 更新内容</DialogTitle>
+          <DialogTitle>Reader {version} 更新内容</DialogTitle>
           <DialogDescription>
             {items.length ? "本次更新的主要变化" : "已更新到新版本。"}
           </DialogDescription>
@@ -278,25 +277,17 @@ export function ReleaseNotesDialog({
             ))}
           </ul>
         )}
-        <p className="text-sm leading-6 text-muted-foreground">
-          如果 NeoRead 对你有帮助，欢迎在 GitHub 点个
-          Star。遇到问题或有建议，也欢迎提交 Issue。
-        </p>
-        <DialogFooter className="flex-col sm:flex-col">
-          <Button
-            autoFocus
-            disabled={opening}
-            onClick={() => void visitGitHub(false)}
-          >
-            <Star />去 GitHub 点 Star
-          </Button>
+        <DialogFooter>
           <Button
             variant="outline"
             disabled={opening}
-            onClick={() => void visitGitHub(true)}
+            onClick={() => void openIssues()}
           >
             <MessageSquare />
-            已点 Star，去提 Issue
+            提交反馈
+          </Button>
+          <Button autoFocus onClick={onClose}>
+            知道了
           </Button>
         </DialogFooter>
       </DialogContent>
