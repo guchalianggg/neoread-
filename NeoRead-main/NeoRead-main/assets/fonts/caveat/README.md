@@ -11,4 +11,4 @@
 来源：https://fonts.googleapis.com/css2?family=Caveat:wght@600&text=NeoRead&display=swap
 授权来源：https://github.com/google/fonts/blob/main/ofl/caveat/OFL.txt
 
-桌面启动页在构建时把字体内嵌为 data URL（`apps/desktop/main/startup-animation.ts`），并随安装包分发 `LICENSE-Caveat.txt`。
+上游桌面启动页原先将此字体内嵌为 data URL。Reader 二开版使用系统字体，保留原字体与许可供上游资料参考。

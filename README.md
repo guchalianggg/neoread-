@@ -1,4 +1,4 @@
-# NeoRead 自制二次开发版
+# Reader（NeoRead 二次开发版）
 
 ## 项目来源与版本说明
 

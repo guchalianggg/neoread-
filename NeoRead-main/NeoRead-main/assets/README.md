@@ -1,5 +1,7 @@
 # 品牌素材
 
+Reader 二开版的启动页、应用页签和桌面打包统一使用 `apps/web/public/reader-icon.svg`。新版安装包由 electron-builder 从这份 SVG 转换系统图标。下列上游素材仍保留给上游文档和网站，不是二开版应用的图标入口。
+
 NeoRead 的 logo 与应用图标。所有文件由 `scripts/build-brand-assets.mjs` 生成，图形只在该脚本中定义；修改后在 macOS 上运行 `node scripts/build-brand-assets.mjs`（需要 Homebrew 的 `librsvg` 与 `imagemagick`），不要手工编辑生成结果。
 
 | 路径 | 用途 |
