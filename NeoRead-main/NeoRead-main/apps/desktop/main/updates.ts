@@ -72,7 +72,7 @@ export function selectRelease(
   const target = installerTargets[`${platform}/${arch}`];
   if (!target) throw new Error("当前平台没有官方更新安装包");
   const version = tag.slice(1);
-  const installer = `NeoRead-${version}-${target}`;
+  const legacyInstaller = `NeoRead-${version}-${target}`;
   if (checksums.length > 64 * 1024) throw new Error("更新校验清单超过大小限制");
   const files = new Set<string>();
   for (const line of checksums.split(/\r?\n/).filter(Boolean)) {
@@ -83,7 +83,11 @@ export function selectRelease(
   }
   const assetURL = (name: string) => `${releaseURL}/download/${tag}/${name}`;
   // CI uploads the manifest last. A missing platform is not a completed check.
-  if (!files.has(installer)) return { status: "pending" };
+  const installer = (platform === "win32"
+    ? [`Reader-${version}-${target}`, legacyInstaller]
+    : [legacyInstaller]
+  ).find((name) => files.has(name));
+  if (!installer) return { status: "pending" };
   const downloadURL = assetURL(installer);
   const checksumURL = assetURL("SHA256SUMS.txt");
   const update: ReleaseUpdate = {

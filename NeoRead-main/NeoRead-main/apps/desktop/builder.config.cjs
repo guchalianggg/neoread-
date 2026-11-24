@@ -54,7 +54,7 @@ module.exports = {
     icon: "../web/public/reader-icon.svg",
     // Skip only code signing; resource editing still embeds the icon and version info.
     signExecutable: false,
-    artifactName: "NeoRead-${version}-win-${arch}.${ext}",
+    artifactName: "Reader-${version}-win-${arch}.${ext}",
   },
   nsis: {
     oneClick: false,

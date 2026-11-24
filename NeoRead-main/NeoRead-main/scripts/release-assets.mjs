@@ -9,7 +9,7 @@ const { version } = JSON.parse(
 const expected = [
   `NeoRead-${version}-mac-arm64.dmg`,
   `NeoRead-${version}-mac-arm64.zip`,
-  ...(process.env.MAC_ONLY === "true" ? [] : [`NeoRead-${version}-win-x64.exe`]),
+  ...(process.env.MAC_ONLY === "true" ? [] : [`Reader-${version}-win-x64.exe`]),
 ].sort();
 const actual = (await readdir("release"))
   .filter((file) => file !== "SHA256SUMS.txt")

@@ -65,6 +65,26 @@ describe("release boundaries", () => {
       selectRelease(release(), "0.1.0", "linux", "x64", manifest),
     ).toThrow();
   });
+  it("prefers the Reader Windows installer and verifies its exact filename", () => {
+    const name = "Reader-0.2.0-win-x64.exe";
+    for (const text of [checksums(name), `${manifest}\n${checksums(name)}`]) {
+      const result = selectRelease(release(), "0.1.0", "win32", "x64", text);
+      expect(result.status === "available" && result.update).toMatchObject({
+        installer: name,
+        downloadURL: `https://github.com/guchalianggg/neoread-/releases/download/v0.2.0/${name}`,
+      });
+      expect(installerChecksum(text, name)).toBe("a".repeat(64));
+    }
+    expect(
+      selectRelease(
+        release(),
+        "0.1.0",
+        "win32",
+        "x64",
+        checksums("Reader-0.3.0-win-x64.exe"),
+      ),
+    ).toEqual({ status: "pending" });
+  });
   it("offers a Mac archive only when listed and never mixes architectures", () => {
     const withArchive =
       manifest +

@@ -6,8 +6,10 @@ NeoRead 使用 GitHub Actions 和 electron-builder，发布 GitHub Release 后�
 | ------------------------------------ | -------------------------- |
 | `NeoRead-<version>-mac-arm64.dmg`     | Apple Silicon Mac          |
 | `NeoRead-<version>-mac-arm64.zip`     | Mac 应用内原地更新包       |
-| `NeoRead-<version>-win-x64.exe`       | Windows x64（NSIS）        |
+| `Reader-<version>-win-x64.exe`        | Windows x64（NSIS）        |
 | `SHA256SUMS.txt`                     | 安装包的 SHA-256 校验值    |
+
+Windows 仅更改分发文件名，安装标识与数据路径保持不变。已安装的旧版更新器只识别 `NeoRead-…-win-x64.exe`；如果发布页只提供新命名的包，需手动下载安装一次包含双文件名兼容的版本，之后即可继续使用应用内更新。
 
 当前工作流不构建 Intel Mac、Windows ARM64 或 Linux 安装包。Intel Mac 暂停构建：`onnxruntime-node` 自 1.24 起不再提供 darwin/x64 原生库，包内检查无法加载版面模型。`builder.config.cjs` 与更新检查仍保留 `mac-intel-x64` 命名，恢复时在 `.github/workflows/build.yml`（`macos-15-intel` runner）和 `scripts/release-assets.mjs` 中加回该目标即可。
 
