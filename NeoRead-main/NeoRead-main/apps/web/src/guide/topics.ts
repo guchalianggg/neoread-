@@ -135,7 +135,7 @@ export const guideTopics: GuideTopic[] = [
       {
         id: "block-focus",
         title: "点击段落聚焦",
-        body: "点击正文段落，可聚焦当前段落及其对应译文。换一段点击即可切换；如果不喜欢，可在「设置 → 阅读」关闭「点击段落聚焦」。",
+        body: "点击正文段落，可定位当前段落及其对应译文，不改变 PDF 缩放比例。可在「设置 → 阅读」关闭「点击段落聚焦」。",
         scene: "blockFocus",
       },
       {

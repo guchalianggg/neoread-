@@ -462,7 +462,7 @@ export class PDFReaderAdapter implements ReaderAdapter {
       return;
     event.preventDefault();
     if (!Number.isFinite(event.deltaY) || event.deltaY === 0) return;
-    // Focus animations and other navigation can change scale outside this handler.
+    // Layout and other zoom controls can change scale outside this handler.
     // Keep fractional wheel deltas only while the viewer still has our last scale.
     if (this.viewer.currentScale !== this.wheelAppliedScale)
       this.wheelScale = undefined;
@@ -601,16 +601,9 @@ export class PDFReaderAdapter implements ReaderAdapter {
     if (location.type !== "pdf" || this.disposed) return false;
     const block = referenceBlock(this.blockData, location, text);
     if (!block) return false;
-    this.fitWidth = false;
     this.clearSelection();
-    this.appliedZoom = this.viewer.currentScale;
-    this.events.zoom?.(this.appliedZoom, "focus");
-    this.viewport.reset();
-    const reached = await this.navigation.focusBlock(block.id, "source");
+    const reached = await this.navigation.focusBlock(block.id);
     if (reached) {
-      this.appliedZoom = this.viewer.currentScale;
-      this.events.zoom?.(this.appliedZoom, "focus");
-      this.viewport.reset();
       this.location = { ...location, page: block.page };
       this.events.location(
         this.location,
@@ -638,20 +631,11 @@ export class PDFReaderAdapter implements ReaderAdapter {
   setSearchBlocks(blockIds: string[]) {
     this.blocks.setSearchBlocks(blockIds);
   }
-  async focusBlock(blockId: string, layout: "source" | "parallel") {
+  async focusBlock(blockId: string, _layout?: "source" | "parallel") {
     this.viewport.cancelAnimation();
     if (!this.blockData.some((block) => block.id === blockId)) return;
-    this.fitWidth = false;
     this.clearSelection();
-    this.appliedZoom = this.viewer.currentScale;
-    this.events.zoom?.(this.appliedZoom, "focus");
-    this.viewport.reset();
-    const reached = await this.navigation.focusBlock(blockId, layout);
-    if (reached) {
-      this.appliedZoom = this.viewer.currentScale;
-      this.events.zoom?.(this.appliedZoom, "focus");
-      this.viewport.reset();
-    }
+    await this.navigation.focusBlock(blockId);
   }
   cancelBlockFocus() {
     this.navigation.cancelMotion();

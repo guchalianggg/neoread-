@@ -22,6 +22,7 @@ vi.mock("pdfjs-dist", () => ({
     destroy: vi.fn(),
   }),
 }));
+vi.mock("pdfjs-dist/build/pdf.worker.min.mjs?url", () => ({ default: "" }));
 vi.mock("pdfjs-dist/web/pdf_viewer.mjs", () => ({
   EventBus: class {
     listeners = new Map<string, () => void>();
@@ -199,7 +200,7 @@ it("keeps small deltas proportional instead of applying a full wheel step", () =
   expect(state.scale).toBeCloseTo(1, 2);
 });
 it.each([false, true])(
-  "zooms from the visible scale after block focus (interrupted: %s)",
+  "preserves manual wheel zoom through block focus (interrupted: %s)",
   async (interrupt) => {
     vi.useFakeTimers();
     try {
@@ -220,17 +221,21 @@ it.each([false, true])(
         },
       ]);
       wheel({ deltaY: 100 });
-      expect(state.scale).toBeCloseTo(0.83, 2);
+      const previous = state.scale;
+      expect(previous).toBeCloseTo(0.83, 2);
+      zoom.mockClear();
+      state.update.mockClear();
       const pending = adapter.focusBlock("focus-target", "source");
       await vi.advanceTimersByTimeAsync(interrupt ? 96 : 500);
       if (interrupt) host.dispatchEvent(new WheelEvent("wheel", { deltaY: 0 }));
-      const focused = state.scale;
-      expect(focused).toBeGreaterThan(1);
+      expect(state.scale).toBe(previous);
+      expect(zoom).not.toHaveBeenCalled();
+      expect(state.update).not.toHaveBeenCalled();
       wheel({ deltaY: 100 });
-      expect(state.scale).toBeCloseTo(focused / 1.2, 2);
+      expect(state.scale).toBeCloseTo(previous / 1.2, 2);
       await vi.advanceTimersByTimeAsync(500);
       await pending;
-      expect(state.scale).toBeCloseTo(focused / 1.2, 2);
+      expect(state.scale).toBeCloseTo(previous / 1.2, 2);
     } finally {
       vi.useRealTimers();
     }
@@ -349,7 +354,7 @@ it("keeps the original zoom basis when a sidebar toggle reverses mid-animation",
   }
 });
 
-it("keyboard zoom settles the visible focus scale before applying its zoom step", async () => {
+it("preserves fit-width across reference focus and applies only explicit keyboard zoom during block focus", async () => {
   vi.useFakeTimers();
   try {
     Object.defineProperties(host, {
@@ -368,17 +373,20 @@ it("keyboard zoom settles the visible focus scale before applying its zoom step"
         bounds: { x: 0.1, y: 0.2, width: 0.4, height: 0.2 },
       },
     ]);
-    const pending = adapter.focusBlock("target", "source");
+    const reference = adapter.focusReference({ type: "pdf", page: 1 }, "Target");
+    await vi.advanceTimersByTimeAsync(500);
+    expect(await reference).toBe(true);
+    expect(state.scaleValue).toBe("page-width");
+    expect(zoom).not.toHaveBeenCalled();
+    expect(state.update).not.toHaveBeenCalled();
+    host.scrollTop = 0;
+    const pending = adapter.focusBlock("target", "parallel");
     await vi.advanceTimersByTimeAsync(96);
     expect(state.scale).toBe(1);
-    state.update.mockClear();
+    expect(state.scaleValue).toBe("page-width");
     key("+");
-    expect(state.update).toHaveBeenCalledTimes(2);
-    const settled =
-      Math.round(state.update.mock.calls[0][0].scaleFactor * 100) / 100;
-    expect(settled).toBeGreaterThan(1);
-    expect(settled).toBeLessThan(1.42);
-    expect(state.scale).toBeCloseTo(Math.round(settled * 1.1 * 100) / 100);
+    expect(state.update).toHaveBeenCalledOnce();
+    expect(state.scale).toBe(1.1);
     const zoomed = state.scale;
     await vi.advanceTimersByTimeAsync(500);
     await pending;

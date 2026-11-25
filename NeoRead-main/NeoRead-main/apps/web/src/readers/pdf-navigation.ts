@@ -1,8 +1,7 @@
-import { reducedMotion } from "../motion";
 import { animatePDFScroll } from "./pdf-scroll";
 import { sentenceTextRanges } from "./pdf-sentence-matching";
 import { pageColumns, type ColumnSide } from "./pdf-columns";
-import * as pdfjs from "pdfjs-dist";
+import type * as pdfjs from "pdfjs-dist";
 import type { PDFViewer } from "pdfjs-dist/web/pdf_viewer.mjs";
 import { isPDFPageDecoration, sentenceAnchor } from "@neoread/core";
 import type {
@@ -21,7 +20,6 @@ export class PDFReadingNavigation {
   private disposed = false;
   private frame = 0;
   private operation = 0;
-  private settleFocus?: () => void;
   private focus: PDFPassage[] = [];
   private linkedRanges: Range[] = [];
   // The column the reader is currently inside, for two-column pages.
@@ -42,7 +40,6 @@ export class PDFReadingNavigation {
     host.addEventListener("wheel", this.interrupt, { passive: true });
   }
   private interrupt = () => {
-    this.settleFocus?.();
     this.operation++;
     this.moving = false;
     this.onFocus(null);
@@ -174,7 +171,7 @@ export class PDFReadingNavigation {
     );
     this.host.classList.add("pdf-block-reading");
   }
-  async focusBlock(id: string, layout: "source" | "parallel" = "source") {
+  async focusBlock(id: string) {
     const block = this.readableBlocks().find((b) => b.id === id);
     if (!block || this.disposed) return false;
     this.rememberSide(block);
@@ -182,110 +179,56 @@ export class PDFReadingNavigation {
     const operation = ++this.operation;
     this.moving = true;
     try {
-      const page = await this.page(block.page);
+      await this.page(block.page);
       if (this.disposed || operation !== this.operation) return false;
       const node = this.pageNode(block.page);
       if (!node || !this.host.clientWidth || !this.host.clientHeight)
         return false;
-      // PDF viewport dimensions are points; PDF.js displays them at 96 / 72 CSS pixels.
-      // Read the current panel width after any asynchronous page load, on every click.
-      const viewport = page.getViewport({ scale: 1 });
-      const widthScale =
-        (this.host.clientWidth - 32) /
-        (viewport.width * (96 / 72) * block.bounds.width);
-      const heightScale = block.image
-        ? (this.host.clientHeight - 32) /
-          (viewport.height * (96 / 72) * block.bounds.height)
-        : Infinity;
-      const fitScale =
-        Math.floor(Math.min(widthScale, heightScale) * 100) / 100;
-      const maxScale = layout === "source" ? 1.5 : 2;
-      const scale = Math.min(maxScale, Math.max(0.1, fitScale));
-      const initialScale = this.viewer.currentScale;
-      const initial = node.getBoundingClientRect(),
-        view = this.host.getBoundingClientRect();
-      const fromX =
-        initial.left -
-        view.left +
-        (block.bounds.x + block.bounds.width / 2) * initial.width;
-      const fromY = initial.top - view.top + block.bounds.y * initial.height;
+      // Insets let the first block and edge columns reach the viewport center.
+      // Compensate for their layout shift before animating real scroll offsets.
+      const before = node.getBoundingClientRect();
+      this.updateInsets();
+      const page = node.getBoundingClientRect();
+      this.host.scrollLeft += page.left - before.left;
+      this.host.scrollTop += page.top - before.top;
+      const scroll = () => {
+        const r = node.getBoundingClientRect(),
+          view = this.host.getBoundingClientRect();
+        return {
+          left:
+            this.host.scrollLeft +
+            r.left -
+            view.left +
+            (block.bounds.x + block.bounds.width / 2) * r.width -
+            this.host.clientWidth / 2,
+          top:
+            this.host.scrollTop +
+            r.top -
+            view.top +
+            block.bounds.y * r.height -
+            Math.max(0, (this.host.clientHeight - block.bounds.height * r.height) / 2),
+        };
+      };
+      const height = this.host.clientHeight;
+      const cancelled = () => this.disposed || operation !== this.operation;
+      const target = scroll();
       this.onFocus(block.id);
-      const element = this.viewer.viewer;
-      if (!(element instanceof HTMLElement)) return false;
-      const elementRect = element.getBoundingClientRect();
-      const width = this.host.clientWidth,
-        height = this.host.clientHeight;
-      const originalTransform = element.style.transform;
-      const originalOrigin = element.style.transformOrigin;
-      const originalWillChange = element.style.willChange;
-      const reduced = reducedMotion();
-      let started: number | undefined;
-      let ease = 0;
-      let animationFrame = 0;
-      await new Promise<void>((resolve) => {
-        const settle = () => {
-          this.settleFocus = undefined;
-          cancelAnimationFrame(animationFrame);
-          element.style.transform = originalTransform;
-          element.style.transformOrigin = originalOrigin;
-          element.style.willChange = originalWillChange;
-          // Commit geometry once, including when input interrupts the motion.
-          // Intermediate frames only transform the completed PDF canvas.
-          if (ease > 0) {
-            this.updateInsets();
-            const zoom =
-              Math.round((initialScale + (scale - initialScale) * ease) * 100) /
-              100;
-            const zoomed = Math.abs(this.viewer.currentScale - zoom) > 0.0001;
-            if (zoomed)
-              this.viewer.updateScale({
-                scaleFactor: zoom / this.viewer.currentScale,
-                drawingDelay: 300,
-              });
-            const r = node.getBoundingClientRect(),
-              v = this.host.getBoundingClientRect();
-            const targetY = Math.max(
-              0,
-              (this.host.clientHeight - block.bounds.height * r.height) / 2,
-            );
-            this.host.scrollLeft +=
-              r.left -
-              v.left +
-              (block.bounds.x + block.bounds.width / 2) * r.width -
-              (fromX + (this.host.clientWidth / 2 - fromX) * ease);
-            this.host.scrollTop +=
-              r.top -
-              v.top +
-              block.bounds.y * r.height -
-              (fromY + (targetY - fromY) * ease);
-            if (zoomed) this.viewer.refresh();
-          }
-          resolve();
-        };
-        this.settleFocus = settle;
-        element.style.transformOrigin = `${initial.left + (block.bounds.x + block.bounds.width / 2) * initial.width - elementRect.left}px ${initial.top + block.bounds.y * initial.height - elementRect.top}px`;
-        element.style.willChange = "transform";
-        const frame = (now: number) => {
-          started ??= now;
-          const progress = reduced ? 1 : Math.min(1, (now - started) / 240);
-          ease = 1 - (1 - progress) ** 3;
-          if (progress === 1) {
-            settle();
-            return;
-          }
-          const zoom = initialScale + (scale - initialScale) * ease;
-          const targetY = Math.max(
-            0,
-            (height -
-              (block.bounds.height * initial.height * zoom) / initialScale) /
-              2,
-          );
-          element.style.transform = `translate(${(width / 2 - fromX) * ease}px, ${(targetY - fromY) * ease}px) scale(${zoom / initialScale})`;
-          animationFrame = requestAnimationFrame(frame);
-        };
-        animationFrame = requestAnimationFrame(frame);
-      });
-      if (this.disposed || operation !== this.operation) return false;
+      await animatePDFScroll(
+        this.host,
+        target.left,
+        target.top,
+        cancelled,
+        () => {},
+      );
+      if (cancelled()) return false;
+      // A height-only resize does not cancel navigation. Correct the landing
+      // point against the current viewport without changing the PDF scale.
+      if (height !== this.host.clientHeight) {
+        this.updateInsets();
+        const target = scroll();
+        this.host.scrollLeft = target.left;
+        this.host.scrollTop = target.top;
+      }
       const anchor = this.anchor();
       if (anchor) this.events.readingAnchor?.(anchor);
       return true;

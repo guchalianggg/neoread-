@@ -140,7 +140,7 @@ it("keeps spanning blocks out of the sticky column without erasing it", async ()
   }
 });
 
-it("remembers the focused column before the zoom motion settles", async () => {
+it("remembers the focused column before the scroll motion settles", async () => {
   const s = setup();
   try {
     let release!: (value: PDFPageProxy) => void;
