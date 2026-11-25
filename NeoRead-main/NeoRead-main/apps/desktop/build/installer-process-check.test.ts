@@ -38,13 +38,75 @@ it("installer hooks only check running processes, without library scans or manda
   const nsis = await readFile(join(here, "installer.nsh"), "utf8");
   expect(nsis).toContain("-Mode CheckStopped");
   expect(nsis).not.toMatch(/-Mode Install(?:\s|')/);
-  for (const parameter of ["-UserData", "-BackupRoot", "-InstallRegistryKey", "-UninstallRegistryKey"]) {
+  for (const parameter of ["-UserData", "-BackupRoot"]) {
     expect(nsis).not.toContain(parameter);
   }
+  expect(nsis).toContain('-InstallRegistryKey "${INSTALL_REGISTRY_KEY}" -UninstallRegistryKey "${UNINSTALL_REGISTRY_KEY}"');
+  expect(nsis).toContain('-UninstallRegistryKey2 "${UNINSTALL_REGISTRY_KEY_2}"');
   expect(nsis).toContain("-Mode Clean");
   expect(nsis).not.toMatch(/RMDir\s+\/r|Stop-Process|taskkill/i);
   expect(nsis).toContain("${isDeleteAppData}");
 });
+
+it("keeps the registered GUI path and only repairs the builder's managed shortcuts", async () => {
+  const nsis = await readFile(join(here, "installer.nsh"), "utf8");
+  expect(nsis).toContain("!define MUI_PAGE_CUSTOMFUNCTION_PRE neoreadInstFilesPre");
+  expect(nsis).toMatch(/ReadRegStr \$0 SHELL_CONTEXT "\$\{INSTALL_REGISTRY_KEY\}" "InstallLocation"\s+\$\{If\} \$INSTDIR != \$0\s+Call instFilesPre/);
+  expect(nsis).not.toMatch(/MessageBox[^\r\n]*NeoRead/);
+  expect(nsis).toContain('"NeoRead.pdf"');
+  expect(nsis).toContain('"NeoRead.epub"');
+  expect(nsis).toMatch(/\$\{ElseIfNot\} \$\{FileExists\} "\$\{OLD_LINK\}"\s+StrCpy \$\{STATE\} "absent"/);
+  const finishLink = nsis.split("!macro neoreadFinishManagedLink")[1].split("!macroend")[0];
+  expect(finishLink).toMatch(/\$\{If\} \$\{FileExists\} "\$\{LINK\}"\s+\$\{If\} \$\{STATE\} == "absent"\s+Delete "\$\{LINK\}"/);
+  expect(finishLink).toContain('${AndIf} ${STATE} != "collision"');
+  expect(finishLink).toContain('CreateShortCut "${LINK}" "$appExe" "" "$appExe" 0');
+  expect(finishLink).toContain('WinShell::SetLnkAUMI "${LINK}" "${APP_ID}"');
+  const install = nsis.split(/^!macro customInstall\s*$/m)[1].split("!macroend")[0];
+  expect(install).toMatch(/!ifndef DO_NOT_CREATE_START_MENU_SHORTCUT\s+!insertmacro neoreadFinishManagedLink \$newStartMenuLink/);
+  expect(install).toMatch(/!ifndef DO_NOT_CREATE_DESKTOP_SHORTCUT\s+\$\{IfNot\} \$\{isNoDesktopShortcut\}\s+!insertmacro neoreadFinishManagedLink \$newDesktopLink/);
+  expect(install).toMatch(/\$\{If\} \$neoreadStartMenuBefore == "absent"\s+StrCpy \$launchLink "\$appExe"/);
+});
+
+it.runIf(process.platform === "win32")("blocks Reader by destination or registered path, not by its global name", async () => {
+  const { root, program } = await fixture();
+  const script = join(root, "process-test.ps1");
+  await writeFile(script, String.raw`param([string]$Protection, [string]$FixturePath)
+. $Protection
+function Get-NeoReadProcesses { $script:fakeProcess }
+function Get-RegisteredInstallDirs([string]$InstallKey, [string[]]$UninstallKeys) {
+    if ($InstallKey -ne 'test-install' -or $UninstallKeys.Count -ne 2) { throw 'wrong test keys' }
+    return "$FixturePath-registered"
+}
+function Assert-Blocked {
+    try {
+        Assert-NeoReadInstallStopped $FixturePath 'test-install' @('test-uninstall', 'test-legacy')
+    } catch [InvalidOperationException] {
+        if ($_.Exception.Message -eq 'app_running') { return }
+        throw
+    }
+    throw 'expected app_running'
+}
+$script:fakeProcess = [pscustomobject]@{ Name = 'Reader.exe'; ExecutablePath = "$FixturePath\Reader.exe" }
+Assert-Blocked
+$script:fakeProcess.ExecutablePath = "$FixturePath-registered\Reader.exe"
+Assert-Blocked
+$script:fakeProcess.ExecutablePath = "$FixturePath-registered-other\Reader.exe"
+Assert-NeoReadInstallStopped $FixturePath 'test-install' @('test-uninstall', 'test-legacy')
+$script:fakeProcess.ExecutablePath = $null
+Assert-NeoReadInstallStopped $FixturePath 'test-install' @('test-uninstall', 'test-legacy')
+$script:fakeProcess.Name = 'NeoRead.exe'
+Assert-Blocked
+$script:fakeProcess.Name = 'neoread-server.exe'
+Assert-Blocked
+Write-Output 'synthetic process cases passed'
+`);
+  const { stdout, stderr } = await execute("powershell.exe", [
+    "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", script,
+    "-Protection", join(here, "upgrade-protection.ps1"), "-FixturePath", program,
+  ], { timeout: 30_000, windowsHide: true });
+  expect(stderr).toBe("");
+  expect(stdout.trim()).toBe("synthetic process cases passed");
+}, 40_000);
 
 it.runIf(process.platform === "win32")("process-only CLI accepts old assets and unknown data without reading config or creating snapshots", async () => {
   const { root, program, files } = await fixture();
@@ -67,19 +129,21 @@ it.runIf(process.platform === "win32")("process-only CLI accepts old assets and 
 
 it.runIf(process.platform === "win32")("exact cleanup still preserves old assets, unknown files and an in-directory library", async () => {
   const { root, program, files } = await fixture();
-  for (const name of ["NeoRead.exe", "resources/app.asar", "Uninstall NeoRead.exe"]) {
+  await writeFile(join(program, "NeoRead.exe"), "legacy executable absent from Reader's exact manifest");
+  for (const name of ["Reader.exe", "resources/app.asar", "Uninstall Reader.exe"]) {
     await writeFile(join(program, name), "synthetic program file");
   }
   const manifest = join(root, "manifest.json");
-  await writeFile(manifest, JSON.stringify({ schema: 1, files: ["NeoRead.exe", "resources\\app.asar"] }));
+  await writeFile(manifest, JSON.stringify({ schema: 1, files: ["Reader.exe", "resources\\app.asar"] }));
   const { stdout, stderr } = await execute("powershell.exe", [
     "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", join(here, "upgrade-protection.ps1"),
-    "-Mode", "Clean", "-Destination", program, "-Manifest", manifest, "-UninstallerName", "Uninstall NeoRead.exe",
+    "-Mode", "Clean", "-Destination", program, "-Manifest", manifest, "-UninstallerName", "Uninstall Reader.exe",
   ], { timeout: 30_000, windowsHide: true });
   expect(stderr).toBe("");
   expect(JSON.parse(stdout).event).toBe("uninstall.protection.complete");
-  for (const name of ["NeoRead.exe", "resources/app.asar", "Uninstall NeoRead.exe"]) {
+  for (const name of ["Reader.exe", "resources/app.asar", "Uninstall Reader.exe"]) {
     await expect(readFile(join(program, name))).rejects.toMatchObject({ code: "ENOENT" });
   }
+  expect(await readFile(join(program, "NeoRead.exe"), "utf8")).toBe("legacy executable absent from Reader's exact manifest");
   await checkFiles(program, files);
 }, 40_000);

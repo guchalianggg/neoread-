@@ -429,7 +429,7 @@ it("waits for flushed reading data, then copies once despite repeated quit event
   expect(migrate).toHaveBeenCalledWith(
     "/userdata",
     "/old/library",
-    join("/destination", "NeoRead Library"),
+    join("/destination", "Reader Library"),
     expect.any(String),
     expect.any(Function),
   );
@@ -762,7 +762,7 @@ it.each([false, true])(
 
 it("server exits before readiness: reports only the startup failure", () => {
   expect(diagnostics.failure).toHaveBeenCalledWith(
-    "无法打开 NeoRead",
+    "无法打开 Reader",
     expect.any(String),
   );
   expect(diagnostics.failure).toHaveBeenCalledOnce();

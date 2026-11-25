@@ -297,7 +297,7 @@ it("stages a signed Mac update silently and installs it on restart", async () =>
   expect(mocks.dialog).toHaveBeenCalledTimes(1);
   expect(mocks.dialog).toHaveBeenCalledWith(
     window,
-    expect.objectContaining({ message: "NeoRead 0.2.0 已准备就绪" }),
+    expect.objectContaining({ message: "Reader 0.2.0 已准备就绪" }),
   );
   expect(window.setProgressBar).not.toHaveBeenCalledWith(2);
   expect(send).not.toHaveBeenCalledWith(

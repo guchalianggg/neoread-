@@ -8,6 +8,11 @@ const reviewedTemplates = {
   "installer.nsi": "8811964416d122612c3e7601728af5d3f998d677918df829a4e8b4c739c8b9f8",
   "installSection.nsh": "74c4dbb4163cdd90ca4850b75d304e916235c882d6af7b5cdad63bffbc977072",
   "uninstaller.nsh": "9ee2dac4593478083e8aa6f8487287ce9401006ccd50ecc538871d133ea4a42c",
+  "assistedInstaller.nsh": "8aa1230e9717b428664d613fcc5c6a060883410b34cb7853b517fe11b4ee0a76",
+  "multiUser.nsh": "9aca256695c289ec8a875143101fae8c6236bc8c6a7cf369bbe8b4986e09c9cb",
+  "common.nsh": "281e8071663d2ef3e9f00bb27e6ef09d2c2b52b85458da07082f2b186100e259",
+  "include/installer.nsh": "0e319437dd01dcbf911f3f48f664fde0cefbaef704f1cdb1739f63d563f5d4a0",
+  "include/installUtil.nsh": "97bd546b5cd2aaf16b77bc9e2be8a18962dd74ab5c4d23b35b163ca89bf4dd2a",
   "include/allowOnlyOneInstallerInstance.nsh": "23af250b7a6d29890b1b51432f8c718d5c2e1bdfce412cfaf97f5c1a72f7f74b",
 };
 
@@ -40,8 +45,8 @@ async function createProgramManifest(appOutDir) {
     }
   }
   await visit(appOutDir);
-  if (!files.includes("NeoRead.exe") || !files.includes("resources\\app.asar"))
-    throw new Error("Incomplete NeoRead Windows package; refusing to build an unsafe uninstaller");
+  if (!files.includes("Reader.exe") || !files.includes("resources\\app.asar"))
+    throw new Error("Incomplete Reader Windows package; refusing to build an unsafe uninstaller");
   return { schema: 1, files: files.sort() };
 }
 

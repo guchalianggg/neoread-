@@ -40,7 +40,7 @@ function run(script, cwd, env = {}, args = []) {
 async function installers(cwd) {
   const files = [];
   for (const target of ["mac-arm64.dmg", "mac-arm64.zip", "win-x64.exe"]) {
-    const file = `${target.endsWith(".exe") ? "Reader" : "NeoRead"}-0.2.0-${target}`;
+    const file = `Reader-0.2.0-${target}`;
     const bytes = Buffer.alloc(1024 * 1024 + 512);
     if (target.endsWith("dmg")) bytes.write("koly", bytes.length - 512);
     else if (target.endsWith("zip")) bytes.write("PK\u0003\u0004", 0);
@@ -86,13 +86,13 @@ test("release refuses missing or unexpected artifacts", async () => {
   await rm(join(cwd, "release/Reader-0.2.0-win-x64.exe"));
   expect(run("release-assets.mjs", cwd).status).not.toBe(0);
   await installers(cwd);
-  await rm(join(cwd, "release/NeoRead-0.2.0-mac-arm64.zip"));
+  await rm(join(cwd, "release/Reader-0.2.0-mac-arm64.zip"));
   expect(run("release-assets.mjs", cwd, { MAC_ONLY: "true" }).status).not.toBe(
     0,
   );
   expect(run("release-assets.mjs", cwd).status).not.toBe(0);
   await installers(cwd);
-  await writeFile(join(cwd, "release/NeoRead-0.2.0-mac-x64.dmg"), "unexpected");
+  await writeFile(join(cwd, "release/Reader-0.2.0-mac-x64.dmg"), "unexpected");
   expect(run("release-assets.mjs", cwd).status).not.toBe(0);
 });
 test("release checks installer format before writing hashes", async () => {
@@ -185,8 +185,8 @@ test.each([0, 1, 2])(
       "release",
       "upload",
       "v0.2.0",
-      "release/NeoRead-0.2.0-mac-arm64.dmg",
-      "release/NeoRead-0.2.0-mac-arm64.zip",
+      "release/Reader-0.2.0-mac-arm64.dmg",
+      "release/Reader-0.2.0-mac-arm64.zip",
       "release/Reader-0.2.0-win-x64.exe",
       "--clobber",
     ]);

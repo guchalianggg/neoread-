@@ -64,6 +64,8 @@ jobs:
           path: |
             release/NeoRead-*-${{ matrix.target }}.dmg
             release/NeoRead-*-${{ matrix.target }}.zip
+            release/Reader-*-${{ matrix.target }}.dmg
+            release/Reader-*-${{ matrix.target }}.zip
             release/NeoRead-*-${{ matrix.target }}.exe
             release/Reader-*-${{ matrix.target }}.exe
           if-no-files-found: error

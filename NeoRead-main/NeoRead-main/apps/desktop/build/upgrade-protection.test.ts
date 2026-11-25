@@ -100,13 +100,13 @@ it("includes the late NSIS elevate helper exactly once only when it is packaged"
   const root = await temporary();
   const appOutDir = join(root, "app");
   await mkdir(join(appOutDir, "resources"), { recursive: true });
-  await writeFile(join(appOutDir, "NeoRead.exe"), "synthetic executable");
+  await writeFile(join(appOutDir, "Reader.exe"), "synthetic executable");
   await writeFile(join(appOutDir, "resources", "app.asar"), "synthetic app");
   const options = { appOutDir, buildResourcesDir: root, templateDir, arch: "x64" };
   const without = await protection.prepare({ ...options, packElevateHelper: false });
   expect(without.files).not.toContain("resources\\elevate.exe");
   const withHelper = await protection.prepare({ ...options, packElevateHelper: true });
-  expect(withHelper.files).toEqual(["NeoRead.exe", "resources\\app.asar", "resources\\elevate.exe"]);
+  expect(withHelper.files).toEqual(["Reader.exe", "resources\\app.asar", "resources\\elevate.exe"]);
   await writeFile(join(appOutDir, "resources", "elevate.exe"), "synthetic helper");
   const existing = await protection.prepare({ ...options, packElevateHelper: true });
   expect(existing.files.filter((file) => file === "resources\\elevate.exe")).toHaveLength(1);
@@ -117,11 +117,14 @@ it("afterPack emits only exact program paths and pins the real upstream hook con
   const appOutDir = join(root, "app");
   const resources = join(appOutDir, "resources");
   await mkdir(resources, { recursive: true });
-  await writeFile(join(appOutDir, "NeoRead.exe"), "synthetic executable");
+  await writeFile(join(appOutDir, "NeoRead.exe"), "legacy name only");
   await writeFile(join(resources, "app.asar"), "synthetic app");
   await writeFile(join(resources, "中文资源.txt"), "synthetic resource");
+  await expect(protection.createProgramManifest(appOutDir)).rejects.toThrow("Incomplete Reader Windows package");
+  await rm(join(appOutDir, "NeoRead.exe"));
+  await writeFile(join(appOutDir, "Reader.exe"), "synthetic executable");
   const manifest = await protection.prepare({ appOutDir, buildResourcesDir: root, templateDir, arch: "x64" });
-  expect(manifest.files).toEqual(["NeoRead.exe", "resources\\app.asar", "resources\\中文资源.txt"]);
+  expect(manifest.files).toEqual(["Reader.exe", "resources\\app.asar", "resources\\中文资源.txt"]);
   expect(JSON.parse(await readFile(join(root, "program-files-x64.json"), "utf8"))).toEqual(manifest);
   // New user files added AFTER packaging are never silently added to the whitelist.
   await writeFile(join(resources, "personal.sqlite"), "user data");

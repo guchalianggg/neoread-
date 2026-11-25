@@ -100,9 +100,9 @@ export async function startUpdateService(window: BrowserWindow) {
   const offerRestart = async (version: string) => {
     const selected = await dialog.showMessageBox(window, {
       type: "info",
-      message: `NeoRead ${version} 已准备就绪`,
+      message: `Reader ${version} 已准备就绪`,
       detail:
-        "重启 NeoRead 即可完成更新。选择“稍后”时，会在退出 NeoRead 后自动安装。",
+        "重启 Reader 即可完成更新。选择“稍后”时，会在退出 Reader 后自动安装。",
       buttons: ["立即重启", "稍后"],
       defaultId: 0,
       cancelId: 1,
@@ -160,7 +160,7 @@ export async function startUpdateService(window: BrowserWindow) {
         ? dialog
             .showMessageBox(window, {
               message: "开发模式不检查更新",
-              detail: "请在安装后的 NeoRead 中检查更新。",
+              detail: "请在安装后的 Reader 中检查更新。",
             })
             .then(() => {})
         : Promise.resolve();
@@ -194,11 +194,11 @@ export async function startUpdateService(window: BrowserWindow) {
         const windows = process.platform === "win32";
         const selected = await dialog.showMessageBox(window, {
           type: "info",
-          message: `NeoRead ${result.update.version} 可用`,
+          message: `Reader ${result.update.version} 可用`,
           detail: `${
             windows
-              ? `当前版本：${app.getVersion()}。下载并校验后，NeoRead 会保存阅读数据并退出，自动安装后重新打开。`
-              : `当前版本：${app.getVersion()}。下载并校验后将打开 DMG，请将 NeoRead 拖入 Applications 完成更新。安装前请退出当前 NeoRead。`
+              ? `当前版本：${app.getVersion()}。下载并校验后，Reader 会保存阅读数据并退出，自动安装后重新打开。`
+              : `当前版本：${app.getVersion()}。下载并校验后将打开 DMG，请将 Reader 拖入 Applications 完成更新。安装前请退出当前 Reader。`
           }\n\n安装包从 GitHub 下载，速度较慢时可开启代理加速。`,
           buttons: [windows ? "下载并安装" : "下载安装包", "稍后"],
           defaultId: 0,

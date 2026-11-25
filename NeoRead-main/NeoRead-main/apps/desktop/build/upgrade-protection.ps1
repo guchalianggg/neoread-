@@ -151,6 +151,14 @@ function Get-RegisteredInstallDirs([string]$InstallKey, [string[]]$UninstallKeys
     }
 }
 
+function Assert-NeoReadInstallStopped([string]$Directory, [string]$InstallKey, [string[]]$UninstallKeys) {
+    $installDirs = @(Assert-PlainPath $Directory)
+    # CheckStopped without registry arguments (including the uninstaller) is
+    # destination-only. The installer also checks paths it may upgrade/remove.
+    if ($InstallKey) { $installDirs += @(Get-RegisteredInstallDirs $InstallKey $UninstallKeys) }
+    Assert-NeoReadStopped $installDirs
+}
+
 function Copy-SnapshotFile([IO.Stream]$Source, [string]$Target) {
     $output = [IO.File]::Open($Target, [IO.FileMode]::CreateNew, [IO.FileAccess]::Write, [IO.FileShare]::None)
     try { $Source.CopyTo($output); $output.Flush($true) } finally { $output.Dispose() }
@@ -305,7 +313,11 @@ if ($MyInvocation.InvocationName -ne '.') {
             $result = Invoke-NeoReadUpgradeProtection -Destination $Destination -UserData $UserData -BackupRoot $BackupRoot -OldInstallDirs $old -Manifest $Manifest -UninstallerName $UninstallerName
         } elseif ($Mode -in @('CheckStopped', 'UninstallCheck')) {
             $script:protectionPhase = 'process_check'
-            Assert-NeoReadStopped @((Assert-PlainPath $Destination))
+            if ($Mode -eq 'CheckStopped') {
+                Assert-NeoReadInstallStopped $Destination $InstallRegistryKey @($UninstallRegistryKey, $UninstallRegistryKey2)
+            } else {
+                Assert-NeoReadInstallStopped $Destination
+            }
             $event = if ($Mode -eq 'CheckStopped') { 'process.check.complete' } else { 'uninstall.protection.stopped' }
             $result = @{ event = $event }
         } else {

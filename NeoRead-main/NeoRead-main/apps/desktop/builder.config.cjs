@@ -1,6 +1,6 @@
 module.exports = {
   appId: "io.github.cynicalight.neoread",
-  productName: "NeoRead",
+  productName: "Reader",
   directories: { output: "../../release" },
   files: ["dist/**/*", "package.json"],
   extraResources: [{ from: "staging", to: ".", filter: ["**/*"] }],
@@ -39,8 +39,8 @@ module.exports = {
     notarize: false,
     artifactName:
       process.arch === "x64"
-        ? "NeoRead-${version}-mac-intel-x64.${ext}"
-        : "NeoRead-${version}-mac-${arch}.${ext}",
+        ? "Reader-${version}-mac-intel-x64.${ext}"
+        : "Reader-${version}-mac-${arch}.${ext}",
   },
   dmg: {
     sign: false,
@@ -58,6 +58,10 @@ module.exports = {
   },
   nsis: {
     oneClick: false,
+    shortcutName: "Reader",
+    createDesktopShortcut: true,
+    createStartMenuShortcut: true,
+    uninstallDisplayName: "Reader ${version}",
     perMachine: false,
     // "All users" elevates an inner UAC instance; build/installer.nsh also
     // checks that NeoRead is stopped there, without scanning libraries or

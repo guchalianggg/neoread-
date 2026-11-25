@@ -154,7 +154,7 @@ if (process.platform === "darwin" && !process.argv.includes("--dir")) {
   const dmg = join(
     root,
     "release",
-    `NeoRead-${app.version}-mac-${process.arch === "x64" ? "intel-x64" : process.arch}.dmg`,
+    `Reader-${app.version}-mac-${process.arch === "x64" ? "intel-x64" : process.arch}.dmg`,
   );
   const compressed = `${dmg}.ulmo.dmg`;
   await rm(compressed, { force: true });

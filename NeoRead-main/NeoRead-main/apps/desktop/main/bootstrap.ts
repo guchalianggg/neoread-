@@ -1,7 +1,8 @@
 import { app, dialog } from "electron";
+import { mkdirSync, statSync } from "node:fs";
 import type { EventEmitter } from "node:events";
 import { join } from "node:path";
-import { devIsolation } from "./dev-isolation";
+import { devIsolation, packagedProfileDirectory } from "./dev-isolation";
 import { readStartupAppearance } from "./startup-appearance-cache";
 import { createStartupWindow } from "./startup-window";
 
@@ -16,11 +17,27 @@ export async function bootstrapDesktop(loadDesktop: () => DesktopModule) {
     isPackaged: app.isPackaged,
     env: process.env,
   });
-  if (isolation.userDataDirectory)
-    app.setPath(
-      "userData",
-      join(app.getPath("appData"), isolation.userDataDirectory),
+  try {
+    const appData = app.getPath("appData");
+    const profile =
+      isolation.userDataDirectory ??
+      packagedProfileDirectory(
+        (name) =>
+          statSync(join(appData, name), {
+            throwIfNoEntry: false,
+          })?.isDirectory() ?? false,
+      );
+    const userData = join(appData, profile);
+    mkdirSync(userData, { recursive: true });
+    app.setPath("userData", userData);
+  } catch {
+    dialog.showErrorBox(
+      "Reader 无法启动",
+      "无法打开应用数据目录。请检查目录权限后重试。已有数据未被迁移或删除。",
     );
+    app.quit();
+    return;
+  }
   if (!app.requestSingleInstanceLock()) {
     app.quit();
     return;

@@ -22,9 +22,9 @@ export const macLink = "/usr/local/bin/neoread";
 export const neoreadBundleId = "io.github.cynicalight.neoread";
 
 /**
- * Whether a link target is the command of some copy of NeoRead.app, so a new
- * install may replace it. An existing bundle must carry NeoRead's bundle ID; a
- * bundle since moved or deleted is recognised by its NeoRead.app name only.
+ * Whether a link target belongs to a copy of Reader (including the older brand).
+ * A live bundle must carry our existing bundle ID; a missing bundle is only
+ * recognised by an exact known bundle name.
  */
 export async function isNeoReadLink(target: string) {
   const bundle = /^(.*\.app)\/Contents\/Resources\/bin\/neoread$/.exec(
@@ -40,7 +40,7 @@ export async function isNeoReadLink(target: string) {
       await lstat(bundle);
       return false;
     } catch {
-      return /^NeoRead(?: \d+)?\.app$/.test(basename(bundle));
+      return /^(?:Reader|NeoRead)(?: \d+)?\.app$/.test(basename(bundle));
     }
   }
   // electron-builder writes XML; anything else is not treated as NeoRead's.
@@ -70,7 +70,7 @@ export async function macStatus(
 }
 
 function conflictError(location: string) {
-  return new Error(`${location} 已被其他程序占用，NeoRead 没有改动它`);
+  return new Error(`${location} 已被其他程序占用，Reader 没有改动它`);
 }
 function permissionDenied(error: unknown) {
   const code = (error as NodeJS.ErrnoException).code;

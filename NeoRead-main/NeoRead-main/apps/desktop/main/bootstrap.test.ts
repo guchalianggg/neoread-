@@ -6,6 +6,7 @@ const state = vi.hoisted(() => ({
   create: undefined as any,
   failure: vi.fn(),
 }));
+vi.mock("node:fs", () => ({ mkdirSync: vi.fn(), statSync: () => undefined }));
 vi.mock("electron", () => ({
   get app() {
     return state.app;
@@ -49,6 +50,10 @@ it("creates themed feedback before importing business code and replays early ope
     return { adoptStartupWindow: adopt };
   });
   const running = bootstrapDesktop(loadBusiness);
+  expect(state.app.setPath).toHaveBeenCalledWith(
+    "userData",
+    expect.stringMatching(/Reader Data$/),
+  );
   state.app.emit("open-file", { preventDefault: vi.fn() }, "example.pdf");
   await Promise.resolve();
   expect(state.create).toHaveBeenCalledWith(expect.any(Function), "dark");

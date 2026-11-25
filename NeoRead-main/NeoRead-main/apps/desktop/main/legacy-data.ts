@@ -111,7 +111,7 @@ export async function promptLegacyCleanup(
   const { response } = await dialog.showMessageBox(window, {
     type: "info",
     title: "迁移已完成",
-    message: "你的书库和配置已迁移到 NeoRead 并通过校验",
+    message: "你的书库和配置已迁移到当前版本并通过校验",
     detail: `建议卸载旧 Reader App，并清理旧阅读数据，释放磁盘空间。\n\n“立即清理”仅清理已迁移的旧书库和配置，缓存、日志和其他未迁移文件会保留。旧 Reader App 请手动卸载。\n\n旧数据目录：${source}${state.external ? "\n\n外置自定义书库的旧副本不会被删除。" : ""}`,
     buttons: ["稍后清理", "立即清理"],
     defaultId: 1,
@@ -131,7 +131,7 @@ export async function promptLegacyCleanup(
     await dialog.showMessageBox(window, {
       type: "warning",
       message: "旧数据清理未完成",
-      detail: `${(error as Error).message}\n\nNeoRead 的迁移结果不受影响。请检查旧目录后手动处理：${source}`,
+      detail: `${(error as Error).message}\n\n已迁移的数据不受影响。请检查旧目录后手动处理：${source}`,
       buttons: ["知道了"],
       noLink: true,
     });

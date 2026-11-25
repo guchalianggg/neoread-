@@ -14,13 +14,13 @@ const source = windows
   ? join(root, "release/win-unpacked")
   : join(
       root,
-      `release/mac${process.arch === "arm64" ? "-arm64" : ""}/NeoRead.app`,
+      `release/mac${process.arch === "arm64" ? "-arm64" : ""}/Reader.app`,
     );
 const temporary = await mkdtemp(join(tmpdir(), "neoread-package-smoke-"));
-const isolated = join(temporary, windows ? "NeoRead" : "NeoRead.app");
+const isolated = join(temporary, windows ? "Reader" : "Reader.app");
 const app = windows ? isolated : join(isolated, "Contents");
 const resources = join(app, windows ? "resources" : "Resources");
-const electron = join(app, windows ? "NeoRead.exe" : "MacOS/NeoRead");
+const electron = join(app, windows ? "Reader.exe" : "MacOS/Reader");
 let child;
 let stopped;
 try {

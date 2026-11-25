@@ -131,7 +131,7 @@ function showMainWindow() {
     mainWindowOpening = reopenMainWindow()
       .catch((error) => {
         diagnostics?.record("desktop.reopen_failed", error);
-        dialog.showErrorBox("无法重新打开 NeoRead", "请退出 NeoRead 后重试。");
+        dialog.showErrorBox("无法重新打开 Reader", "请退出 Reader 后重试。");
       })
       .finally(() => {
         mainWindowOpening = undefined;
@@ -269,8 +269,8 @@ async function startServer() {
         citationService = undefined;
         void diagnostics!
           .failure(
-            "NeoRead 本地服务已停止",
-            "已保存的文档和笔记仍保留在本地。可先导出诊断包，再重新打开 NeoRead。",
+            "Reader 本地服务已停止",
+            "已保存的文档和笔记仍保留在本地。可先导出诊断包，再重新打开 Reader。",
           )
           .catch(() => {})
           .finally(() => {
@@ -594,7 +594,7 @@ app
           await dialog.showMessageBox({
             type: "warning",
             message: "当前书库与程序安装目录重叠",
-            detail: "当前书库仍会打开，不会切换为空书库。请先在设置中将书库迁移到独立的外部目录，再升级或卸载 NeoRead。",
+            detail: "当前书库仍会打开，不会切换为空书库。请先在设置中将书库迁移到独立的外部目录，再升级或卸载 Reader。",
             buttons: ["打开书库并迁移"],
           });
         }
@@ -754,8 +754,8 @@ app
         if (!quitting)
           void diagnostics!
             .failure(
-              "NeoRead 界面已停止",
-              "可先导出诊断包，再重新打开 NeoRead。",
+              "Reader 界面已停止",
+              "可先导出诊断包，再重新打开 Reader。",
             )
             .then(() => {
               flushed = true;
@@ -876,7 +876,7 @@ app
                 type: "error",
                 message: move.existing ? "打开书库失败" : "书库迁移失败",
                 detail: `${(error as Error).message}\n原书库已保留，将重新打开原来的位置。`,
-                buttons: ["重新打开 NeoRead"],
+                buttons: ["重新打开 Reader"],
               });
               move.resolve(false);
             }
@@ -1077,7 +1077,7 @@ app
         await validateLibraryDirectory(destination, serverBinary(), installedProgramDir);
         const confirmed = await dialog.showMessageBox(window!, {
           type: "question",
-          message: "导入已有书库并重启 NeoRead？",
+          message: "导入已有书库并重启 Reader？",
           detail: `书库位置：${destination}\n将直接打开此书库，不复制或合并数据。当前书库保留。`,
           buttons: ["打开并重启", "取消"],
           defaultId: 0,
@@ -1100,13 +1100,13 @@ app
       choosingLibrary = true;
       try {
         const selected = await dialog.showOpenDialog(window!, {
-          title: "选择书库保存位置（将在其中新建 NeoRead Library）",
+          title: "选择书库保存位置（将在其中新建 Reader Library）",
           properties: ["openDirectory", "createDirectory"],
         });
         if (selected.canceled || !selected.filePaths[0]) return false;
         const destination = join(
           await realpath(selected.filePaths[0]),
-          "NeoRead Library",
+          "Reader Library",
         );
         await validateLibraryDestination(destination, installedProgramDir);
         // The server's SQLite DSN treats ? as the start of query parameters.
@@ -1115,14 +1115,14 @@ app
         try {
           await lstat(destination);
           throw new Error(
-            "所选位置已有 NeoRead Library 文件夹，请选择其他位置。",
+            "所选位置已有 Reader Library 文件夹，请选择其他位置。",
           );
         } catch (error) {
           if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
         }
         const confirmed = await dialog.showMessageBox(window!, {
           type: "question",
-          message: "迁移书库并重启 NeoRead？",
+          message: "迁移书库并重启 Reader？",
           detail: `新位置：${destination}\nPDF、笔记、批注和阅读记录将一起复制。原书库保留。`,
           buttons: ["迁移并重启", "取消"],
           defaultId: 0,
@@ -1257,7 +1257,7 @@ app
       requestFolderAccess: async (folder: string) => {
         const selected = await dialog.showOpenDialog(window!, {
           title: "允许访问 Word 插件文件夹",
-          message: "请选择当前文件夹，允许 NeoRead 访问 Word 引用插件。",
+          message: "请选择当前文件夹，允许 Reader 访问 Word 引用插件。",
           buttonLabel: "允许访问",
           defaultPath: folder,
           properties: ["openDirectory"],
@@ -1594,11 +1594,11 @@ app
       await diagnostics.failure(
         error instanceof ReaderMigrationError
           ? "Reader 数据迁移未完成"
-          : "无法打开 NeoRead",
+          : "无法打开 Reader",
         (error instanceof ReaderMigrationError ? `${error.message}\n\n` : "") +
           "可导出启动日志供开发者排查，然后退出重试。",
       );
-    else dialog.showErrorBox("无法打开 NeoRead", String(error));
+    else dialog.showErrorBox("无法打开 Reader", String(error));
     flushed = true;
     app.quit();
   });
