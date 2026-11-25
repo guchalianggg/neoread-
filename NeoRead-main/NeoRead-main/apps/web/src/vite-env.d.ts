@@ -56,6 +56,14 @@ interface Window {
       library: "books" | "papers",
       folder?: string,
     ) => Promise<Array<{ id: string; name: string; pages: number }>>;
+    importDroppedFiles?: (
+      files: File[],
+      library: "books" | "papers",
+      folder?: string,
+    ) => Promise<Array<{ id: string; name: string; pages: number }> | null>;
+    syncSourceFile?: (
+      id: string,
+    ) => Promise<import("../../desktop/main/document-import").SourceSyncResult>;
     importLargePapers: (
       ids: string[],
       library: "books" | "papers",

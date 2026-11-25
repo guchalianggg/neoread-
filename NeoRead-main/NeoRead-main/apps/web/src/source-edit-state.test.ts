@@ -118,6 +118,71 @@ it("does not automatically overwrite a conflicting revision; failed reload retai
   });
 });
 
+it("refreshes a clean snapshot and refuses a response below the reported revision", async () => {
+  const store = state.getSourceEditStore("a");
+  await store.load();
+  const expected = store.getSnapshot();
+  if (!state.canRefreshSourceEdit(expected))
+    throw new Error("expected clean snapshot");
+  fake.get.mockResolvedValueOnce(snapshot("too old", 1));
+  await expect(
+    store.refreshLinkedSnapshot(expected, 2, () => true),
+  ).resolves.toBe("failed");
+  expect(store.getSnapshot()).toBe(expected);
+  fake.get.mockResolvedValueOnce(snapshot("from disk", 2));
+  await expect(
+    store.refreshLinkedSnapshot(expected, 2, () => true),
+  ).resolves.toBe("refreshed");
+  expect(store.getSnapshot()).toMatchObject({
+    dirty: false,
+    snapshot: { content: "from disk", revision: 2 },
+  });
+  expect(fake.save).not.toHaveBeenCalled();
+});
+
+it("does not block typing or replace a draft created during a linked refresh", async () => {
+  const store = state.getSourceEditStore("a");
+  await store.load();
+  const expected = store.getSnapshot();
+  if (!state.canRefreshSourceEdit(expected))
+    throw new Error("expected clean snapshot");
+  const pending = deferred<SourceEditSnapshot>();
+  fake.get.mockReturnValueOnce(pending.promise);
+  const refreshing = store.refreshLinkedSnapshot(expected, 2, () => true);
+  expect(store.getSnapshot().loading).toBe(false);
+  store.editContent("new draft");
+  pending.resolve(snapshot("from disk", 2));
+  await expect(refreshing).resolves.toBe("blocked");
+  await expect(
+    store.refreshLinkedSnapshot(expected, 2, () => true),
+  ).resolves.toBe("blocked");
+  expect(fake.get).toHaveBeenCalledTimes(2);
+  expect(store.getSnapshot()).toMatchObject({
+    dirty: true,
+    snapshot: { content: "new draft", revision: 0 },
+  });
+});
+
+it("ignores a stale linked read after another operation loads a newer clean revision", async () => {
+  const store = state.getSourceEditStore("a");
+  await store.load();
+  const expected = store.getSnapshot();
+  if (!state.canRefreshSourceEdit(expected))
+    throw new Error("expected clean snapshot");
+  const pending = deferred<SourceEditSnapshot>();
+  fake.get
+    .mockReturnValueOnce(pending.promise)
+    .mockResolvedValueOnce(snapshot("latest", 3));
+  const refreshing = store.refreshLinkedSnapshot(expected, 2, () => true);
+  await store.reloadConfirmed();
+  pending.resolve(snapshot("old response", 2));
+  await expect(refreshing).resolves.toBe("blocked");
+  expect(store.getSnapshot().snapshot).toMatchObject({
+    content: "latest",
+    revision: 3,
+  });
+});
+
 it("deduplicates saves and does not replace edits made in flight", async () => {
   const store = state.getSourceEditStore("a");
   await store.load();

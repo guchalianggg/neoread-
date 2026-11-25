@@ -13,7 +13,8 @@ import {
 import { PaperNoteRichEditor } from "./PaperNoteRichEditor";
 import { SourceDocumentReader } from "./SourceDocumentReader";
 import { EditableSpreadsheet } from "./EditableSpreadsheet";
-import { getSourceEditStore } from "./source-edit-state";
+import { canRefreshSourceEdit, getSourceEditStore } from "./source-edit-state";
+import { useLinkedSourceSync } from "./use-linked-source-sync";
 import { downloadBlob } from "./download";
 import { reportDiagnostic } from "./diagnostics";
 import "./source-document-editor.css";
@@ -28,6 +29,15 @@ export type SourceDocumentEditorProps = {
 export function sourceEditDownloadName(filename: string): string {
   return filename.replace(/\.xls$/i, ".xlsx").replace(/\.doc$/i, ".docx");
 }
+
+const linkedSourceStatus = {
+  current: "已链接源文件",
+  updated: "已从源文件更新",
+  missing: "找不到源文件，已保留当前副本。",
+  conflict: "源文件与书库副本有冲突，已保留当前副本。",
+  busy: "源文件同步处理中",
+  failed: "源文件同步未完成，已保留当前副本。",
+};
 
 // Key the inner editor even if a caller reuses one workspace for several tabs.
 export function SourceDocumentEditor(props: SourceDocumentEditorProps) {
@@ -124,6 +134,11 @@ function SourceDocumentEditorSession({
   const kind = snapshot?.kind ?? doc.sourceFormat;
   const spreadsheet = kind === "xls" || kind === "xlsx";
   const word = kind === "doc" || kind === "docx";
+  const linkedSourceView =
+    active && !editing && (word || kind === "md" || kind === "markdown");
+  const canCheckLinkedSource =
+    linkedSourceView && !downloading && canRefreshSourceEdit(state);
+  const linkedSync = useLinkedSourceSync(doc.id, store, canCheckLinkedSource);
   const status = state.loading
     ? "读取中"
     : state.saving
@@ -215,6 +230,19 @@ function SourceDocumentEditorSession({
           <span>
             {kind === "xls" ? "XLS 将保存为 XLSX。" : "保存为 XLSX。"}
             按文本编辑，不计算公式、不加载外链；不保证保留公式、图表、复杂格式或宏。
+          </span>
+        )}
+        {linkedSourceView && linkedSync.status && (
+          <span className="inline-flex flex-wrap items-center gap-2">
+            <span role="status">{linkedSourceStatus[linkedSync.status]}</span>
+            <Button
+              variant="ghost"
+              size="xs"
+              disabled={!canCheckLinkedSource || linkedSync.checking}
+              onClick={linkedSync.retry}
+            >
+              检查源文件
+            </Button>
           </span>
         )}
       </div>

@@ -4,6 +4,99 @@
   "security": [{ "session": [] }],
   "paths":
     {
+      "/api/documents/{id}/source-sync":
+        {
+          "parameters":
+            [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": { "type": "string" },
+              },
+            ],
+          "post":
+            {
+              "summary": "Refresh a Markdown or Word reading copy from file bytes without replacing the imported attachment",
+              "requestBody":
+                {
+                  "required": true,
+                  "content":
+                    {
+                      "application/octet-stream":
+                        { "schema": { "type": "string", "format": "binary" } },
+                    },
+                },
+              "responses":
+                {
+                  "200":
+                    {
+                      "description": "Published a new reading revision on the same document",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                {
+                                  "type": "object",
+                                  "required": ["revision"],
+                                  "properties":
+                                    {
+                                      "revision":
+                                        { "type": "integer", "minimum": 2 },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                  "204":
+                    {
+                      "description": "File bytes already match the current source revision",
+                    },
+                  "400":
+                    { "description": "Invalid or unconvertible file bytes" },
+                  "401": { "description": "Missing or invalid session" },
+                  "404": { "description": "Document no longer available" },
+                  "408":
+                    {
+                      "description": "Sync cancelled or timed out; previous version retained",
+                    },
+                  "409":
+                    {
+                      "description": "Local edit conflict, positional data protection, or document busy; previous version retained",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                {
+                                  "type": "object",
+                                  "required": ["error", "code"],
+                                  "properties":
+                                    {
+                                      "error": { "type": "string" },
+                                      "code":
+                                        {
+                                          "enum":
+                                            ["conflict", "anchored", "busy"],
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                  "413": { "description": "File exceeds the supported size" },
+                  "415":
+                    {
+                      "description": "Unsupported document format or request media type",
+                    },
+                  "500":
+                    { "description": "Sync failed; previous version retained" },
+                  "503":
+                    { "description": "Required local converter unavailable" },
+                },
+            },
+        },
       "/api/documents/{id}/source-edit":
         {
           "parameters":

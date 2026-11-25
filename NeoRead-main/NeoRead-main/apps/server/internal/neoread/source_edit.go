@@ -25,9 +25,10 @@ import (
 // Limits are rejection boundaries, never truncation. Rectangular cell budgets
 // include holes, per sheet and across all sheets. All cells are literal strings.
 const (
-	sourceEditRequestLimit = 16 << 20
-	sourceEditTextLimit    = 8 << 20
-	sourceEditCellLimit    = 32767 // UTF-16 units, Excel's native limit
+	sourceEditRequestLimit    = 16 << 20
+	sourceEditTextLimit       = 8 << 20
+	sourceEditCellLimit       = 32767 // UTF-16 units, Excel's native limit
+	sourceEditInitialRevision = 1
 )
 
 type sourceEditSheet struct {
@@ -63,6 +64,9 @@ func sourceEditExtension(kind string) string {
 		return "docx"
 	}
 	return kind
+}
+func initialSourceEditSnapshot(d Document, filename string) sourceEditSnapshot {
+	return sourceEditSnapshot{Kind: d.SourceFormat, Filename: strings.TrimSuffix(filename, filepath.Ext(filename)) + "." + sourceEditExtension(d.SourceFormat), Revision: sourceEditInitialRevision, Editable: true}
 }
 func (s *Store) sourceVersionDir(document, version string) string {
 	return filepath.Join(s.Root, "cache", document, "source-edits", version)
@@ -357,7 +361,7 @@ func (s *Server) sourceSnapshot(ctx context.Context, d Document) (snap sourceEdi
 	if b, e := hex.DecodeString(hash); e != nil || len(b) != 32 {
 		return snap, sourceError("corrupt", "原件记录无效")
 	}
-	snap = sourceEditSnapshot{Kind: d.SourceFormat, Filename: strings.TrimSuffix(filename, filepath.Ext(filename)) + "." + sourceEditExtension(d.SourceFormat), Revision: 1, Editable: true}
+	snap = initialSourceEditSnapshot(d, filename)
 	original := filepath.Join(s.Store.Root, "attachments", hash)
 	switch snap.Kind {
 	case "md", "markdown":
@@ -532,21 +536,12 @@ func (s *Server) putSourceEdit(w http.ResponseWriter, r *http.Request) {
 		operationErr = sourceError("format", "不适用")
 		return
 	}
-	finish, err := s.beginDocumentReparse(d)
+	finish, err := s.beginSourcePublication(d)
 	if err != nil {
-		reject(sourceError("busy", "文档正在处理，请稍后重试保存"))
+		reject(err)
 		return
 	}
 	defer finish()
-	// Do not delete or relocate positional user data. This deliberately rejects
-	// old reader records; the source editor does not create positional marks.
-	s.annotationMu.Lock()
-	defer s.annotationMu.Unlock()
-	if !s.corpusMu.TryLock() {
-		reject(sourceError("busy", "全文索引正在准备，请稍后重试保存"))
-		return
-	}
-	defer s.corpusMu.Unlock()
 	old, err := s.sourceSnapshot(r.Context(), d)
 	if err != nil {
 		reject(err)
@@ -572,64 +567,102 @@ func (s *Server) putSourceEdit(w http.ResponseWriter, r *http.Request) {
 		reject(err)
 		return
 	}
+	if err := s.publishSourceVersion(r.Context(), d, next, old.Revision, version, texts, ""); err != nil {
+		reject(err)
+		return
+	}
+	w.Header().Set("Cache-Control", "no-store")
+	respond(w, 200, next)
+}
+
+// Both editors and automatic sync hold importMu across these locks and commit,
+// serializing source generations with imports, trash and purge. Keep positional
+// writers and corpus builders out until the new revision is visible.
+func (s *Server) beginSourcePublication(d Document) (func(), error) {
+	finish, err := s.beginDocumentReparse(d)
+	if err != nil {
+		return nil, sourceError("busy", "文档正在处理，请稍后重试保存")
+	}
+	s.annotationMu.Lock()
+	if !s.corpusMu.TryLock() {
+		s.annotationMu.Unlock()
+		finish()
+		return nil, sourceError("busy", "全文索引正在准备，请稍后重试保存")
+	}
+	return func() {
+		s.corpusMu.Unlock()
+		s.annotationMu.Unlock()
+		finish()
+	}, nil
+}
+
+// Owns the prepared generation: discard it on any failure. A zero expected
+// revision means no editor snapshot exists; sync may publish revision 2 directly.
+func (s *Server) publishSourceVersion(ctx context.Context, d Document, next sourceEditSnapshot, expectedRevision int64, version string, texts map[string]string, syncHash string) error {
 	committed := false
 	defer func() {
 		if !committed {
 			_ = os.RemoveAll(s.Store.sourceVersionDir(d.ID, version))
 		}
 	}()
-	tx, err := s.Store.DB.BeginTx(r.Context(), nil)
+	tx, err := s.Store.DB.BeginTx(ctx, nil)
 	if err != nil {
-		reject(err)
-		return
+		return err
 	}
 	defer tx.Rollback()
+	// Recheck the document incarnation and never migrate old positional data.
 	var anchored bool
-	err = tx.QueryRowContext(r.Context(), `SELECT EXISTS(SELECT 1 FROM annotations WHERE document_id=?) OR EXISTS(SELECT 1 FROM document_navigation WHERE document_id=?) OR COALESCE(progress,'') NOT IN ('','null') OR percentage>0 FROM documents WHERE id=?`, d.ID, d.ID, d.ID).Scan(&anchored)
+	err = tx.QueryRowContext(ctx, `SELECT EXISTS(SELECT 1 FROM annotations WHERE document_id=?) OR EXISTS(SELECT 1 FROM document_navigation WHERE document_id=?) OR COALESCE(progress,'') NOT IN ('','null') OR percentage>0 FROM documents WHERE id=? AND created_at=? AND type=? AND deleted_at=''`, d.ID, d.ID, d.ID, d.CreatedAt, d.Type).Scan(&anchored)
+	if errors.Is(err, sql.ErrNoRows) {
+		return sourceError("unavailable", "文档已不可用")
+	}
 	if err != nil {
-		reject(err)
-		return
+		return err
 	}
 	if anchored {
-		reject(sourceError("anchored", "此文档已有阅读位置、定位批注或自定义目录，暂不支持自动迁移；请保留此文档并将当前可编辑版作为新文档导入"))
-		return
+		return sourceError("anchored", "此文档已有阅读位置、定位批注或自定义目录，暂不支持自动迁移；请保留此文档并将当前可编辑版作为新文档导入")
 	}
 	raw, _ := json.Marshal(next)
-	result, err := tx.ExecContext(r.Context(), "UPDATE source_edits SET revision=?,body=?,version=?,reading=1 WHERE document_id=? AND revision=?", next.Revision, string(raw), version, d.ID, old.Revision)
-	if err != nil {
-		reject(err)
-		return
+	var result sql.Result
+	if expectedRevision == 0 {
+		result, err = tx.ExecContext(ctx, "INSERT INTO source_edits(document_id,revision,body,version,reading) VALUES(?,?,?,?,1) ON CONFLICT(document_id) DO NOTHING", d.ID, next.Revision, string(raw), version)
+	} else {
+		result, err = tx.ExecContext(ctx, "UPDATE source_edits SET revision=?,body=?,version=?,reading=1 WHERE document_id=? AND revision=?", next.Revision, string(raw), version, d.ID, expectedRevision)
 	}
-	if n, _ := result.RowsAffected(); n != 1 {
-		reject(sourceError("conflict", "文档版本已变化，请重新加载"))
-		return
+	if err != nil {
+		return err
+	}
+	if n, err := result.RowsAffected(); err != nil {
+		return err
+	} else if n != 1 {
+		return sourceError("conflict", "文档版本已变化，请重新加载")
+	}
+	if syncHash != "" {
+		if _, err = tx.ExecContext(ctx, "INSERT INTO source_syncs(document_id,sha256,revision) VALUES(?,?,?) ON CONFLICT(document_id) DO UPDATE SET sha256=excluded.sha256,revision=excluded.revision", d.ID, syncHash, next.Revision); err != nil {
+			return err
+		}
 	}
 	for _, table := range []string{"search_index", "document_corpora", "document_passages_fts", "document_overviews_fts"} {
-		if _, err = tx.ExecContext(r.Context(), "DELETE FROM "+table+" WHERE document_id=?", d.ID); err != nil {
-			reject(err)
-			return
+		if _, err = tx.ExecContext(ctx, "DELETE FROM "+table+" WHERE document_id=?", d.ID); err != nil {
+			return err
 		}
 	}
 	for href, text := range texts {
-		if _, err = tx.ExecContext(r.Context(), "INSERT INTO search_index(document_id,href,content) VALUES(?,?,?)", d.ID, href, text); err != nil {
-			reject(err)
-			return
+		if _, err = tx.ExecContext(ctx, "INSERT INTO search_index(document_id,href,content) VALUES(?,?,?)", d.ID, href, text); err != nil {
+			return err
 		}
 	}
-	if _, err = tx.ExecContext(r.Context(), "INSERT INTO document_corpus_jobs(document_id,status) VALUES(?,'queued') ON CONFLICT(document_id) DO UPDATE SET status='queued'", d.ID); err != nil {
-		reject(err)
-		return
+	if _, err = tx.ExecContext(ctx, "INSERT INTO document_corpus_jobs(document_id,status) VALUES(?,'queued') ON CONFLICT(document_id) DO UPDATE SET status='queued'", d.ID); err != nil {
+		return err
 	}
 	if err = tx.Commit(); err != nil {
-		reject(err)
-		return
+		return err
 	}
 	committed = true
 	s.codexChat.deleteDocument(d.ID)
 	s.documentCodex.deleteDocument(d.ID)
 	s.connectorRevision.Add(1)
-	w.Header().Set("Cache-Control", "no-store")
-	respond(w, 200, next)
+	return nil
 }
 
 type sourceDiagnosticKey struct{}

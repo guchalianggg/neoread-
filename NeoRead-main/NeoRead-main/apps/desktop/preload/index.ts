@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer, webUtils } from "electron";
 import { startupAppearanceFromArguments } from "../startup-appearance";
 import type { CiteEvent } from "../../../packages/api-client/src/cite-events";
 import type { ProxySettings } from "../../../packages/neoread-core/src/proxy-settings";
@@ -93,6 +93,16 @@ contextBridge.exposeInMainWorld("neoreadDesktop", {
     ipcRenderer.invoke("neoread:choose-zotero-directory"),
   importFiles: (library: "books" | "papers", folder = "") =>
     ipcRenderer.invoke("neoread:import", library, folder),
+  importDroppedFiles: (
+    files: File[],
+    library: "books" | "papers",
+    folder = "",
+  ) => {
+    const paths = files.map((file) => webUtils.getPathForFile(file));
+    if (paths.some((path) => !path)) return Promise.resolve(null);
+    return proxyRequest("neoread:import-dropped", paths, library, folder);
+  },
+  syncSourceFile: (id: string) => proxyRequest("neoread:source-sync", id),
   importLargePapers: (
     ids: string[],
     library: "books" | "papers",

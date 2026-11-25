@@ -71,6 +71,23 @@ const button = (text: string, parent: ParentNode = host) =>
   )!;
 const field = (parent: ParentNode = host) =>
   parent.querySelector<HTMLTextAreaElement>("textarea")!;
+const heading = () => host.querySelector("article h1, article h2")?.textContent;
+const focus = () => window.dispatchEvent(new Event("focus"));
+type SyncSourceFile = NonNullable<
+  NonNullable<Window["neoreadDesktop"]>["syncSourceFile"]
+>;
+function desktopSync() {
+  const sync = vi.fn<SyncSourceFile>().mockResolvedValue({ state: "current" });
+  vi.stubGlobal("neoreadDesktop", { syncSourceFile: sync });
+  return sync;
+}
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((yes) => {
+    resolve = yes;
+  });
+  return { promise, resolve };
+}
 const type = (value: string, parent: ParentNode = host) => {
   const input = field(parent);
   Object.getOwnPropertyDescriptor(
@@ -110,6 +127,7 @@ beforeEach(() => {
 afterEach(async () => {
   await act(async () => root.unmount());
   host.remove();
+  vi.useRealTimers();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
@@ -355,4 +373,176 @@ it("returns to reading without saving or discarding the draft", async () => {
   expect(tabCloseWarning(document.id)?.message).toContain("未保存");
   await act(async () => button("编辑").click());
   expect(field().value).toBe("# Draft heading");
+});
+
+it("checks on open, focus and the reading interval; reloads only on an update or newer revision", async () => {
+  vi.useFakeTimers();
+  const document = doc();
+  const sync = desktopSync().mockResolvedValueOnce({
+    state: "updated",
+    revision: 1,
+  });
+  fake.get
+    .mockResolvedValueOnce(source())
+    .mockResolvedValueOnce(source("# From disk", 1));
+  await act(async () =>
+    root.render(
+      <StrictMode>
+        <SourceDocumentEditor document={document} onBack={() => {}} />
+      </StrictMode>,
+    ),
+  );
+  expect(sync).toHaveBeenCalledExactlyOnceWith(document.id);
+  expect(heading()).toBe("From disk");
+  expect(host.textContent).toContain("已从源文件更新");
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(5_000);
+  });
+  expect(sync).toHaveBeenCalledTimes(2);
+  expect(fake.get).toHaveBeenCalledTimes(2);
+
+  sync.mockResolvedValueOnce({ state: "current", revision: 2 });
+  fake.get.mockResolvedValueOnce(source("# Newer revision", 2));
+  await act(async () => {
+    focus();
+  });
+  expect(sync).toHaveBeenCalledTimes(3);
+  expect(heading()).toBe("Newer revision");
+  expect(fake.save).not.toHaveBeenCalled();
+});
+
+it("does not overlap checks or fetch over a draft that appeared during IPC", async () => {
+  vi.useFakeTimers();
+  const document = doc();
+  const sync = desktopSync();
+  await act(async () =>
+    root.render(<SourceDocumentEditor document={document} onBack={() => {}} />),
+  );
+  const pending = deferred<Awaited<ReturnType<SyncSourceFile>>>();
+  sync.mockReturnValueOnce(pending.promise);
+  await act(async () => {
+    focus();
+    focus();
+    await vi.advanceTimersByTimeAsync(5_000);
+  });
+  expect(sync).toHaveBeenCalledTimes(2);
+  expect(button("检查源文件").disabled).toBe(true);
+  await act(async () => button("编辑").click());
+  await act(async () => {
+    focus();
+    await vi.advanceTimersByTimeAsync(5_000);
+  });
+  expect(sync).toHaveBeenCalledTimes(2);
+  await act(async () => type("# Local draft"));
+  await act(async () => button("返回阅读").click());
+  await act(async () => {
+    pending.resolve({ state: "updated", revision: 1 });
+  });
+  await act(async () => {
+    focus();
+    await vi.advanceTimersByTimeAsync(10_000);
+  });
+  expect(sync).toHaveBeenCalledTimes(2);
+  expect(fake.get).toHaveBeenCalledTimes(1);
+  expect(heading()).toBe("Local draft");
+  expect(button("检查源文件").disabled).toBe(true);
+  expect(getSourceEditStore(document.id).getSnapshot()).toMatchObject({
+    dirty: true,
+    snapshot: { revision: 0, content: "# Local draft" },
+  });
+});
+
+it("catches up after reopening without applying the previous tab's in-flight read", async () => {
+  const document = doc();
+  const sync = desktopSync().mockResolvedValueOnce({ state: "updated" });
+  const stale = deferred<SourceEditSnapshot>();
+  const latest = deferred<SourceEditSnapshot>();
+  fake.get
+    .mockResolvedValueOnce(source())
+    .mockReturnValueOnce(stale.promise)
+    .mockReturnValueOnce(latest.promise);
+  const render = () => (
+    <SourceDocumentEditor document={document} onBack={() => {}} />
+  );
+  await act(async () => root.render(render()));
+  expect(fake.get).toHaveBeenCalledTimes(2);
+  await act(async () => root.render(null));
+  await act(async () => root.render(render()));
+  expect(sync).toHaveBeenCalledTimes(1);
+  await act(async () => {
+    stale.resolve(source("# Stale response", 1));
+  });
+  expect(sync).toHaveBeenCalledTimes(2);
+  expect(fake.get).toHaveBeenCalledTimes(3);
+  expect(heading()).toBe("Original");
+  await act(async () => {
+    latest.resolve(source("# Latest", 2));
+  });
+  expect(heading()).toBe("Latest");
+});
+
+it("keeps the Reader copy on missing or conflicting source files and permits a manual retry", async () => {
+  vi.useFakeTimers();
+  const document = doc();
+  const sync = desktopSync()
+    .mockResolvedValueOnce({ state: "missing" })
+    .mockResolvedValueOnce({ state: "conflict" });
+  const render = (active: boolean) => (
+    <SourceDocumentEditor
+      document={document}
+      active={active}
+      onBack={() => {}}
+    />
+  );
+  await act(async () => root.render(render(false)));
+  await act(async () => {
+    focus();
+    await vi.advanceTimersByTimeAsync(5_000);
+  });
+  expect(sync).not.toHaveBeenCalled();
+  await act(async () => root.render(render(true)));
+  expect(heading()).toBe("Original");
+  expect(host.textContent).toContain("找不到源文件，已保留当前副本。");
+  await act(async () => button("检查源文件").click());
+  expect(host.textContent).toContain("有冲突，已保留当前副本。");
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(10_000);
+  });
+  expect(sync).toHaveBeenCalledTimes(2);
+  expect(heading()).toBe("Original");
+  expect(fake.get).toHaveBeenCalledTimes(1);
+  await act(async () => button("检查源文件").click());
+  expect(sync).toHaveBeenCalledTimes(3);
+  expect(host.textContent).toContain("已链接源文件");
+});
+
+it("never shows a sync control in a browser, for unlinked sources, or for XLS/XLSX", async () => {
+  vi.useFakeTimers();
+  const render = () => (
+    <SourceDocumentEditor document={doc()} onBack={() => {}} />
+  );
+  await act(async () => root.render(render()));
+  expect(button("检查源文件")).toBeUndefined();
+  const sync = desktopSync().mockResolvedValue({ state: "unlinked" });
+  await act(async () => root.render(render()));
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(10_000);
+  });
+  expect(button("检查源文件")).toBeUndefined();
+  expect(sync).toHaveBeenCalledTimes(1);
+
+  for (const kind of ["xls", "xlsx"] as const) {
+    fake.get.mockResolvedValueOnce({
+      ...source(),
+      kind,
+      sheets: [{ name: "A", rows: [["1"]] }],
+    });
+    await act(async () => root.render(render()));
+    await act(async () => {
+      focus();
+      await vi.advanceTimersByTimeAsync(5_000);
+    });
+    expect(button("检查源文件")).toBeUndefined();
+  }
+  expect(sync).toHaveBeenCalledTimes(1);
 });

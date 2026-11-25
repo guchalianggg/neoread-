@@ -165,6 +165,7 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("GET /api/documents/{id}/source-edit", s.getSourceEdit)
 	mux.HandleFunc("PUT /api/documents/{id}/source-edit", s.putSourceEdit)
 	mux.HandleFunc("GET /api/documents/{id}/source-edit/file", s.downloadSourceEdit)
+	mux.HandleFunc("POST /api/documents/{id}/source-sync", s.postSourceSync)
 	mux.HandleFunc("GET /api/documents/{id}/attachments", s.listPaperAttachments)
 	mux.HandleFunc("POST /api/documents/{id}/attachments", s.addPaperAttachment)
 	mux.HandleFunc("PATCH /api/documents/{id}/attachments/{attachment}", s.updatePaperAttachment)

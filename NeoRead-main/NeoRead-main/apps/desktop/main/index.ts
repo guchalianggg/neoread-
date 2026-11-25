@@ -14,7 +14,7 @@ import {
   shell,
 } from "electron";
 import { spawn, type ChildProcess } from "node:child_process";
-import { join, resolve, dirname } from "node:path";
+import { basename, join, resolve, dirname } from "node:path";
 import { createInterface } from "node:readline";
 import { readFile, realpath, lstat } from "node:fs/promises";
 import {
@@ -47,7 +47,11 @@ import {
 } from "./proxy-settings";
 import { startUpdateService } from "./update-service";
 import { devIsolation } from "./dev-isolation";
-import { documentArguments, documentFile } from "./open-files";
+import { documentArguments } from "./open-files";
+import {
+  createLocalDocumentImport,
+  type LocalImportResult,
+} from "./document-import";
 import { documentImportExtensions } from "@neoread/core";
 import {
   migrateReaderData,
@@ -315,48 +319,118 @@ function windowBackground(appearance: unknown, palettes: unknown) {
   );
   return contrast === "high" ? "#171717" : "#211e21";
 }
-// Long papers wait for the reader's choice. The renderer refers to them by
-// one-time IDs, never by path.
-const largePapers = new Map<string, string>();
-async function importPaths(
-  paths: string[],
-  library: "books" | "papers" = "books",
-  allowLarge = false,
-  folder = "",
-) {
-  const accepted = library === "papers" ? /\.pdf$/i : documentFile;
-  const large: Array<{ id: string; name: string; pages: number }> = [];
-  const documents: string[] = [];
-  for (const path of paths) {
-    if (!accepted.test(path)) continue;
-    const data = await readFile(path);
-    const name = path.split(/[\\/]/).pop()!;
-    const form = new FormData();
-    form.append("library", library);
-    if (allowLarge) form.append("allowLarge", "1");
-    if (folder.startsWith("smart:"))
-      form.append("smartCategory", folder.slice(6));
-    else if (folder)
-      form.append(
-        "folder",
-        folder.startsWith("folder:") ? folder.slice(7) : folder,
-      );
-    form.append("file", new Blob([data]), name);
-    const response = await fetch(`${serverURL}/api/documents`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${serverToken}` },
-      body: form,
+let documentImport:
+  | { url: string; service: ReturnType<typeof createLocalDocumentImport> }
+  | undefined;
+function localDocumentImport() {
+  if (quitting || !activeLibrary || !serverURL || recoveryServer)
+    throw new Error("书库尚未就绪，请稍后重试。");
+  const url = serverURL;
+  const token = serverToken;
+  const library = activeLibrary;
+  if (documentImport?.url === url) return documentImport.service;
+  const current = () =>
+    !quitting &&
+    activeLibrary === library &&
+    serverURL === url &&
+    serverToken === token;
+  const service = createLocalDocumentImport({
+    library,
+    profile: app.getPath("userData"),
+    request(path, body) {
+      if (!current()) throw new Error("书库已切换，请重新选择文件。");
+      return fetch(url + path, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          ...(body instanceof FormData
+            ? {}
+            : { "Content-Type": "application/octet-stream" }),
+        },
+        body,
+        redirect: "error",
+        signal: AbortSignal.timeout(
+          body instanceof FormData ? 300_000 : 120_000,
+        ),
+      });
+    },
+    trash(path) {
+      if (!current()) throw new Error("书库已切换，原文件已保留。");
+      return shell.trashItem(path);
+    },
+    record(event, reasonCode) {
+      diagnostics?.logs.record("desktop", {
+        event,
+        level: reasonCode === "recycled" ? "info" : "warn",
+        reasonCode,
+      });
+    },
+  });
+  documentImport = { url, service };
+  return service;
+}
+async function reportLocalImport(result: LocalImportResult) {
+  if (result.documents.length)
+    window?.webContents.send("neoread:library-changed");
+  if (!window || window.isDestroyed() || quitting) return;
+  const detail = [
+    result.failed
+      ? `${result.failed} 个文件未导入，原文件已保留。${result.error ?? ""}`
+      : "",
+    result.kept
+      ? `${result.kept} 个已入库文件的原件未移到回收站（可能重复、已变更或系统拒绝回收）。`
+      : "",
+    result.linkFailed
+      ? `${result.linkFailed} 个文件已入库，但未建立原文件同步。`
+      : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+  if (detail)
+    await dialog.showMessageBox(window, {
+      type: "warning",
+      message: "部分文件未完成所选操作",
+      detail,
     });
-    if (!response.ok) {
-      const failure = await response.json();
-      if (failure.code !== "large-paper") throw new Error(failure.error);
-      const id = randomBytes(16).toString("hex");
-      largePapers.set(id, path);
-      large.push({ id, name, pages: failure.pages });
-    } else documents.push((await response.json()).id);
-  }
-  window?.webContents.send("neoread:library-changed");
-  return { large, documents };
+}
+async function chooseLocalImport(
+  paths: string[],
+  library: "books" | "papers",
+  folder: string,
+) {
+  if (!paths.length || !window) return [];
+  const service = localDocumentImport();
+  const { response } = await dialog.showMessageBox(window, {
+    type: "question",
+    title: "导入文档",
+    message:
+      paths.length === 1
+        ? "导入后如何处理原文件？"
+        : `导入 ${paths.length} 个文件后，如何处理原文件？`,
+    detail: [
+      ...paths
+        .slice(0, 5)
+        .map((path) => basename(path).replace(/[\r\n]/g, " ")),
+      ...(paths.length > 5 ? [`另有 ${paths.length - 5} 个文件`] : []),
+      "",
+      "保留时，Word 和 Markdown 可跟随原文件更新。选择移到回收站，仅处理成功入库且未变更的新文件，不建立同步。",
+    ].join("\n"),
+    buttons: ["保留原文件", "导入后移到回收站", "取消"],
+    defaultId: 0,
+    cancelId: 2,
+    noLink: true,
+  });
+  if (response !== 0 && response !== 1) return [];
+  if (service !== localDocumentImport())
+    throw new Error("书库已切换，请重新选择文件。");
+  const result = await service.import(
+    paths,
+    library,
+    folder,
+    response === 1 ? "trash" : "keep",
+  );
+  await reportLocalImport(result);
+  return result.large;
 }
 // neoread:// links reach one window. The renderer claims queued links once its
 // listener exists; later links are sent directly.
@@ -427,12 +501,15 @@ async function flushFiles() {
   const opened: OpenedFiles = { documents: [], large: [] };
   try {
     for (const path of paths) {
-      const { documents, large } = await importPaths(
+      const result = await localDocumentImport().import(
         [path],
         /\.pdf$/i.test(path) ? "papers" : "books",
+        "",
+        "keep",
       );
-      opened.documents.push(...documents);
-      opened.large.push(...large);
+      await reportLocalImport(result);
+      opened.documents.push(...result.documents);
+      opened.large.push(...result.large);
     }
   } catch (error) {
     const code = (error as NodeJS.ErrnoException).code;
@@ -1531,10 +1608,38 @@ app
         });
         return selected.canceled
           ? []
-          : (await importPaths(selected.filePaths, library, false, folder))
-              .large;
+          : chooseLocalImport(selected.filePaths, library, folder);
       },
     );
+    ipcMain.handle(
+      "neoread:import-dropped",
+      async (event, paths: unknown, library: unknown, folder: unknown) => {
+        if (
+          event.sender !== window?.webContents ||
+          event.senderFrame !== window.webContents.mainFrame
+        )
+          throw new Error("Invalid sender");
+        if (
+          !Array.isArray(paths) ||
+          paths.length > 512 ||
+          !paths.every((path) => typeof path === "string") ||
+          (library !== "books" && library !== "papers") ||
+          typeof folder !== "string" ||
+          (library !== "papers" && folder)
+        )
+          throw new Error("无效的文件选择。");
+        return chooseLocalImport(paths, library, folder);
+      },
+    );
+    ipcMain.handle("neoread:source-sync", async (event, id: unknown) => {
+      if (
+        event.sender !== window?.webContents ||
+        event.senderFrame !== window.webContents.mainFrame ||
+        typeof id !== "string"
+      )
+        throw new Error("Invalid sender or document");
+      return localDocumentImport().sync(id);
+    });
     ipcMain.handle(
       "neoread:import-large",
       async (event, ids: unknown, library: unknown, folder: unknown) => {
@@ -1550,12 +1655,17 @@ app
           (library !== "papers" && folder)
         )
           throw new Error("Invalid import");
-        const paths = ids.flatMap((id) => {
-          const path = typeof id === "string" ? largePapers.get(id) : undefined;
-          if (path) largePapers.delete(id);
-          return path ? [path] : [];
-        });
-        return (await importPaths(paths, library, true, folder)).documents;
+        const result = await localDocumentImport().confirm(
+          ids,
+          library,
+          folder,
+        );
+        await reportLocalImport(result);
+        if (!result.documents.length && ids.length && !result.failed)
+          throw new Error("导入确认已失效，请重新选择文件。");
+        if (!result.documents.length && result.failed)
+          throw new Error("未能导入文件，原文件已保留。");
+        return result.documents;
       },
     );
     mainWindowOpening = reopenMainWindow();

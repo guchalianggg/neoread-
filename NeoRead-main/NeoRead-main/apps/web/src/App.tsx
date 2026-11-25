@@ -346,6 +346,17 @@ export function App() {
     if (!accepted.length) return;
     setBusy(true);
     try {
+      const desktop = await window.neoreadDesktop?.importDroppedFiles?.(
+        accepted,
+        target,
+        target === "papers" ? folder : "",
+      );
+      if (desktop) {
+        await refreshLibrary();
+        setLargePapers(desktop);
+        setLargePaperFolder(folder);
+        return;
+      }
       const elsewhere: Document[] = [];
       const large: LargePaper[] = [];
       for (const file of accepted) {

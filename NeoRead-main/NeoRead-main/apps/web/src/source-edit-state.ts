@@ -13,6 +13,18 @@ export type SourceEditState = {
   error: string;
 };
 
+export function canRefreshSourceEdit(
+  state: SourceEditState,
+): state is SourceEditState & { snapshot: SourceEditSnapshot } {
+  return (
+    !!state.snapshot &&
+    !state.loading &&
+    !state.saving &&
+    !state.dirty &&
+    !state.conflict
+  );
+}
+
 function diagnostic(event: string, conflict = false) {
   // Do not log filenames, cell contents, Markdown or server error messages.
   try {
@@ -85,6 +97,33 @@ function createSourceEditStore(id: string) {
       }
     });
     return loading;
+  };
+  // Unlike reloadConfirmed, this read never locks the editor or discards a
+  // draft. Compare against the state captured before the desktop IPC started.
+  const refreshLinkedSnapshot = async (
+    expected: SourceEditState & { snapshot: SourceEditSnapshot },
+    minimumRevision: number,
+    isCurrent: () => boolean,
+  ): Promise<"refreshed" | "blocked" | "failed"> => {
+    const canApply = () =>
+      isCurrent() && state === expected && canRefreshSourceEdit(state);
+    if (!canApply()) return "blocked";
+    try {
+      const snapshot = checkSnapshot(await api.getSourceEdit(id));
+      if (!canApply()) return "blocked";
+      if (
+        snapshot.revision <
+        Math.max(expected.snapshot.revision, minimumRevision)
+      )
+        return "failed";
+      if (snapshot.revision > expected.snapshot.revision) {
+        editVersion++;
+        update({ snapshot, error: "" });
+      }
+      return "refreshed";
+    } catch {
+      return canApply() ? "failed" : "blocked";
+    }
   };
   const edit = (patch: { content?: string; sheets?: SourceSheet[] }) => {
     if (!state.snapshot || state.loading) return;
@@ -177,6 +216,7 @@ function createSourceEditStore(id: string) {
     load: () => load(),
     // Caller must obtain explicit user confirmation before discarding a draft.
     reloadConfirmed: () => load(true),
+    refreshLinkedSnapshot,
     editContent: (content: string) => edit({ content }),
     editSheets: (sheets: SourceSheet[]) => edit({ sheets }),
     save,
@@ -206,6 +246,8 @@ export function getSourceEditStore(id: string) {
   }
   return store;
 }
+
+export type SourceEditStore = ReturnType<typeof getSourceEditStore>;
 
 export function hasPendingSourceEdits(): boolean {
   return [...stores.values()].some((store) => {
