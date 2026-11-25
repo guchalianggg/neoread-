@@ -38,7 +38,42 @@ describe("pageColumns", () => {
     expect(layout.split).toBeUndefined();
   });
 
-  it("needs votes on both sides", () => {
+  it("recognizes one tall body block in each column and keeps a crossing heading spanning", () => {
+    const tall = (b: PDFBlock) => ({
+      ...b,
+      bounds: { ...b.bounds, height: 0.45 },
+    });
+    const columns = [
+      { ...block("heading", 0.2, 0.05, 0.4), label: "paragraph_title" },
+      tall(block("left", 0.06, 0.18, 0.41)),
+      tall(block("right", 0.54, 0.21, 0.4)),
+    ];
+    const layout = pageColumns(columns).get(1)!;
+    expect(layout.columns).toBe(2);
+    expect([...layout.side.values()]).toEqual(["span", "left", "right"]);
+    expect(columnBands(columns, layout).map((band) => band.kind)).toEqual([
+      "span",
+      "columns",
+    ]);
+  });
+
+  it("does not split staggered text or use tall captions as column evidence", () => {
+    const tall = (b: PDFBlock) => ({
+      ...b,
+      bounds: { ...b.bounds, height: 0.24 },
+    });
+    const left = tall(block("left", 0.06, 0.14, 0.4));
+    expect(
+      pageColumns([left, tall(block("right", 0.54, 0.5, 0.4))]).get(1)?.columns,
+    ).toBe(1);
+    const caption = {
+      ...tall(block("right", 0.54, 0.14, 0.4)),
+      label: "figure_caption",
+    };
+    expect(pageColumns([left, caption]).get(1)?.columns).toBe(1);
+  });
+
+  it("needs votes on both sides for short snippets", () => {
     const blocks = [
       block("l1", 0.05, 0.15, 0.42),
       block("l2", 0.05, 0.4, 0.42),

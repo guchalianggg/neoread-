@@ -1614,6 +1614,31 @@ it("mirrors two-column pages as banded left and right flows", async () => {
   ).toEqual(["p1-b1", "p1-title", "p1-l2", "p1-r1", "p1-r2"]);
 });
 
+it.each(["原文译文", "仅译文"])(
+  "shows two columns when the parser supplies one tall block per side in %s",
+  async (mode) => {
+    await renderView(defaultTheme, [
+      { ...twoColumnBlocks[0], page: 3 },
+      { ...twoColumnBlocks[1], page: 3 },
+      { ...twoColumnBlocks[3], page: 3 },
+    ]);
+    await click(mode);
+    const page = host.querySelector('[data-translation-page="3"]')!;
+    expect(page.getAttribute("data-columns")).toBe("2");
+    const band = page.querySelector(".translation-columns")!;
+    expect(band.children).toHaveLength(2);
+    expect(
+      band.children[0].querySelector('[data-translation-block="p1-l2"]'),
+    ).not.toBeNull();
+    expect(
+      band.children[1].querySelector('[data-translation-block="p1-r2"]'),
+    ).not.toBeNull();
+    expect(
+      band.querySelector('[data-translation-block="p1-title"]'),
+    ).toBeNull();
+  },
+);
+
 it("keeps numbered pages when mirroring is off and uses a flat flow only for text reflow", async () => {
   await renderView(
     { ...defaultTheme, translationMirrorColumns: false },

@@ -124,7 +124,7 @@
 .pdf-reading .translation-document section {
   max-width: none;
 }
-/* A focused body block's width at the Focus Block zoom limit. */
+/* Use the configured reading width for non-mirrored pages. */
 .pdf-reading .translation-document[data-column] section {
   max-width: var(--pdf-column-width);
 }
@@ -138,9 +138,12 @@
 .translation-column {
   min-width: 0;
 }
-/* Keep the focused-column width without overflowing a mirrored cell. */
-.pdf-reading .translation-document[data-column] .translation-columns section {
-  max-width: min(var(--pdf-column-width), 100%);
+/* Let mirrored blocks fill their own column or span the whole page. */
+.pdf-reading
+  .translation-document[data-column]
+  .translation-page[data-columns="2"]
+  section {
+  max-width: none;
 }
 .translation-document section {
   position: relative;

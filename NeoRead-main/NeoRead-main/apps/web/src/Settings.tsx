@@ -1085,7 +1085,7 @@ export function Settings({
                 <span>
                   译文镜像分栏
                   <span className="block text-xs text-muted-foreground">
-                    双栏论文的译文按原版面分栏显示，两侧滚动更易对应。
+                    PDF 双栏页按原版分栏，通栏内容保持通栏；开启文字重排时不分栏。
                   </span>
                 </span>
                 <Switch
@@ -1097,7 +1097,12 @@ export function Settings({
                 />
               </label>
               <label className="flex items-center justify-between gap-4 text-sm">
-                <span>点击段落聚焦</span>
+                <span>
+                  点击段落聚焦
+                  <span className="block text-xs text-muted-foreground">
+                    定位原文与对应译文，不改变 PDF 缩放比例。
+                  </span>
+                </span>
                 <Switch
                   aria-label="点击段落聚焦"
                   checked={theme.blockFocus !== false}

@@ -1,14 +1,11 @@
 import type { PDFBlock } from "@neoread/core";
 import { READING_MARGIN } from "../appearance";
 
-/** Focus Block zooms a text block to fit, up to this scale. */
-const FOCUS_MAX_SCALE = 1.5;
+/** Keep the established single-column translation width independent of PDF zoom. */
+const REFERENCE_SCALE = 1.5;
 const BODY_LABELS = new Set(["text", "abstract", "paragraph", "list"]);
 
-/**
- * Width in CSS pixels of a typical body text block after Focus Block reaches
- * its maximum zoom. Computed once per document; PDF zoom does not change it.
- */
+/** Nominal width in CSS pixels of a typical body text block. */
 export function pdfFocusWidth(
   blocks: Pick<PDFBlock, "bounds" | "label" | "text">[],
   pageWidth: number | undefined,
@@ -21,14 +18,14 @@ export function pdfFocusWidth(
     .sort((a, b) => a - b);
   if (!widths.length) return undefined;
   const median = widths[Math.floor(widths.length / 2)];
-  return Math.round(median * pageWidth * FOCUS_MAX_SCALE);
+  return Math.round(median * pageWidth * REFERENCE_SCALE);
 }
 
 const MIN_COLUMN = 240;
 
 /**
- * Column width for a reading margin: the default margin keeps the focused
- * block width, and each px of margin narrows both sides.
+ * Column width for a reading margin: the default keeps the nominal width,
+ * and each px of margin narrows both sides.
  */
 export const pdfTranslationColumn = (
   focusWidth: number,

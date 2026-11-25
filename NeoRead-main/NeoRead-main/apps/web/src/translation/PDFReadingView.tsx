@@ -31,6 +31,7 @@ import type {
 import { defaultTheme, isPDFPageDecoration } from "@neoread/core";
 import { api } from "@neoread/api";
 import { Button } from "@neoread/ui/components/button";
+import { useReaderStore } from "../store";
 import { Tabs, TabsList, TabsTrigger } from "@neoread/ui/components/tabs";
 import {
   Tooltip,
@@ -1116,6 +1117,20 @@ export function PDFReadingView({
           <TabsTrigger value="translation">仅译文</TabsTrigger>
         </TabsList>
       </Tabs>
+      {!reflow && mode !== "source" && (
+        <Button
+          variant={mirrorColumns ? "secondary" : "ghost"}
+          size="sm"
+          aria-pressed={mirrorColumns}
+          onClick={() =>
+            useReaderStore
+              .getState()
+              .setTheme({ translationMirrorColumns: !mirrorColumns })
+          }
+        >
+          按原版分栏
+        </Button>
+      )}
     </div>
   );
   // One translated block, shared by the flat flow and mirrored column bands.

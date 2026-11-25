@@ -1,4 +1,5 @@
 import type { PDFBlock } from "@neoread/core";
+import { isPDFPageDecoration } from "@neoread/core";
 
 export type ColumnSide = "left" | "right" | "span";
 
@@ -22,6 +23,42 @@ const TIE_EPS = 1e-6;
 
 const cache = new WeakMap<PDFBlock[], Map<number, PageColumnLayout>>();
 
+function columnVoter(block: PDFBlock) {
+  return (
+    !block.image &&
+    !!block.text.trim() &&
+    !isPDFPageDecoration(block) &&
+    !/title|caption|formula|table/i.test(block.label) &&
+    block.bounds.width > 0 &&
+    block.bounds.width < NARROW_WIDTH
+  );
+}
+
+// Some parsers emit one large block per column. Require substantial parallel
+// body text with a clear central gutter, not just two offset snippets.
+function splitFromTallColumns(blocks: PDFBlock[]) {
+  const left: PDFBlock[] = [],
+    right: PDFBlock[] = [];
+  for (const block of blocks) {
+    const b = block.bounds;
+    if (b.height < 0.14 || b.width < 0.24) continue;
+    if (b.x + b.width <= 0.49) left.push(block);
+    else if (b.x >= 0.51) right.push(block);
+  }
+  left.sort((a, b) => a.bounds.y - b.bounds.y);
+  right.sort((a, b) => a.bounds.y - b.bounds.y);
+  for (let i = 0, j = 0; i < left.length && j < right.length;) {
+    const l = left[i].bounds,
+      r = right[j].bounds;
+    const lEnd = l.y + l.height,
+      rEnd = r.y + r.height;
+    if (Math.min(lEnd, rEnd) - Math.max(l.y, r.y) >= 0.1)
+      return (l.x + l.width + r.x) / 2;
+    if (lEnd <= rEnd) i++;
+    else j++;
+  }
+}
+
 /**
  * Detect per-page column structure from block bounds (0-1 page coordinates).
  * Narrow body blocks vote by their center x; the widest gap between voting
@@ -32,9 +69,7 @@ const cache = new WeakMap<PDFBlock[], Map<number, PageColumnLayout>>();
  * reading order is preserved because side assignment never rewrites the
  * incoming block sequence.
  */
-export function pageColumns(
-  blocks: PDFBlock[],
-): Map<number, PageColumnLayout> {
+export function pageColumns(blocks: PDFBlock[]): Map<number, PageColumnLayout> {
   const cached = cache.get(blocks);
   if (cached) return cached;
   const pages = new Map<number, PDFBlock[]>();
@@ -46,8 +81,8 @@ export function pageColumns(
   }
   const result = new Map<number, PageColumnLayout>();
   for (const [page, list] of pages) {
-    const centers = list
-      .filter((b) => b.bounds.width > 0 && b.bounds.width < NARROW_WIDTH)
+    const voters = list.filter(columnVoter);
+    const centers = voters
       .map((b) => b.bounds.x + b.bounds.width / 2)
       .sort((a, b) => a - b);
     let gap = 0,
@@ -71,10 +106,16 @@ export function pageColumns(
     const split =
       gap >= MIN_GAP && bestStart !== -1
         ? (centers[bestStart] + centers[bestEnd]) / 2
-        : undefined;
+        : splitFromTallColumns(voters);
     const side = new Map<string, ColumnSide>();
     for (const block of list) {
-      if (!split || block.bounds.width >= NARROW_WIDTH) {
+      const { x, width } = block.bounds;
+      if (
+        !split ||
+        width >= NARROW_WIDTH ||
+        block.label === "doc_title" ||
+        (x < split - SPAN_BAND && x + width > split + SPAN_BAND)
+      ) {
         side.set(block.id, "span");
         continue;
       }
