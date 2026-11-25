@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
+import { watch } from "node:fs";
 import {
   lstat,
   mkdir,
@@ -7,7 +8,7 @@ import {
   realpath,
   writeFile,
 } from "node:fs/promises";
-import { basename, isAbsolute, join, relative, sep } from "node:path";
+import { basename, dirname, isAbsolute, join, relative, sep } from "node:path";
 import { acceptsDocumentFile } from "../../../packages/neoread-core/src/import-formats";
 
 export type OriginalDisposition = "keep" | "trash";
@@ -37,7 +38,10 @@ type Host = {
   request: (path: string, body: BodyInit) => Promise<Response>;
   trash: (path: string) => Promise<void>;
   record?: (
-    event: "document.import_original" | "document.source_sync_check",
+    event:
+      | "document.import_original"
+      | "document.source_sync_check"
+      | "document.markdown_watch",
     reason: string,
   ) => void;
 };
@@ -48,6 +52,8 @@ type Pick = {
   expires?: number;
 };
 const sourceFile = /\.(md|markdown|doc|docx)$/i;
+const markdownFile = /\.(md|markdown)$/i;
+const markdownWatchDelay = 250;
 const documentID = /^[a-f0-9]{32}$/;
 const hash = (data: string | Uint8Array) =>
   createHash("sha256").update(data).digest("hex");
@@ -260,6 +266,67 @@ export function createLocalDocumentImport(host: Host) {
     return result;
   }
 
+  async function linkedPath(id: string) {
+    const value = JSON.parse(await readFile(linkPath(id), "utf8"));
+    if (
+      typeof value?.path !== "string" ||
+      !isAbsolute(value.path) ||
+      !sourceFile.test(value.path)
+    )
+      throw new Error("Invalid source link");
+    return value.path as string;
+  }
+
+  const watchFailures = new Set<string>();
+  async function watchMarkdown(
+    id: string,
+    signal: AbortSignal,
+    changed: () => void,
+  ) {
+    if (!documentID.test(id) || signal.aborted) return;
+    const failed = () => {
+      if (signal.aborted || watchFailures.has(id)) return;
+      watchFailures.add(id);
+      record("document.markdown_watch", "polling_fallback");
+    };
+    try {
+      const path = await linkedPath(id);
+      const directory = dirname(path);
+      if (
+        !markdownFile.test(path) ||
+        !(await external(directory)) ||
+        signal.aborted
+      )
+        return;
+      const compare = (name: string) =>
+        process.platform === "win32" ? name.toLowerCase() : name;
+      const name = compare(basename(path));
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      // Watch the directory, not the inode: editors often save via rename.
+      const watcher = watch(
+        directory,
+        { persistent: false, signal },
+        (_, filename) => {
+          if (signal.aborted || (filename && compare(filename) !== name))
+            return;
+          watchFailures.delete(id);
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            if (!signal.aborted) changed();
+          }, markdownWatchDelay);
+        },
+      );
+      watcher.once("close", () => clearTimeout(timer));
+      watcher.once("error", () => {
+        failed();
+        watcher.close();
+      });
+    } catch (error) {
+      // Missing link = ordinary imported copy, no watcher expected.
+      if (errorCode(error) !== "ENOENT") failed();
+    }
+  }
+
   async function check(id: string): Promise<SourceSyncResult> {
     const fail = (
       state: "missing" | "conflict" | "busy" | "failed",
@@ -271,14 +338,7 @@ export function createLocalDocumentImport(host: Host) {
     };
     let path: string;
     try {
-      const value = JSON.parse(await readFile(linkPath(id), "utf8"));
-      if (
-        typeof value?.path !== "string" ||
-        !isAbsolute(value.path) ||
-        !sourceFile.test(value.path)
-      )
-        return fail("failed");
-      path = value.path;
+      path = await linkedPath(id);
     } catch (error) {
       return errorCode(error) === "ENOENT"
         ? { state: "unlinked" }
@@ -352,6 +412,7 @@ export function createLocalDocumentImport(host: Host) {
       }
       return importPicks(picks, library, folder, true);
     },
+    watchMarkdown,
     sync(id: string): Promise<SourceSyncResult> {
       if (!documentID.test(id)) return Promise.resolve({ state: "unlinked" });
       const existing = inFlight.get(id);

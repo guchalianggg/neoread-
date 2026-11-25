@@ -17,6 +17,7 @@ async function proxyRequest(channel: string, ...args: unknown[]) {
     );
   }
 }
+let markdownWatchSequence = 0;
 contextBridge.exposeInMainWorld("neoreadDesktop", {
   platform: process.platform,
   saveExportFile: (name: string, bytes: Uint8Array) =>
@@ -103,6 +104,18 @@ contextBridge.exposeInMainWorld("neoreadDesktop", {
     return proxyRequest("neoread:import-dropped", paths, library, folder);
   },
   syncSourceFile: (id: string) => proxyRequest("neoread:source-sync", id),
+  onMarkdownFileChanged: (id: string, callback: () => void) => {
+    const key = ++markdownWatchSequence;
+    const listener = (_event: unknown, notified: number) => {
+      if (notified === key) callback();
+    };
+    ipcRenderer.on("neoread:markdown-changed", listener);
+    ipcRenderer.send("neoread:watch-markdown", key, id);
+    return () => {
+      ipcRenderer.removeListener("neoread:markdown-changed", listener);
+      ipcRenderer.send("neoread:watch-markdown", key, null);
+    };
+  },
   importLargePapers: (
     ids: string[],
     library: "books" | "papers",

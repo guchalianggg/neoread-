@@ -52,6 +52,7 @@ export function useLinkedSourceSync(
     const work = workByStore.get(store) ?? { minimumRevision: 0 };
     workByStore.set(store, work);
     let current = true;
+    let pendingFileChange = false;
     const publish = (next: SyncStatus) => {
       statusRef.current = next;
       setStatus(next);
@@ -122,6 +123,10 @@ export function useLinkedSourceSync(
       })().finally(() => {
         work.inFlight = undefined;
         setChecking(false);
+        if (pendingFileChange && current) {
+          pendingFileChange = false;
+          check();
+        }
       });
     };
     // Defer the first check past effect setup (including StrictMode replay).
@@ -130,11 +135,20 @@ export function useLinkedSourceSync(
     const onFocus = () => check();
     retryRef.current = () => check(true);
     window.addEventListener("focus", onFocus);
+    const kind = store.getSnapshot().snapshot?.kind;
+    const stopWatch =
+      kind === "md" || kind === "markdown"
+        ? desktop?.onMarkdownFileChanged?.(id, () => {
+            if (work.inFlight) pendingFileChange = true;
+            else check();
+          })
+        : undefined;
     const timer = window.setInterval(() => {
       if (statusRef.current !== "unlinked") check();
     }, CHECK_INTERVAL_MS);
     return () => {
       current = false;
+      stopWatch?.();
       retryRef.current = undefined;
       window.removeEventListener("focus", onFocus);
       window.clearInterval(timer);

@@ -1,5 +1,12 @@
 import { createHash } from "node:crypto";
-import { mkdtemp, mkdir, rm, writeFile, readFile } from "node:fs/promises";
+import {
+  mkdtemp,
+  mkdir,
+  rename,
+  rm,
+  writeFile,
+  readFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, expect, it, vi } from "vitest";
@@ -122,4 +129,32 @@ it("carries the chosen disposition through long paper confirmation", async () =>
   expect((await importer.confirm([ticket.id], "books", "")).documents).toEqual(
     [],
   );
+});
+
+it("notifies the active Markdown link after atomic replacement and stops on abort", async () => {
+  const { importer, path, document, request, library } = await fixture();
+  const controller = new AbortController();
+  const notify = vi.fn();
+  const delay = () => new Promise((done) => setTimeout(done, 400));
+  await importer.import([path], "books", "", "keep");
+  try {
+    await importer.watchMarkdown(document, controller.signal, notify);
+    const temporary = `${path}.tmp`;
+    await writeFile(temporary, "# Updated");
+    await delay();
+    expect(notify).not.toHaveBeenCalled();
+    await rename(temporary, path);
+    await vi.waitFor(() => expect(notify).toHaveBeenCalledTimes(1), {
+      timeout: 2500,
+    });
+    // A file event only notifies: it never bypasses the normal sync API path.
+    expect(request).toHaveBeenCalledTimes(1);
+    controller.abort();
+    await writeFile(path, "# After leaving the tab");
+    await writeFile(join(library, "unrelated.md"), "unrelated");
+    await delay();
+    expect(notify).toHaveBeenCalledTimes(1);
+  } finally {
+    controller.abort();
+  }
 });

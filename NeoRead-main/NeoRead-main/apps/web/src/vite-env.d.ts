@@ -64,6 +64,7 @@ interface Window {
     syncSourceFile?: (
       id: string,
     ) => Promise<import("../../desktop/main/document-import").SourceSyncResult>;
+    onMarkdownFileChanged?: (id: string, callback: () => void) => () => void;
     importLargePapers: (
       ids: string[],
       library: "books" | "papers",

@@ -322,6 +322,11 @@ function windowBackground(appearance: unknown, palettes: unknown) {
 let documentImport:
   | { url: string; service: ReturnType<typeof createLocalDocumentImport> }
   | undefined;
+let markdownWatch: { key: number; controller: AbortController } | undefined;
+function closeMarkdownWatch() {
+  markdownWatch?.controller.abort();
+  markdownWatch = undefined;
+}
 function localDocumentImport() {
   if (quitting || !activeLibrary || !serverURL || recoveryServer)
     throw new Error("书库尚未就绪，请稍后重试。");
@@ -846,7 +851,10 @@ app
           code,
         }),
       );
+      window.webContents.on("did-navigate", closeMarkdownWatch);
+      window.webContents.on("render-process-gone", closeMarkdownWatch);
       window.once("closed", () => {
+        closeMarkdownWatch();
         window = undefined;
         updateService?.stop();
         updateService = undefined;
@@ -1639,6 +1647,47 @@ app
       )
         throw new Error("Invalid sender or document");
       return localDocumentImport().sync(id);
+    });
+    ipcMain.on("neoread:watch-markdown", (event, key: unknown, id: unknown) => {
+      const sender = window?.webContents;
+      if (
+        !sender ||
+        event.sender !== sender ||
+        event.senderFrame !== sender.mainFrame ||
+        typeof key !== "number" ||
+        !Number.isSafeInteger(key) ||
+        key < 1
+      )
+        return;
+      if (id === null) {
+        if (markdownWatch?.key === key) closeMarkdownWatch();
+        return;
+      }
+      if (
+        typeof id !== "string" ||
+        !/^[a-f0-9]{32}$/.test(id) ||
+        quitting ||
+        !activeLibrary ||
+        !serverURL ||
+        recoveryServer
+      )
+        return;
+      closeMarkdownWatch();
+      const controller = new AbortController();
+      markdownWatch = { key, controller };
+      const url = serverURL;
+      const library = activeLibrary;
+      const frame = sender.mainFrame;
+      void localDocumentImport().watchMarkdown(id, controller.signal, () => {
+        if (
+          !quitting &&
+          url === serverURL &&
+          library === activeLibrary &&
+          !sender.isDestroyed() &&
+          sender.mainFrame === frame
+        )
+          sender.send("neoread:markdown-changed", key);
+      });
     });
     ipcMain.handle(
       "neoread:import-large",
