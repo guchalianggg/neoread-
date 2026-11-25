@@ -340,13 +340,18 @@ func runSourcePandoc(ctx context.Context, work, from, to string, input []byte, f
 	return out.Bytes(), nil
 }
 
+// Only produced locally by sanitizeWordAST, never supplied by a client or stored.
+type sanitizedWordAST []byte
+
 // Strip all links/images/raw HTML before any writer runs. Unlike regex-based
 // Markdown filtering this handles references, nested syntax and DOCX hyperlinks.
-func sanitizeWordAST(raw []byte) ([]byte, error) {
-	var ast any
-	if err := json.Unmarshal(raw, &ast); err != nil {
+func sanitizeWordAST(raw []byte) (sanitizedWordAST, error) {
+	var ast map[string]any
+	if err := json.Unmarshal(raw, &ast); err != nil || ast == nil {
 		return nil, sourceError("corrupt", "Word 中间格式无效")
 	}
+	// Export the document body, not imported author/title/custom metadata.
+	ast["meta"] = map[string]any{}
 	var walk func(any) any
 	walk = func(v any) any {
 		switch x := v.(type) {
@@ -405,12 +410,15 @@ func sanitizeWordAST(raw []byte) ([]byte, error) {
 	}
 	return json.Marshal(walk(ast))
 }
-func normalizeWordMarkdown(ctx context.Context, work, text string) (string, []byte, error) {
-	ast, err := runSourcePandoc(ctx, work, "gfm", "json", []byte(text), "")
+
+// Produce both forms in one pass so rendering a reading copy and writing its
+// DOCX do not require reparsing the generated Markdown.
+func readWordBody(ctx context.Context, work, from string, input []byte, filename string) (string, sanitizedWordAST, error) {
+	raw, err := runSourcePandoc(ctx, work, from, "json", input, filename)
 	if err != nil {
 		return "", nil, err
 	}
-	ast, err = sanitizeWordAST(ast)
+	ast, err := sanitizeWordAST(raw)
 	if err != nil {
 		return "", nil, err
 	}
@@ -423,15 +431,18 @@ func normalizeWordMarkdown(ctx context.Context, work, text string) (string, []by
 	}
 	return string(md), ast, nil
 }
-func writeWordFile(ctx context.Context, text, path string) (string, error) {
+func writeWordFile(ctx context.Context, text, path string, ast sanitizedWordAST) (string, error) {
 	work, err := os.MkdirTemp("", "neoread-word-*")
 	if err != nil {
 		return "", err
 	}
 	defer os.RemoveAll(work)
-	canonical, ast, err := normalizeWordMarkdown(ctx, work, text)
-	if err != nil {
-		return "", err
+	canonical := text
+	if ast == nil {
+		canonical, ast, err = readWordBody(ctx, work, "gfm", []byte(text), "")
+		if err != nil {
+			return "", err
+		}
 	}
 	data, err := runSourcePandoc(ctx, work, "json", "docx", ast, "")
 	if err != nil {
@@ -446,13 +457,17 @@ func writeWordFile(ctx context.Context, text, path string) (string, error) {
 	return canonical, validateDOCX(ctx, path)
 }
 func markdownToDOCX(ctx context.Context, text, path string) error {
-	_, err := writeWordFile(ctx, text, path)
+	_, err := writeWordFile(ctx, text, path, nil)
 	return err
 }
 func wordMarkdown(ctx context.Context, source, kind string) (string, error) {
+	text, _, err := readWordSource(ctx, source, kind)
+	return text, err
+}
+func readWordSource(ctx context.Context, source, kind string) (string, sanitizedWordAST, error) {
 	work, err := os.MkdirTemp("", "neoread-word-*")
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 	defer os.RemoveAll(work)
 	if kind == "doc" {
@@ -460,37 +475,22 @@ func wordMarkdown(ctx context.Context, source, kind string) (string, error) {
 		// Word receives a private copy, not the attachment itself.
 		data, e := readSourceBounded(ctx, source, sourceResourceLimit)
 		if e != nil {
-			return "", e
+			return "", nil, e
 		}
 		copyPath := filepath.Join(work, "input.doc")
 		if e = os.WriteFile(copyPath, data, 0600); e != nil {
-			return "", e
+			return "", nil, e
 		}
 		if err = convertLegacyDOC(ctx, copyPath, converted, work); err != nil {
-			return "", err
+			return "", nil, err
 		}
 		source = converted
 	}
 	input := filepath.Join(work, "safe.docx")
 	if err = safeWordPackage(ctx, source, input); err != nil {
-		return "", err
+		return "", nil, err
 	}
-	ast, err := runSourcePandoc(ctx, work, "docx", "json", nil, input)
-	if err != nil {
-		return "", err
-	}
-	ast, err = sanitizeWordAST(ast)
-	if err != nil {
-		return "", err
-	}
-	data, err := runSourcePandoc(ctx, work, "json", "gfm-raw_html", ast, "")
-	if err != nil {
-		return "", err
-	}
-	if len(data) > sourceEditTextLimit {
-		return "", sourceError("limit", "Word 正文超过 8 MiB 编辑上限")
-	}
-	return string(data), nil
+	return readWordBody(ctx, work, "docx", nil, input)
 }
 func wordChapters(ctx context.Context, source, kind, title string) ([]sourceChapter, []sourceTOC, error) {
 	text, err := wordMarkdown(ctx, source, kind)

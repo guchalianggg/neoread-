@@ -290,6 +290,13 @@ func TestSourceSyncDOCX(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// Measure the sync itself, not fixture creation or initial import.
+	logDir := t.TempDir()
+	logs, err := diagnostics.New(logDir, "docx-sync")
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.SetDiagnostics(logs)
 	expectSourceSyncRevision(t, sourceSyncRequest(t, s, d.ID, bytes.NewReader(updated)), 2)
 	expectSourceSyncRevision(t, sourceSyncRequest(t, s, d.ID, bytes.NewReader(updated)), 0)
 	if w := sourceSyncRequest(t, s, d.ID, strings.NewReader("not a valid DOCX")); w.Code != 400 {
@@ -297,5 +304,47 @@ func TestSourceSyncDOCX(t *testing.T) {
 	}
 	if snap := editableSnapshot(t, s, d.ID); snap.Revision != 2 || snap.Content == nil || !strings.Contains(*snap.Content, "WordSyncUpdated") {
 		t.Fatal(snap)
+	}
+	export := request(t, s, "GET", "/api/documents/"+d.ID+"/source-edit/file", nil)
+	if export.Code != http.StatusOK {
+		t.Fatal(export.Code)
+	}
+	body := sourceTestZIP(t, export.Body.Bytes())["word/document.xml"]
+	if !strings.Contains(body, "WordSyncUpdated") || !strings.Contains(body, "Changed text") || strings.Contains(body, "WordOriginal") {
+		t.Fatal("DOCX download did not match the synchronized revision")
+	}
+	files, err := filepath.Glob(filepath.Join(logDir, "*.jsonl"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var stages []string
+	for _, file := range files {
+		data, err := os.ReadFile(file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, line := range bytes.Split(bytes.TrimSpace(data), []byte{'\n'}) {
+			var e struct{ Event, Phase, Tool string }
+			if err := json.Unmarshal(line, &e); err != nil {
+				t.Fatal(err)
+			}
+			if e.Event == "document.source_process.start" && e.Tool == "pandoc" {
+				stages = append(stages, e.Phase)
+			}
+		}
+	}
+	if got := strings.Join(stages, ","); got != "docx_to_json,json_to_gfm-raw_html,json_to_docx" {
+		t.Fatalf("unexpected sync conversion stages: %s", got)
+	}
+}
+
+func TestWordIntermediateOmitsSourceMetadata(t *testing.T) {
+	raw := []byte(`{"pandoc-api-version":[1,23],"meta":{"author":{"t":"MetaString","c":"private-author"}},"blocks":[{"t":"Para","c":[{"t":"Str","c":"visible-body"}]}]}`)
+	clean, err := sanitizeWordAST(raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if bytes.Contains(clean, []byte("private-author")) || !bytes.Contains(clean, []byte("visible-body")) {
+		t.Fatal("working copy must contain body, not imported document properties")
 	}
 }

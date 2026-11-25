@@ -181,7 +181,7 @@ func sourceSheetChapters(ctx context.Context, sheets []sourceEditSheet, allowEmp
 	return chapters, nil
 }
 
-func writeEditableFile(ctx context.Context, path string, snap sourceEditSnapshot) error {
+func writeEditableFile(ctx context.Context, path string, snap sourceEditSnapshot, ast sanitizedWordAST) error {
 	if err := validateSourceSnapshot(ctx, snap); err != nil {
 		return err
 	}
@@ -189,7 +189,7 @@ func writeEditableFile(ctx context.Context, path string, snap sourceEditSnapshot
 	case "md", "markdown":
 		return os.WriteFile(path, []byte(*snap.Content), 0600)
 	case "doc", "docx":
-		canonical, err := writeWordFile(ctx, *snap.Content, path)
+		canonical, err := writeWordFile(ctx, *snap.Content, path, ast)
 		if err == nil {
 			*snap.Content = canonical
 		}
@@ -236,7 +236,7 @@ func writeEditableFile(ctx context.Context, path string, snap sourceEditSnapshot
 // Build a new immutable generation completely before publishing its DB pointer.
 // Old generations remain available to readers until document purge. A crash
 // before commit can leave an unreferenced generation, never a partial saved draft.
-func (s *Server) prepareSourceVersion(ctx context.Context, d Document, snap sourceEditSnapshot, reading bool) (version string, texts map[string]string, err error) {
+func (s *Server) prepareSourceVersion(ctx context.Context, d Document, snap sourceEditSnapshot, reading bool, ast sanitizedWordAST) (version string, texts map[string]string, err error) {
 	ctx = s.sourceDiagnosticContext(ctx)
 	version = id()
 	dir := s.Store.sourceVersionDir(d.ID, version)
@@ -249,7 +249,7 @@ func (s *Server) prepareSourceVersion(ctx context.Context, d Document, snap sour
 		}
 	}()
 	path := filepath.Join(dir, "source."+sourceEditExtension(snap.Kind))
-	if err = writeEditableFile(ctx, path, snap); err != nil {
+	if err = writeEditableFile(ctx, path, snap, ast); err != nil {
 		return
 	}
 	if reading {
@@ -363,6 +363,7 @@ func (s *Server) sourceSnapshot(ctx context.Context, d Document) (snap sourceEdi
 	}
 	snap = initialSourceEditSnapshot(d, filename)
 	original := filepath.Join(s.Store.Root, "attachments", hash)
+	var ast sanitizedWordAST
 	switch snap.Kind {
 	case "md", "markdown":
 		var data []byte
@@ -373,7 +374,7 @@ func (s *Server) sourceSnapshot(ctx context.Context, d Document) (snap sourceEdi
 		}
 	case "doc", "docx":
 		var text string
-		text, err = wordMarkdown(ctx, original, snap.Kind)
+		text, ast, err = readWordSource(ctx, original, snap.Kind)
 		if err == nil {
 			snap.Content = &text
 		}
@@ -388,7 +389,7 @@ func (s *Server) sourceSnapshot(ctx context.Context, d Document) (snap sourceEdi
 		return
 	}
 	var version string
-	version, _, err = s.prepareSourceVersion(ctx, d, snap, false)
+	version, _, err = s.prepareSourceVersion(ctx, d, snap, false, ast)
 	if err != nil {
 		return
 	}
@@ -562,7 +563,7 @@ func (s *Server) putSourceEdit(w http.ResponseWriter, r *http.Request) {
 		reject(err)
 		return
 	}
-	version, texts, err := s.prepareSourceVersion(r.Context(), d, next, true)
+	version, texts, err := s.prepareSourceVersion(r.Context(), d, next, true, nil)
 	if err != nil {
 		reject(err)
 		return

@@ -155,14 +155,14 @@ WHERE a.document_id=? AND a.kind='file' AND substr(a.sha256,1,32)=a.document_id 
 
 	setPhase("prepare")
 	s.diagnosticEvent(slog.LevelInfo, "document.source_sync.start", "requestId", requestID(ctx), "phase", "prepare", "format", current.SourceFormat)
-	text, err := sourceSyncText(s.sourceDiagnosticContext(ctx), current.SourceFormat, data)
+	text, ast, err := sourceSyncText(s.sourceDiagnosticContext(ctx), current.SourceFormat, data)
 	if err != nil {
 		return 0, err
 	}
 	next := initialSourceEditSnapshot(current, filename)
 	next.Revision = lastRevision + 1
 	next.Content = &text
-	version, texts, err := s.prepareSourceVersion(ctx, current, next, true)
+	version, texts, err := s.prepareSourceVersion(ctx, current, next, true, ast)
 	if err != nil {
 		return 0, err
 	}
@@ -173,20 +173,20 @@ WHERE a.document_id=? AND a.kind='file' AND substr(a.sha256,1,32)=a.document_id 
 	return next.Revision, nil
 }
 
-func sourceSyncText(ctx context.Context, kind string, data []byte) (string, error) {
+func sourceSyncText(ctx context.Context, kind string, data []byte) (string, sanitizedWordAST, error) {
 	if kind == "md" || kind == "markdown" {
-		return strings.TrimPrefix(string(data), "\ufeff"), nil
+		return strings.TrimPrefix(string(data), "\ufeff"), nil, nil
 	}
 	// Extensions come only from the stored original. Never use a caller path
 	// (or the original attachment) as converter input or output.
 	work, err := os.MkdirTemp("", "neoread-source-sync-*")
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 	defer os.RemoveAll(work)
 	input := filepath.Join(work, "input."+kind)
 	if err := os.WriteFile(input, data, 0600); err != nil {
-		return "", err
+		return "", nil, err
 	}
-	return wordMarkdown(ctx, input, kind)
+	return readWordSource(ctx, input, kind)
 }
