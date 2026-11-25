@@ -1,7 +1,20 @@
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { api } from "@neoread/api";
 import type { Document } from "@neoread/core";
 import { Button } from "@neoread/ui/components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@neoread/ui/components/dropdown-menu";
 import {
   ArrowLeft,
   BookOpen,
@@ -15,7 +28,8 @@ import { SourceDocumentReader } from "./SourceDocumentReader";
 import { EditableSpreadsheet } from "./EditableSpreadsheet";
 import { canRefreshSourceEdit, getSourceEditStore } from "./source-edit-state";
 import { useLinkedSourceSync } from "./use-linked-source-sync";
-import { downloadBlob } from "./download";
+import { downloadBlob, exportCancelled, fileTitle } from "./download";
+import { exportMarkdownFile, type ExportFormat } from "./document-export";
 import { reportDiagnostic } from "./diagnostics";
 import "./source-document-editor.css";
 
@@ -28,6 +42,18 @@ export type SourceDocumentEditorProps = {
 
 export function sourceEditDownloadName(filename: string): string {
   return filename.replace(/\.xls$/i, ".xlsx").replace(/\.doc$/i, ".docx");
+}
+
+function markdownCopyName(filename: string): string {
+  const stem = fileTitle(
+    filename
+      .trim()
+      .replace(/\.(?:md|markdown)$/i, "")
+      .replace(/\p{Cc}/gu, "-"),
+  ).replace(/[. ]+$/, "");
+  // Windows reserves device names even when followed by a dot and extension.
+  const reserved = /^(?:con|prn|aux|nul|com[1-9¹²³]|lpt[1-9¹²³])(?:\.|$)/i;
+  return `${reserved.test(stem) ? "_" : ""}${stem || "Markdown"}-副本`;
 }
 
 const linkedSourceStatus = {
@@ -60,12 +86,16 @@ function SourceDocumentEditorSession({
   const [downloadError, setDownloadError] = useState("");
   const [editing, setEditing] = useState(false);
   const [readingBody, setReadingBody] = useState("");
+  const markdownExport = useRef<AbortController | null>(null);
+  const exportHintId = useId();
   const snapshot = state.snapshot;
   const disabled = !snapshot || state.loading || downloading;
   useEffect(() => {
     void store.load();
     return store.registerCloseGuard();
   }, [store]);
+  // Closing or switching tabs abandons preparation/printing for this tab.
+  useEffect(() => () => markdownExport.current?.abort(), [active]);
   useEffect(() => {
     if (!active) return;
     const save = (event: KeyboardEvent) => {
@@ -139,6 +169,55 @@ function SourceDocumentEditorSession({
   const canCheckLinkedSource =
     linkedSourceView && !downloading && canRefreshSourceEdit(state);
   const linkedSync = useLinkedSourceSync(doc.id, store, canCheckLinkedSource);
+  const markdown = kind === "md" || kind === "markdown";
+  const exportConflict = state.conflict || linkedSync.status === "conflict";
+  const canExportMarkdown =
+    active && !downloading && !exportConflict && canRefreshSourceEdit(state);
+  const exportHint = exportConflict
+    ? "请先处理冲突再导出。"
+    : state.dirty && !state.saving
+      ? "请先保存修改再导出。"
+      : "";
+  const exportCopy = async (format: ExportFormat) => {
+    if (
+      !canExportMarkdown ||
+      !snapshot ||
+      markdownExport.current ||
+      store.getSnapshot() !== state
+    )
+      return;
+    // Use the committed body from this render, not a new fetch or a draft flush.
+    const controller = new AbortController();
+    markdownExport.current = controller;
+    setDownloading(true);
+    setDownloadError("");
+    try {
+      await exportMarkdownFile(
+        snapshot.content ?? "",
+        markdownCopyName(snapshot.filename),
+        format,
+        controller.signal,
+      );
+    } catch (error) {
+      if (exportCancelled(error, controller.signal)) return;
+      setDownloadError("导出未完成，请重试。");
+      // The shared PDF pipeline already reports its failures.
+      if (format === "markdown") {
+        try {
+          reportDiagnostic({
+            event: "source_edit.markdown_export_failed",
+            level: "error",
+            detail: "markdown_delivery_failed",
+          });
+        } catch {
+          /* Diagnostics cannot block recovery. */
+        }
+      }
+    } finally {
+      markdownExport.current = null;
+      setDownloading(false);
+    }
+  };
   const status = state.loading
     ? "读取中"
     : state.saving
@@ -196,17 +275,52 @@ function SourceDocumentEditorSession({
             {editing ? "返回阅读" : "编辑"}
           </Button>
         )}
-        <Button
-          variant="ghost"
-          size="sm"
-          disabled={disabled || state.saving || state.conflict}
-          onClick={() => {
-            void download();
-          }}
-        >
-          <Download />
-          {downloading ? "下载中" : "下载"}
-        </Button>
+        {markdown ? (
+          active && (
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                disabled={!canExportMarkdown}
+                render={
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    aria-busy={downloading}
+                    aria-describedby={exportHint ? exportHintId : undefined}
+                  />
+                }
+              >
+                <Download />
+                {downloading ? "导出中" : "导出"}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-40">
+                <DropdownMenuItem
+                  disabled={!canExportMarkdown}
+                  onClick={() => void exportCopy("markdown")}
+                >
+                  Markdown (.md)
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  disabled={!canExportMarkdown}
+                  onClick={() => void exportCopy("pdf")}
+                >
+                  {window.neoreadDesktop?.markdownPDF ? "PDF" : "PDF（打印）"}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm"
+            disabled={disabled || state.saving || state.conflict}
+            onClick={() => {
+              void download();
+            }}
+          >
+            <Download />
+            {downloading ? "下载中" : "下载"}
+          </Button>
+        )}
         {onSettings && (
           <Button
             variant="ghost"
@@ -220,6 +334,7 @@ function SourceDocumentEditorSession({
       </header>
       <div className="source-edit-notice">
         <span>编辑副本，原件保留。</span>
+        {markdown && exportHint && <span id={exportHintId}>{exportHint}</span>}
         {word && (
           <span>
             {kind === "doc" ? "DOC 将保存为 DOCX。" : "保存为 DOCX。"}
