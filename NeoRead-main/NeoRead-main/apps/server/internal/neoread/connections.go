@@ -255,11 +255,11 @@ func validateAPIProtocol(protocol string) error {
 }
 func validateAPIURL(raw string) error {
 	u, e := url.Parse(raw)
-	if e != nil || u.Hostname() == "" || u.User != nil || u.RawQuery != "" || u.Fragment != "" {
-		return errors.New("API 地址无效")
+	if e != nil || u.Hostname() == "" || u.Scheme != "https" && u.Scheme != "http" {
+		return errors.New("请输入以 http:// 或 https:// 开头的完整 API Base URL")
 	}
-	if u.Scheme != "https" && u.Scheme != "http" {
-		return errors.New("API 地址需要使用 HTTP 或 HTTPS")
+	if u.User != nil || u.ForceQuery || u.RawQuery != "" || strings.Contains(raw, "#") {
+		return errors.New("API Base URL 不能包含账号密码、查询参数或片段")
 	}
 	return nil
 }

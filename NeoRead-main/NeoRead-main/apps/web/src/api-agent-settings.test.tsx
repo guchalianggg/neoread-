@@ -246,18 +246,26 @@ it("groups proxy settings and log export under diagnostics without a network tab
 });
 // These multi-step integration cases exercise real Base UI controls and both
 // capability checks; 10s is too tight on the shared CI runner.
-it("saves the API endpoint and key, then tests the new connection", async () => {
+it("saves an explicit HTTP Base URL and tests the new connection", async () => {
   await act(async () => root.render(<Settings open onOpenChange={() => {}} />));
   expect(input("Base URL")).toBeNull();
   expect(api.testAI).not.toHaveBeenCalled();
   await openAPI();
   expect(input("Base URL").value).toBe("https://api.deepseek.com");
+  const urlInput = input("Base URL");
+  const help = document.getElementById(
+    urlInput.getAttribute("aria-describedby")!,
+  );
+  expect(help?.textContent).toContain("http:// 或 https://");
+  expect(help?.textContent).toContain("可信局域网");
+  const base = "http://127.0.0.1:1234/gateway/v1";
+  await type("Base URL", ` ${base} `);
   await type("API Key", "sk-test");
   await submit();
   expect(api.saveAIConfig).toHaveBeenLastCalledWith(
     expect.objectContaining({
       api: {
-        url: "https://api.deepseek.com",
+        url: base,
         protocol: "openai",
         model: "",
         key: "sk-test",

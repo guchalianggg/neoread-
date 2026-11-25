@@ -792,11 +792,20 @@ test("Responses preserves SDK context-overflow compaction and recovery", async (
   }
 }, 15000);
 
-test.each(["openai-responses", "openai-completions", "anthropic-messages"])(
-  "%s preserves SDK recovery after a length-limited turn",
-  async (api) => {
+test.each([
+  ["openai-responses", "/responses"],
+  ["openai-completions", "/chat/completions"],
+  ["anthropic-messages", "/messages"],
+])(
+  "%s preserves SDK recovery over HTTP after a length-limited turn",
+  async (api, path) => {
+    const prefix = "/gateway/v1";
     let requests = 0;
     const upstream = createServer(async (req, res) => {
+      if (req.method !== "POST" || req.url !== prefix + path) {
+        res.writeHead(404).end();
+        return;
+      }
       for await (const _chunk of req) {
         /* consume */
       }
@@ -884,9 +893,10 @@ test.each(["openai-responses", "openai-completions", "anthropic-messages"])(
     );
     try {
       const input = responsesInput(
-        `http://127.0.0.1:${(upstream.address() as { port: number }).port}/v1`,
+        `http://127.0.0.1:${(upstream.address() as { port: number }).port}${prefix}`,
       );
       input.model.api = api;
+      input.endpoint = input.model.baseUrl + path;
       const result = await responseWorker(input);
       expect(result.code).toBe(0);
       expect(requests).toBe(2);

@@ -238,9 +238,9 @@ func TestAPIAgentConfigKeepsKeyPrivate(t *testing.T) {
 	if w := request(t, s, "PUT", "/api/ai/config", strings.NewReader(changed)); w.Code != 200 || capable(s.aiConfig(), "api:deepseek-flash", false) {
 		t.Fatal("capability survived a key change")
 	}
-	insecure := strings.Replace(body, "https://api.deepseek.com", "http://api.deepseek.com", 1)
-	if w := request(t, s, "PUT", "/api/ai/config", strings.NewReader(insecure)); w.Code != 400 {
-		t.Fatal("plain HTTP to a remote API was accepted")
+	invalid := strings.Replace(body, "https://api.deepseek.com", "ftp://api.deepseek.com", 1)
+	if w := request(t, s, "PUT", "/api/ai/config", strings.NewReader(invalid)); w.Code != 400 {
+		t.Fatal("non-HTTP(S) API was accepted")
 	}
 	w := request(t, s, "GET", "/api/providers?auth=skip", nil)
 	if !strings.Contains(w.Body.String(), `{"id":"api","installed":true,"authenticated":true,"status":"已配置"}`) {

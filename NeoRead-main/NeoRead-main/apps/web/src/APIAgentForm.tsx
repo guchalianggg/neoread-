@@ -84,12 +84,25 @@ export function APIAgentForm({
       <Input
         id={`${id}-url`}
         aria-label="Base URL"
+        aria-describedby={`${id}-url-help`}
+        inputMode="url"
+        placeholder="http://127.0.0.1:1234/v1"
+        autoCapitalize="none"
+        autoCorrect="off"
         autoComplete="off"
         spellCheck={false}
         value={url}
         disabled={disabled || saving}
         onChange={(event) => setURL(event.target.value)}
       />
+      <p
+        id={`${id}-url-help`}
+        className="col-start-2 text-xs text-muted-foreground"
+      >
+        请填写带 http:// 或 https:// 的服务基础地址，保留服务所需的路径（如
+        /v1），不要加 /models 或模型调用路径。HTTP
+        不加密，仅用于本机或可信局域网；公网请用 HTTPS。
+      </p>
       <span id={`${id}-protocol`} className="text-sm">
         API 格式
       </span>
