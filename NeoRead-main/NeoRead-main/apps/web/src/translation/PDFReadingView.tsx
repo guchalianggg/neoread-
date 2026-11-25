@@ -1,11 +1,7 @@
 import { figureTarget } from "../readers/figure-references";
 import { readerLayout, updateReaderLayout } from "../neoread-layout";
 import { pdfFocusWidth, pdfTranslationColumn } from "./pdf-column";
-import {
-  columnBands,
-  pageColumns,
-  type TranslationBand,
-} from "../readers/pdf-columns";
+import { columnBands, pageColumns } from "../readers/pdf-columns";
 import {
   useEffect,
   useLayoutEffect,
@@ -159,6 +155,7 @@ export function PDFReadingView({
     control = useRef(new ReadingSync()),
     side = useRef<"source" | "translation">("source"),
     reading = useRef<PDFReadingAnchor | undefined>(undefined);
+  const pageOnlyReading = useRef<number | undefined>(undefined);
   const reflowReading = useRef<PDFReadingAnchor | undefined>(
     doc.progress?.type === "pdf" &&
       (doc.progress.reflowPosition?.blockId ?? doc.progress.reflowBlockId)
@@ -189,6 +186,7 @@ export function PDFReadingView({
   };
   useEffect(() => () => clearTimeout(pageTimer.current), []);
   const recordReading = (anchor: PDFReadingAnchor) => {
+    if (!state.current.reflow) pageOnlyReading.current = undefined;
     const block = state.current?.blocks.find((b) => b.id === anchor.blockId);
     if (block) driftPage(block.page);
     reading.current = anchor;
@@ -289,38 +287,31 @@ export function PDFReadingView({
     () => (mirrorColumns ? pageColumns(blocks) : undefined),
     [blocks, mirrorColumns],
   );
-  const translationSegments = useMemo(() => {
-    if (!columnLayouts) return undefined;
-    const raw: (
-      | { kind: "block"; block: PDFBlock }
-      | { kind: "page"; page: number; blocks: PDFBlock[] }
-    )[] = [];
-    let open: { kind: "page"; page: number; blocks: PDFBlock[] } | undefined;
+  const pageCount =
+    engine?.getPageCount?.() ||
+    blocks.reduce((count, block) => Math.max(count, block.page), 1);
+  const translationPages = useMemo(() => {
+    if (reflow) return undefined;
+    const grouped = new Map<number, PDFBlock[]>();
     for (const block of visibleBlocks) {
-      if (columnLayouts.get(block.page)?.columns === 2) {
-        if (!open || open.page !== block.page) {
-          open = { kind: "page", page: block.page, blocks: [] };
-          raw.push(open);
-        }
-        open.blocks.push(block);
-        continue;
-      }
-      open = undefined;
-      raw.push({ kind: "block", block });
+      const page = grouped.get(block.page) ?? [];
+      page.push(block);
+      grouped.set(block.page, page);
     }
-    return raw.map((segment) =>
-      segment.kind === "page"
-        ? {
-            kind: "page" as const,
-            page: segment.page,
-            bands: columnBands(
-              segment.blocks,
-              columnLayouts.get(segment.page),
-            ),
-          }
-        : segment,
-    );
-  }, [columnLayouts, visibleBlocks]);
+    const parsedPages = new Set(blocks.map((block) => block.page));
+    return Array.from({ length: pageCount }, (_, index) => {
+      const page = index + 1;
+      const pageBlocks = grouped.get(page) ?? [];
+      const layout = columnLayouts?.get(page);
+      return {
+        page,
+        blocks: pageBlocks,
+        parsed: parsedPages.has(page),
+        bands:
+          layout?.columns === 2 ? columnBands(pageBlocks, layout) : undefined,
+      };
+    });
+  }, [blocks, columnLayouts, pageCount, reflow, visibleBlocks]);
   const [pageWidth, setPageWidth] = useState<number>();
   useEffect(() => {
     let current = true;
@@ -365,6 +356,23 @@ export function PDFReadingView({
     Array.from(
       pane.current?.querySelectorAll<HTMLElement>(blockSelector) ?? [],
     ).find((n) => nodeBlockId(n) === id);
+  const translationPageNode = (page: number) =>
+    pane.current?.querySelector<HTMLElement>(
+      `[data-translation-page="${page}"]`,
+    );
+  const followTranslationPage = (page: number) => {
+    const host = pane.current;
+    const target = translationPageNode(page);
+    if (!host || !target) return;
+    const bounds = target.getBoundingClientRect();
+    if (!bounds.height) return;
+    cancelTranslationMotion();
+    control.current.following("translation");
+    host.scrollTop = Math.max(
+      0,
+      host.scrollTop + bounds.top - host.getBoundingClientRect().top - 12,
+    );
+  };
   const followTranslation = (
     anchor: PDFReadingAnchor,
     sentenceIndex?: number,
@@ -533,8 +541,13 @@ export function PDFReadingView({
         reflow
           ? { type: "pdf", page: block.page, reflowBlockId: block.id }
           : location,
-        block.page / Math.max(1, ...state.current.blocks.map((b) => b.page)),
+        block.page / pageCount,
       );
+    } else if (!reflow) {
+      reading.current = originalReading.current = undefined;
+      pageOnlyReading.current = location.page;
+      followTranslationPage(location.page);
+      state.current.events.location(location, location.page / pageCount);
     }
   };
   const focus = async (location: DocumentLocation) => {
@@ -679,19 +692,27 @@ export function PDFReadingView({
           return (l: DocumentLocation) => actions.current.focus(l);
         if (key === "next" || key === "previous")
           return () => {
-            if (!state.current.blocks.length)
+            if (!state.current.blocks.length && state.current.mode === "source")
               return state.current.reflow ? Promise.resolve() : target[key]();
             const block = state.current.blocks.find(
               (b) => b.id === reading.current?.blockId,
             );
             const current =
               block?.page ??
+              (state.current.reflow ? undefined : pageOnlyReading.current) ??
               (state.current.reflow
                 ? 1
                 : (target.getLocation() as { page: number }).page);
             return actions.current.go({
               type: "pdf",
-              page: Math.max(1, current + (key === "next" ? 1 : -1)),
+              page: Math.min(
+                target.getPageCount?.() ||
+                  state.current.blocks.reduce(
+                    (count, item) => Math.max(count, item.page),
+                    1,
+                  ),
+                Math.max(1, current + (key === "next" ? 1 : -1)),
+              ),
             });
           };
         if (
@@ -699,6 +720,8 @@ export function PDFReadingView({
           (state.current.mode === "translation" || state.current.reflow)
         )
           return () => {
+            if (!state.current.reflow && pageOnlyReading.current !== undefined)
+              return { type: "pdf", page: pageOnlyReading.current };
             const block = state.current.blocks.find(
               (b) => b.id === reading.current?.blockId,
             );
@@ -776,6 +799,9 @@ export function PDFReadingView({
     window.getSelection()?.removeAllRanges();
     void engine.focusSentences?.("", []);
     const anchor = reflow ? reflowReading.current : originalReading.current;
+    const location = engine.getLocation();
+    const fallbackPage =
+      pageOnlyReading.current ?? (location.type === "pdf" ? location.page : 1);
     if (!reflow) reading.current = anchor;
     const operation = explicitFocus.current.operation;
     const restore = async () => {
@@ -792,7 +818,10 @@ export function PDFReadingView({
         if (mode !== "translation" && anchor && syncEnabledRef.current)
           await engine.followBlock?.(anchor);
       }
-      if (!cancelled && mode !== "source" && anchor) followTranslation(anchor);
+      if (!cancelled && mode !== "source") {
+        if (anchor) followTranslation(anchor);
+        else followTranslationPage(fallbackPage);
+      }
     };
     const apply = () =>
       void restore().catch((e) => {
@@ -909,11 +938,38 @@ export function PDFReadingView({
         return;
       const v = pane.current.getBoundingClientRect(),
         y = v.top + v.height * 0.5;
-      const nodes = Array.from(
-        pane.current.querySelectorAll<HTMLElement>(blockSelector),
-      );
-      const node = nodes.find((n) => n.getBoundingClientRect().bottom > y);
-      if (!node) return;
+      const host = pane.current;
+      const page = reflow
+        ? undefined
+        : [
+            ...host.querySelectorAll<HTMLElement>("[data-translation-page]"),
+          ].find((element) => {
+            const bounds = element.getBoundingClientRect();
+            return bounds.top <= y && bounds.bottom > y;
+          });
+      const nodes = [
+        ...(page ?? host).querySelectorAll<HTMLElement>(blockSelector),
+      ];
+      const node =
+        nodes.find((n) => n.getBoundingClientRect().bottom > y) ??
+        (page ? nodes.at(-1) : undefined);
+      if (!node) {
+        if (!page) return;
+        const number = Number(page.dataset.translationPage);
+        if (pageOnlyReading.current === number) return;
+        pageOnlyReading.current = number;
+        reading.current = originalReading.current = undefined;
+        driftPage(number);
+        const location = { type: "pdf" as const, page: number };
+        events.location(location, number / pageCount);
+        if (mode === "parallel" && syncEnabledRef.current) {
+          control.current.following("source");
+          void engine
+            ?.goTo(location)
+            .catch((error) => toast.error(error.message));
+        }
+        return;
+      }
       const r = node.getBoundingClientRect(),
         anchor = {
           blockId: nodeBlockId(node)!,
@@ -957,7 +1013,19 @@ export function PDFReadingView({
     input(side.current);
     engine?.cancelBlockFocus?.();
     const anchor = reading.current;
-    if (!enabled || mode !== "parallel" || !anchor) return;
+    if (!enabled || mode !== "parallel") return;
+    if (!anchor) {
+      const page = pageOnlyReading.current;
+      if (page === undefined) return;
+      if (side.current === "source") followTranslationPage(page);
+      else {
+        control.current.following("source");
+        void engine
+          ?.goTo({ type: "pdf", page })
+          .catch((error) => toast.error(error.message));
+      }
+      return;
+    }
     if (side.current === "source") {
       void followTranslation(anchor, undefined, { smooth: true });
     } else {
@@ -986,8 +1054,6 @@ export function PDFReadingView({
     </Tooltip>
   );
   const book = doc.library === "books";
-  const pageCount =
-    engine?.getPageCount?.() || Math.max(1, ...blocks.map((b) => b.page));
   const bookChapter = useMemo(
     () =>
       book
@@ -1057,9 +1123,7 @@ export function PDFReadingView({
     const translated = byId.get(block.id),
       noteIndexes = annotations.flatMap((a) => {
         const mark =
-          a.location.type === "pdf"
-            ? a.location.translation
-            : undefined;
+          a.location.type === "pdf" ? a.location.translation : undefined;
         return mark
           ? (mark.ranges ?? [mark])
               .filter(
@@ -1073,9 +1137,7 @@ export function PDFReadingView({
     const text = (
       <TranslationText
         block={block}
-        onCitation={(blockId, label) =>
-          void visitCitation(blockId, label)
-        }
+        onCitation={(blockId, label) => void visitCitation(blockId, label)}
         formulaNumber={equationNumbers.byFormula.get(block.id)}
         translation={translated}
         documentId={doc.id}
@@ -1099,12 +1161,8 @@ export function PDFReadingView({
           data-reflow-block={block.id}
           data-block-kind={block.image ? "image" : "text"}
           data-label={block.label}
-          data-search-hit={
-            searchBlockIds.includes(block.id) || undefined
-          }
-          className={
-            noteIndexes.length ? "translation-annotated" : ""
-          }
+          data-search-hit={searchBlockIds.includes(block.id) || undefined}
+          className={noteIndexes.length ? "translation-annotated" : ""}
         >
           {showsOriginal(block) ? (
             <div data-translation-block={block.id}>{text}</div>
@@ -1135,9 +1193,7 @@ export function PDFReadingView({
         data-label={block.label}
         data-hovered={hoveredBlock === block.id || undefined}
         data-focused={focusedBlock === block.id || undefined}
-        data-search-hit={
-          searchBlockIds.includes(block.id) || undefined
-        }
+        data-search-hit={searchBlockIds.includes(block.id) || undefined}
         aria-current={focusedBlock === block.id || undefined}
         tabIndex={0}
         onClick={(event) => {
@@ -1181,9 +1237,7 @@ export function PDFReadingView({
             hover("translation", block.id);
         }}
         onPointerLeave={() => hover("translation")}
-        className={
-          noteIndexes.length ? "translation-annotated" : ""
-        }
+        className={noteIndexes.length ? "translation-annotated" : ""}
       >
         {text}
         {indicator}
@@ -1249,6 +1303,23 @@ export function PDFReadingView({
                     !state.current.blocks.some((b) => b.page === location.page)
                   )
                     driftPage(location.page);
+                  if (
+                    location.type === "pdf" &&
+                    !state.current.reflow &&
+                    state.current.mode !== "translation" &&
+                    control.current.canFollow("source") &&
+                    !selecting.current &&
+                    !explicitFocus.current.moving &&
+                    !visibleBlocks.some((block) => block.page === location.page)
+                  ) {
+                    reading.current = originalReading.current = undefined;
+                    pageOnlyReading.current = location.page;
+                    if (
+                      state.current.mode === "parallel" &&
+                      syncEnabledRef.current
+                    )
+                      followTranslationPage(location.page);
+                  }
                   if (
                     state.current.mode !== "translation" &&
                     !state.current.reflow &&
@@ -1395,44 +1466,56 @@ export function PDFReadingView({
               }}
             >
               {error && <p role="alert">{error}</p>}
-              {!visibleBlocks.length && (
+              {reflow && !visibleBlocks.length && (
                 <p role="status">
                   {doc.library === "books" && !reflow
                     ? "尚未翻译任何章节，可在工具栏翻译本章。"
                     : "正文仍在解析中，完成的段落会在这里显示。"}
                 </p>
               )}
-              {translationSegments
-                ? translationSegments.map((segment) =>
-                    segment.kind === "block" ? (
-                      renderBlock(segment.block)
-                    ) : (
-                      <div
-                        key={`page-${segment.page}`}
-                        className="translation-page"
-                        data-columns="2"
-                      >
-                        {segment.bands.map((band, bandIndex) =>
-                          band.kind === "span" ? (
-                            renderBlock(band.block!)
-                          ) : (
-                            <div
-                              key={`band-${bandIndex}`}
-                              className="translation-columns"
-                            >
-                              <div className="translation-column">
-                                {band.left!.map(renderBlock)}
+              {translationPages
+                ? translationPages.map((segment) => (
+                    <article
+                      key={segment.page}
+                      className="translation-page"
+                      data-translation-page={segment.page}
+                      data-columns={segment.bands ? "2" : "1"}
+                      aria-label={`译文第 ${segment.page} 页`}
+                    >
+                      <header className="translation-page-number">
+                        第 {segment.page} 页
+                      </header>
+                      {segment.bands
+                        ? segment.bands.map((band, bandIndex) =>
+                            band.kind === "span" ? (
+                              renderBlock(band.block!)
+                            ) : (
+                              <div
+                                key={`band-${bandIndex}`}
+                                className="translation-columns"
+                              >
+                                <div className="translation-column">
+                                  {band.left!.map(renderBlock)}
+                                </div>
+                                <div className="translation-column">
+                                  {band.right!.map(renderBlock)}
+                                </div>
                               </div>
-                              <div className="translation-column">
-                                {band.right!.map(renderBlock)}
-                              </div>
-                            </div>
-                          ),
-                        )}
-                      </div>
-                    ),
-                  )
-                : visibleBlocks.map((block) => renderBlock(block))}
+                            ),
+                          )
+                        : segment.blocks.map(renderBlock)}
+                      {!segment.blocks.length && (
+                        <p className="translation-page-placeholder">
+                          {segment.parsed
+                            ? "本页没有可显示的译文内容。"
+                            : book
+                              ? "本页尚无译文，可在工具栏翻译本章。"
+                              : "本页尚无可显示的译文。"}
+                        </p>
+                      )}
+                    </article>
+                  ))
+                : visibleBlocks.map(renderBlock)}
             </div>
           )
         }

@@ -1603,25 +1603,100 @@ it("mirrors two-column pages as banded left and right flows", async () => {
       `.translation-columns [data-translation-block="p1-title"]`,
     ),
   ).toBeNull();
-  expect(page!.querySelector('[data-translation-block="p1-title"]')).toBeTruthy();
+  expect(
+    page!.querySelector('[data-translation-block="p1-title"]'),
+  ).toBeTruthy();
   // The document order still follows the source reading order.
   expect(
-    [...host.querySelectorAll("[data-translation-block]")].map(
-      (node) => node.getAttribute("data-translation-block"),
+    [...host.querySelectorAll("[data-translation-block]")].map((node) =>
+      node.getAttribute("data-translation-block"),
     ),
   ).toEqual(["p1-b1", "p1-title", "p1-l2", "p1-r1", "p1-r2"]);
 });
 
-it("keeps the translation flat when mirroring is off or pages are single-column", async () => {
+it("keeps numbered pages when mirroring is off and uses a flat flow only for text reflow", async () => {
   await renderView(
     { ...defaultTheme, translationMirrorColumns: false },
     twoColumnBlocks,
   );
   await click("仅译文");
+  const page = host.querySelector('[data-translation-page="1"]')!;
+  expect(page.getAttribute("data-columns")).toBe("1");
+  expect(page.querySelectorAll("[data-translation-block]")).toHaveLength(5);
+  expect(page.querySelector(".translation-columns")).toBeNull();
+  await renderView(reflowed, twoColumnBlocks);
   expect(host.querySelector(".translation-page")).toBeNull();
-  const children = [...host.querySelector(".translation-document")!.children];
-  expect(children.every((node) => node.tagName === "SECTION")).toBe(true);
-  expect(children).toHaveLength(5);
-  await renderView(defaultTheme);
-  expect(host.querySelector(".translation-page")).toBeNull();
+});
+
+it.each(["原文译文", "仅译文"])(
+  "groups nonconsecutive original PDF pages in %s",
+  async (mode) => {
+    await renderView(defaultTheme, [
+      { ...twoColumnBlocks[1], id: "p3-b1", page: 3 },
+    ]);
+    await click(mode);
+    const pages = [
+      ...host.querySelectorAll<HTMLElement>("[data-translation-page]"),
+    ];
+    expect(pages.map((page) => page.dataset.translationPage)).toEqual([
+      "1",
+      "2",
+      "3",
+    ]);
+    expect(pages[0].textContent).toContain("第一句。");
+    expect(pages[1].textContent).toContain("第 2 页");
+    expect(pages[1].querySelector("[data-translation-block]")).toBeNull();
+    expect(
+      pages[2].querySelector('[data-translation-block="p3-b1"]'),
+    ).not.toBeNull();
+  },
+);
+
+it("can navigate through a page that has no translated blocks", async () => {
+  await renderView(defaultTheme, [
+    { ...twoColumnBlocks[1], id: "p3-b1", page: 3 },
+  ]);
+  await click("仅译文");
+  await act(async () => fixture.ready!.goTo({ type: "pdf", page: 2 }));
+  expect(events.location).toHaveBeenLastCalledWith(
+    { type: "pdf", page: 2 },
+    2 / 3,
+  );
+  expect(fixture.ready!.getLocation()).toEqual({ type: "pdf", page: 2 });
+  await act(async () => fixture.ready!.next());
+  expect(events.location).toHaveBeenLastCalledWith({ type: "pdf", page: 3 }, 1);
+});
+
+it("follows the original to the matching placeholder page and back", async () => {
+  await renderView(defaultTheme, [
+    { ...twoColumnBlocks[1], id: "p3-b1", page: 3 },
+  ]);
+  await click("原文译文");
+  const pane = host.querySelector<HTMLElement>(".translation-document")!;
+  const page = pane.querySelector<HTMLElement>('[data-translation-page="2"]')!;
+  vi.spyOn(pane, "getBoundingClientRect").mockReturnValue(
+    new DOMRect(0, 0, 500, 600),
+  );
+  vi.spyOn(page, "getBoundingClientRect").mockImplementation(
+    () => new DOMRect(0, 680 - pane.scrollTop, 500, 650),
+  );
+  await act(async () =>
+    fixture.events!.location({ type: "pdf", page: 2 }, 2 / 3),
+  );
+  expect(pane.scrollTop).toBe(668);
+  await act(async () =>
+    fixture.events!.readingAnchor?.({ blockId: "p3-b1", fraction: 0 }),
+  );
+  vi.mocked(adapter.goTo).mockClear();
+  await act(async () => {
+    pane.dispatchEvent(new Event("wheel", { bubbles: true }));
+    pane.scrollTop = 650;
+    pane.dispatchEvent(new Event("scroll"));
+    await new Promise(requestAnimationFrame);
+  });
+  expect(events.location).toHaveBeenLastCalledWith(
+    { type: "pdf", page: 2 },
+    2 / 3,
+  );
+  expect(adapter.goTo).toHaveBeenCalledWith({ type: "pdf", page: 2 });
 });

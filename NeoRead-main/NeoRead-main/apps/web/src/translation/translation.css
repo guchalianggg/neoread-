@@ -90,6 +90,37 @@
   padding-left: 16px;
   padding-right: 16px;
 }
+.pdf-reading:not([data-reflow]) .translation-document {
+  container-type: inline-size;
+  background: var(--muted);
+}
+.pdf-reading .translation-page {
+  box-sizing: border-box;
+  display: flow-root;
+  width: min(100%, 54rem);
+  min-height: calc(min(100cqi, 54rem) * 1.294);
+  margin: 0 auto 16px;
+  padding: clamp(14px, 5cqi, 40px);
+  background: var(--background);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.08);
+}
+.pdf-reading[data-theme="dark"] .translation-page {
+  background: var(--pdf-dark-paper);
+}
+.translation-page-number {
+  margin-bottom: 1.25em;
+  text-align: end;
+  color: var(--muted-foreground);
+  font-size: 0.75em;
+  font-variant-numeric: tabular-nums;
+}
+.translation-page-placeholder {
+  margin: 2em 0;
+  text-align: center;
+  color: var(--muted-foreground);
+  font-size: 0.85em;
+}
 .pdf-reading .translation-document section {
   max-width: none;
 }
